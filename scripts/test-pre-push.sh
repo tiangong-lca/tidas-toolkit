@@ -126,7 +126,7 @@ expect_gate() {
 
 expect_fast_path() {
   name="$1"; input="$2"
-  run_hook "$input"
+  run_hook "$input" "${3:-}"
   if [ "$hook_rc" -ne 0 ]; then fail "$name" "exit $hook_rc"; return; fi
   if [ -s "$trace" ]; then fail "$name" "gate ran: $(tr '\n' ' ' < "$trace")"; return; fi
   pass "$name"
@@ -200,6 +200,27 @@ expect_gate "dot-dot ref runs the full gate"                  "$fixture/ref-dotd
 expect_gate "40/64 width mismatch runs the full gate"         "$fixture/width-mismatch"
 expect_gate "non-hex remote SHA runs the full gate"           "$fixture/non-hex-remote"
 expect_gate "non-hex SHA256 remote runs the full gate"        "$fixture/sha256-non-hex-remote"
+
+# Locale-sensitive shell ranges must not admit uppercase object IDs.
+write locale-lower-sha1 "(delete) $zero40 refs/heads/hex 0123456789abcdef0123456789abcdef01234567\n"
+write locale-upper-sha1 "(delete) $zero40 refs/heads/hex $(printf 'A%.0s' $(seq 1 40))\n"
+write locale-upper-sha256 "(delete) $zero64 refs/heads/hex $(printf 'A%.0s' $(seq 1 64))\n"
+for oid_test_locale in C en_US.UTF-8; do
+  # C is always exercised. A host without this UTF-8 locale must report that
+  # limitation instead of claiming the affected collation was tested.
+  if [ "$oid_test_locale" != C ]; then
+    if ! env LC_ALL="$oid_test_locale" locale charmap > "$fixture/locale-charmap" 2> "$fixture/locale-warning" ||
+       [ -s "$fixture/locale-warning" ] ||
+       ! grep -Eq '^UTF-?8$' "$fixture/locale-charmap"; then
+      printf 'skip - unavailable test locale: %s\n' "$oid_test_locale"
+      continue
+    fi
+  fi
+  expect_fast_path "lowercase SHA1 deletion ($oid_test_locale)" "$fixture/locale-lower-sha1" "LC_ALL=$oid_test_locale"
+  expect_fast_path "lowercase SHA256 deletion ($oid_test_locale)" "$fixture/sha256-delete" "LC_ALL=$oid_test_locale"
+  expect_gate "uppercase SHA1 keeps full gate ($oid_test_locale)" "$fixture/locale-upper-sha1" 0 "LC_ALL=$oid_test_locale"
+  expect_gate "uppercase SHA256 keeps full gate ($oid_test_locale)" "$fixture/locale-upper-sha256" 0 "LC_ALL=$oid_test_locale"
+done
 
 # --- failure propagation: exact code and no later gate step ----------------
 expect_failure() { # name, input, failing step, expected exit code, env assignment
