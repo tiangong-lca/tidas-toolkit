@@ -26,9 +26,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-09-15
-lastReviewedCommit: e4afb1628a1112a0866cc01dbaebc429f94228ea
-lastReviewedNote: "Reviewed for #195: only complete branch-deletion-only wire input skips source validation. Full code/tag/mixed/unknown/manual gates and exit/argv behavior remain; 35 fixture cases, real TTY and argv mutation probes, actionlint and all seven canonical local gates pass. Four-platform CI and root integration remain pending."
+lastReviewedAt: 2026-09-16
+lastReviewedCommit: 7ab6910686e614540d67128071ac8aa1241f9b64
+lastReviewedNote: "Reviewed for Toolkit #198: the deletion-only OID predicate now uses explicit lowercase ASCII characters without overriding the production locale. Existing shell trace cases plus C/en_US.UTF-8 SHA1/SHA256 cases pass on macOS (43 passing trace cases, no locale skip); source/tag/mixed/unknown input, argument order and failure fallback remain. Runtime, assets, upstream pins, packages and release behavior are unchanged. Full repository gates, independent source review, native CI and root integration remain pending."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
