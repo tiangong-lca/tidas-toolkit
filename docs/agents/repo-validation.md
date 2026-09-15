@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-15
-lastReviewedCommit: 37ce8602fb8aec00fd182f8e2976f7911ff783c4
-lastReviewedNote: "Reviewed for #193 after cold CI34935796586: four native platforms, package dry-run, aggregation and Winget pass; composite installation/context and cache saves are verified. Native action50/50/62/411s; warm comparison and root integration remain pending. Runtime/CLI/authorization unchanged."
+lastReviewedCommit: e4afb1628a1112a0866cc01dbaebc429f94228ea
+lastReviewedNote: "Reviewed for #195: only complete branch-deletion-only wire input skips source validation. Full code/tag/mixed/unknown/manual gates and exit/argv behavior remain; 35 fixture cases, real TTY and argv mutation probes, actionlint and all seven canonical local gates pass. Four-platform CI and root integration remain pending."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -139,6 +139,15 @@ native packaging or publication has completed.
 ```bash
 ./scripts/install-git-hooks.sh
 ```
+
+The hook first classifies the complete pre-push input with
+`scripts/pre-push-deletion-only.sh`. A push that only deletes existing branch
+refs delivers no source, so it exits without running source validation. Every
+other input — code or tag publication, branch creation, mixed, empty, manual,
+malformed, truncated, unknown object-id length or invalid ref input — keeps the
+full gate below unchanged. The classifier is a property of the input alone; no
+environment variable selects the fast path. Regression coverage lives in
+`scripts/test-pre-push.sh`.
 
 The hook runs strict Docpact, the Rust-only audit, both asset locks, format,
 clippy, and all workspace tests. Override an unusual comparison only with an

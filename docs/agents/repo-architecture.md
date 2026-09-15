@@ -27,8 +27,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-15
-lastReviewedCommit: 37ce8602fb8aec00fd182f8e2976f7911ff783c4
-lastReviewedNote: "Reviewed for #193 after cold CI34935796586: four native platforms, package dry-run, aggregation and Winget pass; composite installation/context and cache saves are verified. Native action50/50/62/411s; warm comparison and root integration remain pending. Runtime/CLI/authorization unchanged."
+lastReviewedCommit: e4afb1628a1112a0866cc01dbaebc429f94228ea
+lastReviewedNote: "Reviewed for #195: only complete branch-deletion-only wire input skips source validation. Full code/tag/mixed/unknown/manual gates and exit/argv behavior remain; 35 fixture cases, real TTY and argv mutation probes, actionlint and all seven canonical local gates pass. Four-platform CI and root integration remain pending."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -205,7 +205,9 @@ updated separately when the tracked delivery requires it.
 
 ## Local gate
 
-The versioned pre-push hook runs strict Docpact, the Rust-only audit, paired and
+A complete, valid branch-deletion-only input skips source validation because no
+source is delivered. All other inputs retain the versioned pre-push hook
+with strict Docpact, the Rust-only audit, paired and
 full asset locks, formatting, clippy, and workspace tests. See
 `docs/agents/repo-validation.md` for focused and scale proof.
 
