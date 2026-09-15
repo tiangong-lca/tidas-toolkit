@@ -27,8 +27,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: 2026-09-15
-lastReviewedCommit: 37ce8602fb8aec00fd182f8e2976f7911ff783c4
-lastReviewedNote: "Reviewed for #193 after cold CI34935796586: four native platforms, package dry-run, aggregation and Winget pass; composite installation/context and cache saves are verified. Native action50/50/62/411s; warm comparison and root integration remain pending. Runtime/CLI/authorization unchanged."
+lastReviewedCommit: 88f94b92840767c0b814eb0d7fc7e78c8e94798f
+lastReviewedNote: "Reviewed PR #192 rework: isolate pure measurement in a thirteenth crate, restore package validation integration tests, preserve semantic gates and reject incomplete explicit unit selections. Qualify normal dependency boundaries and retain upstream native-cache/Cargo-target behavior; no dataset asset or public report changes."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -117,8 +117,8 @@ Zero memory budgets and queue capacities are usage errors.
 
 ## Streams and files
 
-- stdin is used only when a future functional command explicitly receives `-`
-  in a documented input option; it is never selected implicitly.
+- `convert - --to reference-unit` explicitly reads one bounded JSON request from stdin.
+  Other commands never select stdin implicitly.
 - stdout contains exactly one human report, one canonical JSON report, or one
   completion script.
 - logs, progress, diagnostics outside a completed report, and file-write
@@ -186,6 +186,66 @@ semantic eILCD projection; reverse conversion applies it and verifies the
 source semantic hash. The report next action gives the exact `tidas validate
 OUTPUT/data --input-format ...` command.
 
+## Flow-property quantity conversion
+
+```bash
+tidas convert request.json --to reference-unit --format json
+tidas convert - --to reference-unit --format json < request.json
+```
+
+This report-only target consumes `tidas.flow-property-conversion-request.v1`;
+`--output` is rejected. Use global `--report` for atomic report publication.
+The operation envelope's `summary.flow_property_conversion` conforms to
+`tidas.flow-property-conversion.v1`. The authoritative schemas are
+`contracts/flow-property-conversion-{request,report}.v1.schema.json`. `tidas version`
+advertises both `flow_property_conversion_schema` and
+`flow_property_conversion_request_schema` so downstream callers can verify this capability.
+
+A request carries complete Flow, FlowProperty and UnitGroup JSON documents,
+source property/unit internal IDs, decimal-string amount and optional bounds,
+fixed `conditions`, and nonempty `evidence` identifiers. It is limited to
+Product/Waste flows. Exact UUID/version references must close over the supplied
+documents, including unused secondary properties. Internal IDs and property
+identities must be unique; the declared reference pointer wins regardless of
+list order and its meanValue must be 1. No document is modified. Zero-valued
+descriptive properties are accepted, but cannot be used as conversion divisors.
+
+The forward equation is `q_reference = q_source * unit_factor / property_factor`.
+`direction: "from-reference"` applies its inverse to `source.amount`; the source
+IDs still identify the requested alternate unit and `reference` still identifies
+the fixed reference basis. Positive factors preserve signed waste quantities and
+scale both interval endpoints. Nonempty formulas are blocked: callers must
+verify/evaluate the formula and retain that provenance before submitting its
+amount. No formula is silently left at a different numerical scale.
+The measurement request supports amount and interval endpoints only; it does not
+accept arbitrary uncertainty parameters. During openLCA import, a non-unit
+conversion factor with normal-distribution absolute dispersion is blocked with
+`normal_uncertainty_requires_rescaling`. This includes an original `sd` retained
+in source trace even when the earlier adapter rounded or omitted its target
+dispersion. Factor-1 identity normalization remains allowed, and dimensionless
+log-normal geometric dispersion is preserved without rescaling.
+
+Decimal text is capped at 256 bytes and exponents at +/-512 before BigDecimal
+parsing. Conversion uses the locked BigDecimal implementation with an explicit
+100-significant-digit HalfEven context. Reports retain the exact factor
+numerator/denominator, rounded decimal result, and actual round-trip residual;
+a round trip exceeding 1e-95 relative decimal error is rejected. Inputs, factors,
+reciprocals and results that overflow f64, or nonzero values that underflow f64
+to zero, are rejected before Worker use. This is decimal conversion evidence,
+not a guarantee of exact binary floating-point representation.
+
+Request input is bounded at 16 MiB and explicitly charged to the runtime memory
+budget. Document/request hashes cover recursively sorted-key JSON with exact normalized
+BigDecimal number lexemes, UTF-8 without a trailing LF, rather than source-file
+bytes. Thus numeric metadata `1.0`/`1` and exponent/decimal spellings hash alike;
+string values retain their original bytes. Callers replay the native command to
+verify reports instead of reconstructing hashing through JavaScript floating-point
+serialization. Replaying the same request produces
+the same domain report. The command checks the supplied identity/unit chain; it
+does not prove density, calorific value, product equivalence, provider matching,
+publication visibility, or full dataset schema validity. `applicability` therefore
+remains `not_assessed`; those gates remain with the calling authoring workflow.
+
 ## Native import surface
 
 External-format import uses:
@@ -214,6 +274,14 @@ the source object and canonical field, and no output directory is published.
 Unmatched elementary taxonomy paths publish through the documented
 air-unspecified fallback and add `elementary_taxonomy_fallback` to
 `issues.jsonl`.
+
+For openLCA JSON-LD exchanges, an explicit property/unit selection without a
+resolvable unit identity is a data issue (`missing_exchange_unit_identity`),
+not permission to use the Flow reference unit. This includes a unit name or
+original unit/property selection retained in source trace. The import fails
+before publication and preserves any existing output. Legacy exchanges with
+no unit or property evidence retain their prior no-unit behavior; this is not
+a claim that their quantities have been converted or scientifically verified.
 
 The operation report summary contains one `import` member conforming to
 `tidas.import-execution-report.v1`. Artifacts carry directory/file hashes and

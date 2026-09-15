@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-15
-lastReviewedCommit: 37ce8602fb8aec00fd182f8e2976f7911ff783c4
-lastReviewedNote: "Reviewed for #193 after cold CI34935796586: four native platforms, package dry-run, aggregation and Winget pass; composite installation/context and cache saves are verified. Native action50/50/62/411s; warm comparison and root integration remain pending. Runtime/CLI/authorization unchanged."
+lastReviewedCommit: 88f94b92840767c0b814eb0d7fc7e78c8e94798f
+lastReviewedNote: "Reviewed PR #192 rework: isolate pure measurement in a thirteenth crate, restore package validation integration tests, preserve semantic gates and reject incomplete explicit unit selections. Qualify normal dependency boundaries and retain upstream native-cache/Cargo-target behavior; no dataset asset or public report changes."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -79,6 +79,7 @@ to install a redistributable or copy a development-machine DLL.
 | Change | Minimum local proof | Higher-risk proof |
 | --- | --- | --- |
 | CLI, contracts, or shared runtime | baseline; root and affected command help; deterministic JSON/version/completion; report/stdout separation; usage and exit-class tests | configuration precedence, cancellation, bounded queues, memory accounting, spool determinism, and all affected JSON Schema contracts |
+| shared measurement | test the crate independently (including its JSON-number features); exact-pointer, bounds, signed quantity, zero-descriptor, duplicate and input-hash fixtures; CLI request/report replay; preserve native semantic rejections | qualify the 13-package set, reject forbidden direct/transitive dependency edges, and retain full package-validation integration tests |
 | conversion | focused conversion + CLI tests; both directions; representative category round-trips; schema-order/XSD proof with scrambled JSON members; envelope and projection-recovery sidecars; source-semantic hash proof; tree hash; symlink, invalid XML, cancellation, budget, rollback | run the local package twice, validate every projected XML document, recover every adapted TIDAS fragment, compare tree hashes, and record wall time/RSS |
 | import | all supported format fixtures; native target validation; deterministic package/mapping/bundle hashes; malformed/unsupported input, cancellation, budget, atomic publication | large exchange/issue-spool fixture with wall time/RSS and cross-root determinism |
 | export | focused crate/CLI tests; report schema; secret redaction; unsafe paths; cancellation/budget; version suffixes; deterministic ZIP; atomic replacement | disposable local PostgreSQL and S3-compatible fixtures twice, comparing archive bytes and membership |
@@ -151,6 +152,27 @@ must preserve historical input readability and reject unrelated namespaces and
 future versions claiming the historical namespace. Installer contracts and the
 full native package matrix retain their usual integrity requirements.
 
+For Flow-property measurement changes, run the conversion, import, validation
+and CLI tests. Required examples cover nonzero reference IDs and reordered lists;
+kg/m3 and g/L forward/inverse conversion; factor-1 identity normalization;
+negative waste amounts and ordered bounds; zero descriptors versus selected zero
+factors; missing/exact-version dependencies; duplicate properties; unchanged
+source JSON; formula blocking; oversized decimal exponents and f64 range limits.
+For openLCA uncertainty, prove that non-unit factors with absolute normal
+dispersion fail without partial mutation, including source `sd` omitted by the
+earlier projection; factor-1 normalization preserves normal dispersion; and
+log-normal dispersion stays dimensionless while amount and bounds are scaled.
+The CLI contract tests exercise both file and explicit stdin requests, deterministic
+reports, and rejection of artifact output. Full schema validation remains separate
+from the bounded measurement request's identity/unit-chain check. A compiler run
+with `--ignore-rust-version` is auxiliary evidence only and does not replace the
+required Rust 1.98.1 canonical validation.
+
+The frozen openLCA oracle lacks its referenced UnitGroup/FlowProperty source
+objects. Its original package is now asserted to fail before publication. The
+parity test adds an explicit unit/property chain only to a temporary derived
+fixture, then checks the unchanged historical oracle's other semantic assertions.
+The frozen source and expected-result files remain unchanged.
 
 ## Native CI archive reuse and isolated Cargo outputs
 
@@ -221,3 +243,19 @@ warm independently; do not attribute the entire job delta solely to this new
 archive cache. Compare actual keys/images, restored-package logs, archive size,
 transfer overhead and all qualification results. Synthetic skipped jobs are not
 timing samples. Default-branch seeding is still pending delivery.
+
+## Flow-property regression proof
+
+Compare retained main and candidate behavior on synthetic inputs. Preserve
+ordinary same-property/cross-property quantities, interval bounds and signed
+waste amounts. Prove the new general reference-unit request/report separately
+from the existing openLCA adapter math. Explicit unit/property evidence with a
+missing unit identity must fail before changing the destination, while a
+complete exact identity still normalizes successfully. Document the retained
+no-evidence legacy path instead of calling it a validated conversion.
+
+The package-target regression script covers the 13 public crates, permits the
+conversion-to-validation dev-only test edge, and rejects both a measurement
+upward dependency and an indirect validation-to-conversion production edge.
+Run `scripts/test-publish-target.sh` and real `scripts/publish-crates.sh check`;
+the mock script alone does not prove self-contained package contents.

@@ -1,5 +1,6 @@
 mod args;
 mod context;
+mod measurement;
 mod output;
 
 use std::env;
@@ -647,13 +648,25 @@ fn runtime_error_in_chain<'a>(
 }
 
 fn conversion_report(arguments: &ConvertArgs, execution: &ExecutionContext) -> OperationReportV1 {
+    if arguments.to == ConversionTarget::ReferenceUnit {
+        return measurement::report(arguments, execution);
+    }
+    let Some(output) = arguments.output.as_ref() else {
+        return OperationReportV1::failed(
+            CommandNameV1::Convert,
+            ExitClass::Usage,
+            "missing_output",
+            "--output is required for package conversion",
+        );
+    };
     let direction = match arguments.to {
         ConversionTarget::Ilcd => ConversionDirection::TidasToIlcd,
         ConversionTarget::Tidas => ConversionDirection::IlcdToTidas,
+        ConversionTarget::ReferenceUnit => unreachable!("handled above"),
     };
     let request = ConversionRequest {
         input_dir: arguments.input.clone(),
-        output_dir: arguments.output.clone(),
+        output_dir: output.clone(),
         direction,
         cancellation: execution.cancellation.clone(),
         memory_budget: execution.memory_budget.clone(),
@@ -671,7 +684,7 @@ fn conversion_report(arguments: &ConvertArgs, execution: &ExecutionContext) -> O
                 serde_json::to_value(&summary).expect("conversion report contract is serializable"),
             );
             report.artifacts.push(ArtifactRefV1 {
-                path: arguments.output.to_string_lossy().into_owned(),
+                path: output.to_string_lossy().into_owned(),
                 media_type: "application/vnd.tidas.package-directory".to_owned(),
                 sha256: Some(summary.output_tree_sha256),
                 bytes: Some(summary.output_bytes),
@@ -679,10 +692,11 @@ fn conversion_report(arguments: &ConvertArgs, execution: &ExecutionContext) -> O
             let input_format = match arguments.to {
                 ConversionTarget::Ilcd => "ilcd-xml",
                 ConversionTarget::Tidas => "tidas-json",
+                ConversionTarget::ReferenceUnit => unreachable!("handled above"),
             };
             report.next_actions.push(format!(
                 "tidas validate {} --input-format {input_format}",
-                arguments.output.join("data").display()
+                output.join("data").display()
             ));
             report
         }
@@ -1243,6 +1257,14 @@ fn version_report(execution: &ExecutionContext) -> OperationReportV1 {
     report.summary.insert(
         "release_report_schema".to_owned(),
         serde_json::json!(RELEASE_REPORT_SCHEMA_V1),
+    );
+    report.summary.insert(
+        "flow_property_conversion_schema".to_owned(),
+        serde_json::json!(tidas_measurement::REPORT_SCHEMA),
+    );
+    report.summary.insert(
+        "flow_property_conversion_request_schema".to_owned(),
+        serde_json::json!(tidas_measurement::REQUEST_SCHEMA),
     );
     report
         .summary

@@ -45,7 +45,8 @@
       },
       "taxonomy_evidence": "Flow.category path",
       "flow_property_capability": "all Flow.flowProperties entries",
-      "golden_parity_changed": false
+      "golden_parity_changed": false,
+      "success_fixture_preparation": "The frozen source lacks its exact UnitGroup/FlowProperty chain and is now blocked; the parity test supplies that chain only in a temporary derived fixture, preserving source and oracle bytes."
     },
     {
       "format": "openlca-process-xlsx",

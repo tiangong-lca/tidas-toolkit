@@ -49,6 +49,7 @@ members = [
   "crates/tidas-dist",
   "crates/tidas-export",
   "crates/tidas-import",
+  "crates/tidas-measurement",
   "crates/tidas-references",
   "crates/tidas-release",
   "crates/tidas-runtime",

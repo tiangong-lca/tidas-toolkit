@@ -29,6 +29,7 @@ tidas-contracts = { version = "=0.3.0", path = "../tidas-contracts" }
 tidas-export = { version = "=0.3.0", path = "../tidas-export" }
 tidas-import = { version = "=0.3.0", path = "../tidas-import" }
 tidas-release = { version = "=0.3.0", path = "../tidas-release" }
+tidas-measurement = { version = "=0.3.0", path = "../tidas-measurement" }
 tidas-runtime = { version = "=0.3.0", path = "../tidas-runtime" }
 tidas-rulesets = { version = "=0.3.0", path = "../tidas-rulesets" }
 tidas-validation = { version = "=0.3.0", path = "../tidas-validation" }

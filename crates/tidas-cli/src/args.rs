@@ -211,17 +211,17 @@ impl Commands {
 
 #[derive(Clone, Debug, Eq, PartialEq, clap::Args)]
 #[command(
-    long_about = "Convert one package directory between TIDAS JSON and eILCD XML. The input tree is mirrored under OUTPUT/data, non-convertible files are preserved, and the locked schemas, stylesheets, or methodologies for the target format are materialized beside it. Publication is atomic: malformed input, cancellation, or runtime failure leaves an existing output unchanged.",
+    long_about = "Convert a package between TIDAS JSON and eILCD XML, or use --to reference-unit with a tidas.flow-property-conversion-request.v1 JSON file (explicit - reads stdin). Reference-unit mode is report-only, supports Product/Waste Flow quantities and fixed decimal rounding, and rejects --output. The input tree is mirrored under OUTPUT/data, non-convertible files are preserved, and the locked schemas, stylesheets, or methodologies for the target format are materialized beside it. Publication is atomic: malformed input, cancellation, or runtime failure leaves an existing output unchanged.",
     after_help = "Examples:\n  tidas convert ./package --output ./eilcd-package --to ilcd\n  tidas convert ./eilcd-data --output ./tidas-package --to tidas --format json\n\nNext: validate the generated OUTPUT/data directory with `tidas validate` and the corresponding --input-format."
 )]
 pub struct ConvertArgs {
-    /// Package directory to traverse recursively without following symlinks.
+    /// Package directory, or reference-unit request JSON file (explicit - reads stdin).
     #[arg(value_name = "INPUT")]
     pub input: PathBuf,
 
     /// Target package directory to publish atomically.
     #[arg(long, value_name = "DIR")]
-    pub output: PathBuf,
+    pub output: Option<PathBuf>,
 
     /// Target representation and locked asset family.
     #[arg(long, value_enum, value_name = "FORMAT")]
@@ -232,6 +232,8 @@ pub struct ConvertArgs {
 pub enum ConversionTarget {
     Ilcd,
     Tidas,
+    /// Convert a fixed product/waste Flow quantity to its reference unit; report only.
+    ReferenceUnit,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq, clap::Args)]

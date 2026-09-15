@@ -189,6 +189,17 @@ impl SemanticCatalog {
         .and_then(Value::as_str) else {
             return Ok(());
         };
+        if matches!(dataset_type, "Product flow" | "Waste flow")
+            && let Err(problem) = tidas_measurement::inspect_flow_properties(instance)
+        {
+            emit(ValidationIssueV1::error(
+                problem.code,
+                TidasCategory::Flows.as_str(),
+                file_path,
+                "flowDataSet/flowProperties",
+                problem.message,
+            ))?;
+        }
         if dataset_type == "Elementary flow" {
             if let Some(items) = value_at(
                 instance,
@@ -824,7 +835,7 @@ mod tests {
     #[test]
     fn localized_and_product_classification_issues_match_python_codes() {
         let catalog = SemanticCatalog::load().unwrap();
-        let instance = serde_json::json!({
+        let mut instance = serde_json::json!({
             "flowDataSet": {
                 "modellingAndValidation": {"LCIMethod": {"typeOfDataSet": "Product flow"}},
                 "flowInformation": {"dataSetInformation": {
@@ -836,6 +847,9 @@ mod tests {
                 }}
             }
         });
+        instance["flowDataSet"]["flowInformation"]["quantitativeReference"] =
+            serde_json::json!({"referenceToReferenceFlowProperty":"7"});
+        instance["flowDataSet"]["flowProperties"] = serde_json::json!({"flowProperty":{"@dataSetInternalID":"7","referenceToFlowPropertyDataSet":{"@refObjectId":"20000000-0000-4000-8000-000000000001"},"meanValue":"1"}});
         let mut issues = Vec::new();
         catalog
             .validate(&instance, TidasCategory::Flows, "flow.json", &mut |issue| {
@@ -854,6 +868,37 @@ mod tests {
             ]
         );
         assert!(issues[1].location.contains("/1/common:class/0/@classId"));
+    }
+
+    #[test]
+    fn product_flow_property_pointer_and_zero_descriptor_are_semantic_gates() {
+        let catalog = SemanticCatalog::load().unwrap();
+        let mut instance = serde_json::json!({"flowDataSet": {
+            "modellingAndValidation": {"LCIMethod": {"typeOfDataSet":"Product flow"}},
+            "flowInformation": {"quantitativeReference":{"referenceToReferenceFlowProperty":"7"}},
+            "flowProperties":{"flowProperty":[
+                {"@dataSetInternalID":"2","referenceToFlowPropertyDataSet":{"@refObjectId":"20000000-0000-4000-8000-000000000002"},"meanValue":"0"},
+                {"@dataSetInternalID":"7","referenceToFlowPropertyDataSet":{"@refObjectId":"20000000-0000-4000-8000-000000000001"},"meanValue":"1"}
+            ]}
+        }});
+        let mut issues = Vec::new();
+        catalog
+            .validate(&instance, TidasCategory::Flows, "flow.json", &mut |issue| {
+                issues.push(issue);
+                Ok(())
+            })
+            .unwrap();
+        assert!(issues.is_empty());
+        instance["flowDataSet"]["flowInformation"]["quantitativeReference"]["referenceToReferenceFlowProperty"] =
+            serde_json::json!("0");
+        catalog
+            .validate(&instance, TidasCategory::Flows, "flow.json", &mut |issue| {
+                issues.push(issue);
+                Ok(())
+            })
+            .unwrap();
+        assert_eq!(issues.len(), 1);
+        assert_eq!(issues[0].issue_code, "missing_reference_flow_property");
     }
 
     #[test]

@@ -1072,3 +1072,86 @@ fn migration_parity_fixture_matches_the_rust_surface() {
         );
     }
 }
+
+#[test]
+fn reference_unit_conversion_uses_native_stdin_and_deterministic_report() {
+    use std::io::Write;
+    use std::process::Stdio;
+    let request = include_bytes!("fixtures/flow-property-conversion-request.json");
+    let mut child = tidas()
+        .args(["convert", "-", "--to", "reference-unit", "--format", "json"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .unwrap();
+    child.stdin.take().unwrap().write_all(request).unwrap();
+    let output = child.wait_with_output().unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    assert!(output.stderr.is_empty());
+    let report: serde_json::Value = serde_json::from_slice(&output.stdout).unwrap();
+    let conversion = &report["summary"]["flow_property_conversion"];
+    assert_eq!(conversion["result"]["amount"], "2000");
+    assert_eq!(conversion["reference"]["flow_property_internal_id"], "7");
+    assert_eq!(conversion["reference"]["unit_name"], "kg");
+    assert_eq!(conversion["round_trip"]["residual"], "0");
+    assert_eq!(conversion["applicability"], "not_assessed");
+    assert_eq!(conversion["documents"].as_array().unwrap().len(), 5);
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("request.json");
+    fs::write(&input, request).unwrap();
+    let (second, other) = json_output(&[
+        "convert",
+        input.to_str().unwrap(),
+        "--to",
+        "reference-unit",
+        "--format",
+        "json",
+    ]);
+    assert!(second.status.success());
+    assert_eq!(other["summary"]["flow_property_conversion"], *conversion);
+}
+
+#[test]
+fn reference_unit_conversion_rejects_formula_and_artifact_output() {
+    let directory = tempfile::tempdir().unwrap();
+    let input = directory.path().join("request.json");
+    let mut request: serde_json::Value = serde_json::from_slice(include_bytes!(
+        "fixtures/flow-property-conversion-request.json"
+    ))
+    .unwrap();
+    request["source"]["formula"] = serde_json::json!("volume * density");
+    fs::write(&input, serde_json::to_vec(&request).unwrap()).unwrap();
+    let (output, report) = json_output(&[
+        "convert",
+        input.to_str().unwrap(),
+        "--to",
+        "reference-unit",
+        "--format",
+        "json",
+    ]);
+    assert_eq!(output.status.code(), Some(2));
+    assert!(report["summary"].get("flow_property_conversion").is_none());
+    assert!(
+        String::from_utf8(output.stdout)
+            .unwrap()
+            .contains("formula_requires_evaluation")
+    );
+    let artifact = directory.path().join("must-not-exist");
+    let (output, _) = json_output(&[
+        "convert",
+        input.to_str().unwrap(),
+        "--to",
+        "reference-unit",
+        "--output",
+        artifact.to_str().unwrap(),
+        "--format",
+        "json",
+    ]);
+    assert_eq!(output.status.code(), Some(64));
+    assert!(!artifact.exists());
+}

@@ -24,6 +24,7 @@ tempfile.workspace = true
 thiserror.workspace = true
 tidas-assets = { version = "=0.3.0", path = "../.." }
 tidas-conversion = { version = "=0.3.0", path = "../tidas-conversion" }
+tidas-measurement = { version = "=0.3.0", path = "../tidas-measurement" }
 tidas-runtime = { version = "=0.3.0", path = "../tidas-runtime" }
 tidas-validation = { version = "=0.3.0", path = "../tidas-validation" }
 uuid.workspace = true

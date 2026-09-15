@@ -22,6 +22,7 @@ public_packages=(
   tidas-xml
   tidas-references
   tidas-assets
+  tidas-measurement
   tidas-conversion
   tidas-rulesets
   tidas-validation
@@ -55,6 +56,27 @@ actual_packages="$(
 if [[ "$actual_packages" != "$expected_packages" ]]; then
   echo "public package set does not match the ordered release contract" >&2
   diff -u <(printf '%s\n' "$expected_packages") <(printf '%s\n' "$actual_packages") || true
+  exit 1
+fi
+
+# Keep shared quantity semantics below both package conversion and validation.
+# Check normal/build edges transitively; dev-only package integration tests are allowed.
+if ! jq -e '
+  .packages as $packages |
+  def dependencies($name):
+    [$packages[] | select(.name == $name) | .dependencies[]? |
+      select(.kind != "dev") | .name];
+  def reachable($pending; $seen):
+    if ($pending | length) == 0 then $seen
+    else $pending[0] as $next |
+      if ($seen | index($next)) != null then reachable($pending[1:]; $seen)
+      else reachable($pending[1:] + dependencies($next); $seen + [$next]) end
+    end;
+  ((reachable(["tidas-validation"]; []) | index("tidas-conversion")) == null) and
+  ((reachable(["tidas-conversion"]; []) | index("tidas-validation")) == null) and
+  (all(dependencies("tidas-measurement")[]; startswith("tidas") | not))
+' <<<"$metadata" >/dev/null; then
+  echo "domain dependency violation: measurement must be independent and conversion/validation must not depend on one another" >&2
   exit 1
 fi
 

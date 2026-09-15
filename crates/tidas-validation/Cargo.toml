@@ -21,6 +21,7 @@ sha2.workspace = true
 tempfile.workspace = true
 thiserror.workspace = true
 tidas-assets = { version = "=0.3.0", path = "../.." }
+tidas-measurement = { version = "=0.3.0", path = "../tidas-measurement" }
 tidas-runtime = { version = "=0.3.0", path = "../tidas-runtime" }
 tidas-rulesets = { version = "=0.3.0", path = "../tidas-rulesets" }
 tidas-xml = { version = "=0.3.0", path = "../tidas-xml" }

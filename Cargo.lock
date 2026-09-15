@@ -2468,6 +2468,7 @@ dependencies = [
  "tidas-conversion",
  "tidas-export",
  "tidas-import",
+ "tidas-measurement",
  "tidas-release",
  "tidas-rulesets",
  "tidas-runtime",
@@ -2569,11 +2570,24 @@ dependencies = [
  "thiserror",
  "tidas-assets",
  "tidas-conversion",
+ "tidas-measurement",
  "tidas-runtime",
  "tidas-validation",
  "uuid",
  "walkdir",
  "zip",
+]
+
+[[package]]
+name = "tidas-measurement"
+version = "0.3.0"
+dependencies = [
+ "bigdecimal",
+ "jsonschema",
+ "serde",
+ "serde_json",
+ "sha2",
+ "thiserror",
 ]
 
 [[package]]
@@ -2642,6 +2656,7 @@ dependencies = [
  "tempfile",
  "thiserror",
  "tidas-assets",
+ "tidas-measurement",
  "tidas-rulesets",
  "tidas-runtime",
  "tidas-xml",

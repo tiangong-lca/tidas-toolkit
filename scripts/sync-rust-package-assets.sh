@@ -12,6 +12,8 @@ fi
 contract_copies=(
   "operation-report.v1.schema.json:crates/tidas-contracts/contracts"
   "conversion-report.v1.schema.json:crates/tidas-conversion/contracts"
+  "flow-property-conversion-request.v1.schema.json:crates/tidas-measurement/contracts"
+  "flow-property-conversion-report.v1.schema.json:crates/tidas-measurement/contracts"
   "export-report.v1.schema.json:crates/tidas-export/contracts"
   "import-execution-report.v1.schema.json:crates/tidas-import/contracts"
   "import-package-report.v1.schema.json:crates/tidas-import/contracts"

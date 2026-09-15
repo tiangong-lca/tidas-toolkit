@@ -31,8 +31,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-09-15
-lastReviewedCommit: 37ce8602fb8aec00fd182f8e2976f7911ff783c4
-lastReviewedNote: "Reviewed for #193 after cold CI34935796586: four native platforms, package dry-run, aggregation and Winget pass; composite installation/context and cache saves are verified. Native action50/50/62/411s; warm comparison and root integration remain pending. Runtime/CLI/authorization unchanged."
+lastReviewedCommit: 88f94b92840767c0b814eb0d7fc7e78c8e94798f
+lastReviewedNote: "Reviewed PR #192 rework: isolate pure measurement in a thirteenth crate, restore package validation integration tests, preserve semantic gates and reject incomplete explicit unit selections. Qualify normal dependency boundaries and retain upstream native-cache/Cargo-target behavior; no dataset asset or public report changes."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -58,7 +58,8 @@ Repository-owned behavior belongs in the corresponding crate:
 | `crates/tidas-cli` | parsing, configuration precedence, output routing, completion, cancellation wiring, and thin dispatch |
 | `crates/tidas-contracts` | stable reports, diagnostics, artifacts, completeness, and exit classes |
 | `crates/tidas-runtime` | explicit memory accounting, bounded queues, cancellation, and streaming spools |
-| `crates/tidas-conversion` | deterministic TIDAS/eILCD conversion with schema-ordered ILCD output and atomic publication |
+| `crates/tidas-conversion` | deterministic TIDAS/eILCD conversion and atomic publication |
+| `crates/tidas-measurement` | pure Flow-property inspection, decimal quantity conversion, and evidence-bound measurement reports |
 | `crates/tidas-import` | bounded external-format import and canonical publication |
 | `crates/tidas-export` | repeatable-read database export, S3-compatible streaming, and deterministic ZIP output |
 | `crates/tidas-validation` | offline JSON Schema and ILCD/XSD validation |
@@ -149,7 +150,7 @@ affected domain. Run Docpact strict validation and lint before handoff.
 
 ## Release architecture
 
-- All public crates use one exact workspace version; `tidas-dist` is not
+- The 13 public crates use one exact workspace version; `tidas-dist` is not
   published.
 - Pull requests qualify packages without registry credentials.
 - A reviewed, append-only `.github/releases/v<version>.json` request binds a

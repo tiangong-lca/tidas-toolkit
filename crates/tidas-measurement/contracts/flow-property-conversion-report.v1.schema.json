@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "tidas.flow-property-conversion.v1"
+    },
+    "request_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "documents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "category": {
+            "enum": [
+              "flows",
+              "flowproperties",
+              "unitgroups"
+            ]
+          },
+          "id": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          }
+        },
+        "required": [
+          "category",
+          "id",
+          "version",
+          "sha256"
+        ]
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "flow_property_internal_id": {
+          "type": "string"
+        },
+        "unit_internal_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "minimum_amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "maximum_amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "formula": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "flow_property_internal_id",
+        "unit_internal_id",
+        "amount"
+      ]
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "flow_property_internal_id": {
+          "type": "string"
+        },
+        "flow_property_id": {
+          "type": "string"
+        },
+        "flow_property_version": {
+          "type": "string"
+        },
+        "unit_group_id": {
+          "type": "string"
+        },
+        "unit_group_version": {
+          "type": "string"
+        },
+        "unit_internal_id": {
+          "type": "string"
+        },
+        "unit_name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "flow_property_internal_id",
+        "flow_property_id",
+        "flow_property_version",
+        "unit_group_id",
+        "unit_group_version",
+        "unit_internal_id",
+        "unit_name"
+      ]
+    },
+    "factor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "numerator": {
+          "type": "string"
+        },
+        "denominator": {
+          "type": "string"
+        },
+        "decimal": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "numerator",
+        "denominator",
+        "decimal"
+      ]
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "type": "string"
+        },
+        "minimum_amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "maximum_amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "amount"
+      ]
+    },
+    "round_trip": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "type": "string"
+        },
+        "residual": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "amount",
+        "residual"
+      ]
+    },
+    "precision": {
+      "const": 100
+    },
+    "rounding": {
+      "const": "half-even"
+    },
+    "direction": {
+      "enum": [
+        "to-reference",
+        "from-reference"
+      ]
+    },
+    "conditions": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "applicability": {
+      "const": "not_assessed"
+    }
+  },
+  "required": [
+    "schema_version",
+    "request_sha256",
+    "documents",
+    "source",
+    "reference",
+    "factor",
+    "result",
+    "round_trip",
+    "precision",
+    "rounding",
+    "direction",
+    "conditions",
+    "evidence",
+    "applicability"
+  ]
+}

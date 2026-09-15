@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "tidas.flow-property-conversion-request.v1"
+    },
+    "flow": {
+      "type": "object"
+    },
+    "flow_properties": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "unit_groups": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "flow_property_internal_id": {
+          "type": "string"
+        },
+        "unit_internal_id": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string"
+        },
+        "minimum_amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "maximum_amount": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "formula": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "flow_property_internal_id",
+        "unit_internal_id",
+        "amount"
+      ]
+    },
+    "direction": {
+      "enum": [
+        "to-reference",
+        "from-reference"
+      ]
+    },
+    "conditions": {
+      "type": "string",
+      "minLength": 1
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "flow",
+    "flow_properties",
+    "unit_groups",
+    "source",
+    "conditions",
+    "evidence"
+  ]
+}

@@ -173,6 +173,23 @@ fn frozen_python_semantic_matrix_matches_all_native_adapters() {
         } else {
             fixture_root.join(expected["source"].as_str().unwrap())
         };
+        // Frozen source/oracle bytes stay unchanged. The old openLCA source lacks
+        // its referenced unit/property chain; current import must block that input.
+        let source = if fixture_name == "openlca.expected.json" {
+            let blocked = directory.path().join("blocked");
+            assert!(matches!(
+                run_import(&matrix_request(
+                    &source,
+                    &blocked,
+                    SourceFormat::OpenlcaJsonld
+                )),
+                Err(tidas_import::ImportExecutionError::SourceIssues { .. })
+            ));
+            assert!(!blocked.exists());
+            complete_openlca_unit_chain(&source, &directory.path().join("closed-openlca"))
+        } else {
+            source
+        };
         let output = directory.path().join("output");
         let report = run_matrix_fixture(
             &source,
@@ -217,7 +234,11 @@ fn run_matrix_fixture(
     output: &Path,
     requested_format: SourceFormat,
 ) -> tidas_import::ImportExecutionReportV1 {
-    run_import(&ImportRequest {
+    run_import(&matrix_request(source, output, requested_format)).unwrap()
+}
+
+fn matrix_request(source: &Path, output: &Path, requested_format: SourceFormat) -> ImportRequest {
+    ImportRequest {
         source: source.to_path_buf(),
         requested_format: Some(requested_format),
         output_dir: output.to_path_buf(),
@@ -229,8 +250,107 @@ fn run_matrix_fixture(
         queue_capacity: 2,
         max_entry_bytes: 1024 * 1024,
         max_issue_bytes: 64 * 1024,
-    })
-    .unwrap()
+    }
+}
+
+#[test]
+fn openlca_missing_exchange_unit_blocks_publication_without_replacing_output() {
+    let fixture =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/python-oracle-v1/openlca");
+    for unit in [None, Some(serde_json::json!({"name": "kg"}))] {
+        let directory = tempdir().unwrap();
+        let source = complete_openlca_unit_chain(&fixture, &directory.path().join("source"));
+        let process_path = source.join("processes/22222222-2222-4222-8222-222222222222.json");
+        let mut process: Value = serde_json::from_slice(&fs::read(&process_path).unwrap()).unwrap();
+        let exchange = process["exchanges"][0].as_object_mut().unwrap();
+        exchange.insert(
+            "flowProperty".to_owned(),
+            serde_json::json!({
+                "@id": "77777777-7777-4777-8777-777777777777", "name": "Mass"
+            }),
+        );
+        match unit {
+            Some(unit) => {
+                exchange.insert("unit".to_owned(), unit);
+            }
+            None => {
+                exchange.remove("unit");
+            }
+        }
+        fs::write(&process_path, serde_json::to_vec(&process).unwrap()).unwrap();
+        let output = directory.path().join("output");
+        for existing_output in [false, true] {
+            if existing_output {
+                fs::create_dir(&output).unwrap();
+                fs::write(output.join("sentinel"), "previous accepted package").unwrap();
+            }
+            let result = run_import(&matrix_request(
+                &source,
+                &output,
+                SourceFormat::OpenlcaJsonld,
+            ));
+            assert!(
+                matches!(
+                    result,
+                    Err(tidas_import::ImportExecutionError::SourceIssues { count: 1 })
+                ),
+                "{result:?}"
+            );
+            if existing_output {
+                assert_eq!(
+                    fs::read_to_string(output.join("sentinel")).unwrap(),
+                    "previous accepted package"
+                );
+                assert_eq!(fs::read_dir(&output).unwrap().count(), 1);
+            } else {
+                assert!(!output.exists());
+            }
+        }
+    }
+}
+
+#[test]
+fn openlca_explicit_reference_unit_remains_importable() {
+    let fixture =
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/fixtures/python-oracle-v1/openlca");
+    let directory = tempdir().unwrap();
+    let source = complete_openlca_unit_chain(&fixture, &directory.path().join("source"));
+    let output = directory.path().join("output");
+    let report = run_matrix_fixture(&source, &output, SourceFormat::OpenlcaJsonld);
+    assert_eq!(report.error_count, 0);
+    assert_eq!(report.tidas_validation_issue_count, 0);
+    assert_eq!(report.ilcd_validation_issue_count, Some(0));
+    assert!(output.join("tidas").is_dir());
+    assert!(output.join("ilcd").is_dir());
+}
+
+fn complete_openlca_unit_chain(source: &Path, target: &Path) -> PathBuf {
+    const PROPERTY: &str = "77777777-7777-4777-8777-777777777777";
+    const GROUP: &str = "88888888-8888-4888-8888-888888888888";
+    for category in ["flows", "processes", "flow_properties", "unit_groups"] {
+        fs::create_dir_all(target.join(category)).unwrap();
+    }
+    fs::copy(source.join("context.jsonld"), target.join("context.jsonld")).unwrap();
+    let flow_path = "flows/11111111-1111-4111-8111-111111111111.json";
+    let process_path = "processes/22222222-2222-4222-8222-222222222222.json";
+    let mut flow: Value =
+        serde_json::from_slice(&fs::read(source.join(flow_path)).unwrap()).unwrap();
+    flow["flowProperties"] = serde_json::json!([{"flowProperty":{"@id":PROPERTY,"name":"Mass"},"conversionFactor":"1","isRefFlowProperty":true}]);
+    fs::write(target.join(flow_path), serde_json::to_vec(&flow).unwrap()).unwrap();
+    fs::copy(source.join(process_path), target.join(process_path)).unwrap();
+    let property = serde_json::json!({"@type":"FlowProperty","@id":PROPERTY,"name":"Mass","unitGroup":{"@id":GROUP,"name":"Units of mass"}});
+    let group = serde_json::json!({"@type":"UnitGroup","@id":GROUP,"name":"Units of mass","units":[{"@id":"eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee","name":"kg","conversionFactor":"1","referenceUnit":true}]});
+    fs::write(
+        target.join("flow_properties/mass.json"),
+        serde_json::to_vec(&property).unwrap(),
+    )
+    .unwrap();
+    fs::write(
+        target.join("unit_groups/mass.json"),
+        serde_json::to_vec(&group).unwrap(),
+    )
+    .unwrap();
+    target.to_path_buf()
 }
 
 fn source_format(value: &str) -> SourceFormat {

@@ -1,0 +1,166 @@
+{
+  "schema_version": "tidas.flow-property-conversion-request.v1",
+  "flow": {
+    "flowDataSet": {
+      "flowInformation": {
+        "dataSetInformation": {
+          "common:UUID": "10000000-0000-4000-8000-000000000001"
+        },
+        "quantitativeReference": {
+          "referenceToReferenceFlowProperty": "7"
+        }
+      },
+      "administrativeInformation": {
+        "publicationAndOwnership": {
+          "common:dataSetVersion": "01.00.000"
+        }
+      },
+      "modellingAndValidation": {
+        "LCIMethod": {
+          "typeOfDataSet": "Product flow"
+        }
+      },
+      "flowProperties": {
+        "flowProperty": [
+          {
+            "@dataSetInternalID": "2",
+            "referenceToFlowPropertyDataSet": {
+              "@refObjectId": "20000000-0000-4000-8000-000000000002",
+              "@version": "01.00.000"
+            },
+            "meanValue": "0.001",
+            "generalComment": {
+              "@xml:lang": "en",
+              "#text": "Illustrative fixed water density only."
+            }
+          },
+          {
+            "@dataSetInternalID": "7",
+            "referenceToFlowPropertyDataSet": {
+              "@refObjectId": "20000000-0000-4000-8000-000000000001",
+              "@version": "01.00.000"
+            },
+            "meanValue": "1"
+          }
+        ]
+      }
+    }
+  },
+  "flow_properties": [
+    {
+      "flowPropertyDataSet": {
+        "flowPropertiesInformation": {
+          "dataSetInformation": {
+            "common:UUID": "20000000-0000-4000-8000-000000000001"
+          },
+          "quantitativeReference": {
+            "referenceToReferenceUnitGroup": {
+              "@refObjectId": "30000000-0000-4000-8000-000000000001",
+              "@version": "01.00.000"
+            }
+          }
+        },
+        "administrativeInformation": {
+          "publicationAndOwnership": {
+            "common:dataSetVersion": "01.00.000"
+          }
+        }
+      }
+    },
+    {
+      "flowPropertyDataSet": {
+        "flowPropertiesInformation": {
+          "dataSetInformation": {
+            "common:UUID": "20000000-0000-4000-8000-000000000002"
+          },
+          "quantitativeReference": {
+            "referenceToReferenceUnitGroup": {
+              "@refObjectId": "30000000-0000-4000-8000-000000000002",
+              "@version": "01.00.000"
+            }
+          }
+        },
+        "administrativeInformation": {
+          "publicationAndOwnership": {
+            "common:dataSetVersion": "01.00.000"
+          }
+        }
+      }
+    }
+  ],
+  "unit_groups": [
+    {
+      "unitGroupDataSet": {
+        "unitGroupInformation": {
+          "dataSetInformation": {
+            "common:UUID": "30000000-0000-4000-8000-000000000001"
+          },
+          "quantitativeReference": {
+            "referenceToReferenceUnit": "9"
+          }
+        },
+        "administrativeInformation": {
+          "publicationAndOwnership": {
+            "common:dataSetVersion": "01.00.000"
+          }
+        },
+        "units": {
+          "unit": [
+            {
+              "@dataSetInternalID": "9",
+              "name": "kg",
+              "meanValue": "1"
+            },
+            {
+              "@dataSetInternalID": "3",
+              "name": "g",
+              "meanValue": "0.001"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "unitGroupDataSet": {
+        "unitGroupInformation": {
+          "dataSetInformation": {
+            "common:UUID": "30000000-0000-4000-8000-000000000002"
+          },
+          "quantitativeReference": {
+            "referenceToReferenceUnit": "9"
+          }
+        },
+        "administrativeInformation": {
+          "publicationAndOwnership": {
+            "common:dataSetVersion": "01.00.000"
+          }
+        },
+        "units": {
+          "unit": [
+            {
+              "@dataSetInternalID": "9",
+              "name": "m3",
+              "meanValue": "1"
+            },
+            {
+              "@dataSetInternalID": "3",
+              "name": "L",
+              "meanValue": "0.001"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "source": {
+    "flow_property_internal_id": "2",
+    "unit_internal_id": "9",
+    "amount": "2",
+    "minimum_amount": "1.9",
+    "maximum_amount": "2.1"
+  },
+  "conditions": "Synthetic test fixture; fixed density 1000 kg/m3, not a material recommendation.",
+  "evidence": [
+    "test-fixture:fixed-density"
+  ]
+}
