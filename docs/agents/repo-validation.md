@@ -140,6 +140,15 @@ native packaging or publication has completed.
 ./scripts/install-git-hooks.sh
 ```
 
+The hook first classifies the complete pre-push input with
+`scripts/pre-push-deletion-only.sh`. A push that only deletes existing branch
+refs delivers no source, so it exits without running source validation. Every
+other input — code or tag publication, branch creation, mixed, empty, manual,
+malformed, truncated, unknown object-id length or invalid ref input — keeps the
+full gate below unchanged. The classifier is a property of the input alone; no
+environment variable selects the fast path. Regression coverage lives in
+`scripts/test-pre-push.sh`.
+
 The hook runs strict Docpact, the Rust-only audit, both asset locks, format,
 clippy, and all workspace tests. Override an unusual comparison only with an
 explicit `DOCPACT_BASE_REF`.

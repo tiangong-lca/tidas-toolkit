@@ -4,6 +4,13 @@ set -eu
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
+# A push that only deletes branches delivers no source. Classification reads the
+# complete pre-push input once; every other input keeps the full gate below.
+if "$repo_root/scripts/pre-push-deletion-only.sh"; then
+  echo "Pre-push input contains only valid branch deletions; no source is being delivered."
+  exit 0
+fi
+
 "$repo_root/scripts/docpact-gate.sh" "$@"
 
 echo "Auditing the Rust-only active tree."

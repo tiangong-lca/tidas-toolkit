@@ -205,7 +205,9 @@ updated separately when the tracked delivery requires it.
 
 ## Local gate
 
-The versioned pre-push hook runs strict Docpact, the Rust-only audit, paired and
+A complete, valid branch-deletion-only input skips source validation because no
+source is delivered. All other inputs retain the versioned pre-push hook
+with strict Docpact, the Rust-only audit, paired and
 full asset locks, formatting, clippy, and workspace tests. See
 `docs/agents/repo-validation.md` for focused and scale proof.
 

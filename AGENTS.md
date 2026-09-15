@@ -189,6 +189,10 @@ Install the versioned hook once per checkout:
 ./scripts/install-git-hooks.sh
 ```
 
+A pre-push input that contains only valid branch deletions delivers no source and
+skips validation (`scripts/pre-push-deletion-only.sh`); every other input keeps the
+full gate. See `docs/agents/repo-validation.md`.
+
 The pre-push hook runs strict Docpact, the Rust-only repository audit, both
 asset locks, formatting, clippy, and the complete workspace test suite. The
 Docpact wrapper resolves the CLI without requiring bare `docpact` on `PATH`.

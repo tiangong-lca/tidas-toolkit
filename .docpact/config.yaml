@@ -83,6 +83,8 @@ ownership:
           - scripts/docpact
           - scripts/docpact-gate.sh
           - scripts/install-git-hooks.sh
+          - scripts/pre-push-deletion-only.sh
+          - scripts/test-pre-push.sh
       ownerRepo: tidas-tools
 
 coverage:

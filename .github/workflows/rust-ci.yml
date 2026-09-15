@@ -11,6 +11,9 @@ on:
       - migration/**
       - .github/workflows/rust-ci.yml
       - scripts/audit-rust-only.sh
+      - .githooks/**
+      - scripts/pre-push-deletion-only.sh
+      - scripts/test-pre-push.sh
   workflow_dispatch:
 
 permissions:
@@ -39,6 +42,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+
+      - name: Test pre-push deletion-only classification
+        shell: bash
+        run: sh scripts/test-pre-push.sh
 
       - name: Install Linux XML toolchain
         if: matrix.family == 'linux'
