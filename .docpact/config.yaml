@@ -2,8 +2,8 @@ version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
 lastReviewedAt: "2026-09-16"
-lastReviewedCommit: "7ab6910686e614540d67128071ac8aa1241f9b64"
-lastReviewedNote: "Reviewed for Toolkit #198: the deletion-only OID predicate now uses explicit lowercase ASCII characters without overriding the production locale. Existing shell trace cases plus C/en_US.UTF-8 SHA1/SHA256 cases pass on macOS (43 passing trace cases, no locale skip); source/tag/mixed/unknown input, argument order and failure fallback remain. Runtime, assets, upstream pins, packages and release behavior are unchanged. Full repository gates, independent source review, native CI and root integration remain pending."
+lastReviewedCommit: "2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b"
+lastReviewedNote: "Reviewed for Toolkit #197 and #198: the qualified public-spec import remains pinned outside executable runtime assets, while the deletion-only OID predicate uses explicit lowercase ASCII characters. W2 local gates and the 43-case deletion-only trace passed; final merged-chain review records both changes."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
 # and ownership/routing/validation governance is otherwise unchanged.
@@ -47,6 +47,18 @@ ownership:
         include:
           - assets/**
           - .gitattributes
+      ownerRepo: tidas-tools
+    - id: public-specification-pin
+      paths:
+        include:
+          - assets/spec/**
+          - assets/tidas/schemas/**
+          - assets/tidas/schemas_zh/**
+          - assets/tidas/methodologies/tidas_flows.yaml
+          - assets/tidas/methodologies/tidas_processes.yaml
+          - assets/tidas/schema.lock.json
+          - crates/tidas-assets/src/spec_pin.rs
+          - crates/tidas-assets/src/spec_import.rs
       ownerRepo: tidas-tools
     - id: native-distribution
       paths:
@@ -197,6 +209,15 @@ routing:
         - assets/tidas/schemas/**
         - assets/tidas/schemas_zh/**
         - assets/tidas/methodologies/**
+    public-specification-pin:
+      paths:
+        - assets/spec/**
+        - assets/tidas/schemas/**
+        - assets/tidas/schemas_zh/**
+        - assets/tidas/methodologies/tidas_flows.yaml
+        - assets/tidas/methodologies/tidas_processes.yaml
+        - assets/tidas/schema.lock.json
+        - crates/tidas-assets/**
     native-distribution:
       paths:
         - LICENSE

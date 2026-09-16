@@ -14,6 +14,11 @@ publish = ["crates-io"]
 include = [
   "/assets/asset-lock.v1.json",
   "/assets/eilcd/**",
+  # The pinned candidate manifest and provenance record. They are not executable
+  # assets and are deliberately outside `assets/tidas`, but a source install
+  # must still be able to run `tidas-asset-lock spec-check`.
+  "/assets/spec/spec-manifest.json",
+  "/assets/spec/spec-pin.json",
   "/assets/tidas/**",
   "/assets/validation_indexes/product_flow_category_index.json",
   "/contracts/asset-lock.v1.schema.json",
@@ -29,12 +34,23 @@ path = "crates/tidas-assets/src/lib.rs"
 name = "tidas-asset-lock"
 path = "crates/tidas-assets/src/bin/asset_lock.rs"
 
+# The root package's manifest sits at the repository root, so its integration
+# tests are declared explicitly to keep them inside the owning crate directory
+# rather than claiming a new top-level `tests/` tree.
+[[test]]
+name = "spec_import"
+path = "crates/tidas-assets/tests/spec_import.rs"
+
 [dependencies]
+flate2.workspace = true
 include_dir.workspace = true
 jsonschema.workspace = true
+noyalib.workspace = true
 serde.workspace = true
 serde_json.workspace = true
 sha2.workspace = true
+tar.workspace = true
+tempfile.workspace = true
 thiserror.workspace = true
 walkdir.workspace = true
 

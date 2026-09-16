@@ -206,12 +206,16 @@ Rust 1.98.1 or newer is required. Install the platform libxml2/libxslt developme
 ```bash
 scripts/audit-rust-only.sh
 cargo run --locked -p tidas-assets --bin tidas-asset-lock -- check
+cargo run --locked -p tidas-assets --bin tidas-asset-lock -- spec-check \
+  --archive <QUALIFIED_CANDIDATE.tgz>
 cargo fmt --all --check
 cargo clippy --locked --workspace --all-targets -- -D warnings
 cargo test --locked --workspace --all-targets
 ```
 
 Use `cargo run -p tidas-assets --bin tidas-asset-lock -- write` after an intentional schema or executable-asset change, review both lock diffs, and then rerun the checks. See [the validation guide](docs/agents/repo-validation.md) for domain and large-package proof.
+
+The 36 public schemas, the two shared methodology documents, and the paired `schema.lock.json` are a generated copy of the qualified public specification published by `tiangong-lca/tidas-spec`. They are pinned to one immutable candidate by its archive and manifest SHA-256 in `crates/tidas-assets/src/spec_pin.rs`; the candidate manifest and the import provenance record are kept under `assets/spec/`. Do not hand-edit a public schema or methodology. Regenerate the copy with `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>` and prove it with `tidas-asset-lock spec-check`, which CI runs against the candidate fetched from its exact source commit. Tools-owned methodology inputs (`runtime_rulesets.json`, `runtime_rulesets.schema.json`, and the elementary taxonomy extension), the eILCD schemas and stylesheets, and the validation indexes stay owned here and are never replaced by that import.
 
 The implementation that preceded the Rust-only cutover is immutable historical evidence in Git history and the tag declared by `migration/final-python-line.json`. It is not an installation, execution, CI, or release path.
 

@@ -13,6 +13,7 @@ whenToUse:
 whenToUpdate:
   - when the public command tree, invocation context, configuration precedence, output channels, or runtime controls change
 checkPaths:
+  - assets/spec/**
   - docs/agents/cli-contract.md
   - Cargo.toml
   - Cargo.lock
@@ -26,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: 2026-09-16
-lastReviewedCommit: 7ab6910686e614540d67128071ac8aa1241f9b64
-lastReviewedNote: "Reviewed for Toolkit #198: the deletion-only OID predicate now uses explicit lowercase ASCII characters without overriding the production locale. Existing shell trace cases plus C/en_US.UTF-8 SHA1/SHA256 cases pass on macOS (43 passing trace cases, no locale skip); source/tag/mixed/unknown input, argument order and failure fallback remain. Runtime, assets, upstream pins, packages and release behavior are unchanged. Full repository gates, independent source review, native CI and root integration remain pending."
+lastReviewedAt: "2026-09-16"
+lastReviewedCommit: 2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b
+lastReviewedNote: "Reviewed for Toolkit #197 and #198: the qualified public-spec import remains pinned outside executable runtime assets, while the deletion-only OID predicate uses explicit lowercase ASCII characters. W2 local gates and the 43-case deletion-only trace passed; final merged-chain review records both changes."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -68,6 +69,17 @@ Pre-cutover executable names are not aliases. All seven commands dispatch
 directly to Rust domain crates. `unavailable` (69) remains a
 reserved stable exit class for a known future Rust capability that is exposed
 before implementation.
+
+The repository also builds one internal, unpublished binary,
+`tidas-asset-lock`, for executable-asset and public-specification maintenance.
+It is not part of the product surface: the published `tidas` executable and its
+seven commands are unaffected by it. Its `check`/`write` actions own the paired
+schema lock and the complete executable-asset byte lock; `spec-check` proves the
+generated public-specification copy still matches its pinned candidate without
+writing anything; and `spec-import` replaces exactly that public subset from a
+qualified candidate archive supplied explicitly with `--archive`. No action
+downloads a candidate from a mutable branch, and none of them is reachable
+through `tidas`.
 
 ## Adapter boundary
 

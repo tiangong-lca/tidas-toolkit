@@ -19,6 +19,16 @@ on:
 permissions:
   contents: read
 
+env:
+  # The qualified public-specification candidate. Only these exact bytes are
+  # accepted: the archive digest, its manifest digest, and the source revision
+  # are pinned in `crates/tidas-assets/src/spec_pin.rs`, and the drift gate below
+  # fails if this download does not reproduce them. A branch name is never used
+  # as a source of truth.
+  TIDAS_SPEC_CANDIDATE_COMMIT: 41e078b63336a31cd8c4bcab748afeb09c19c1e7
+  TIDAS_SPEC_CANDIDATE_ARCHIVE: tiangong-lca-tidas-spec-0.1.0.tgz
+  TIDAS_SPEC_CANDIDATE_SHA256: 921a0ffa0d3703bc2d9bd8a5bbb02d327be7746177487af8245ac2788a7cf91e
+
 jobs:
   rust:
     name: ${{ matrix.name }}
@@ -82,6 +92,26 @@ jobs:
 
       - name: Check executable asset lock
         run: cargo run --locked -p tidas-assets --bin tidas-asset-lock -- check
+
+      - name: Fetch the qualified public-specification candidate
+        if: matrix.name == 'Linux x86_64'
+        shell: bash
+        run: |
+          set -euo pipefail
+          archive="$RUNNER_TEMP/tidas-spec-candidate.tgz"
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://raw.githubusercontent.com/tiangong-lca/tidas-spec/${TIDAS_SPEC_CANDIDATE_COMMIT}/release/${TIDAS_SPEC_CANDIDATE_ARCHIVE}" \
+            --output "$archive"
+          observed="$(sha256sum "$archive" | awk '{print $1}')"
+          if [ "$observed" != "$TIDAS_SPEC_CANDIDATE_SHA256" ]; then
+            echo "candidate archive digest mismatch: expected $TIDAS_SPEC_CANDIDATE_SHA256, found $observed" >&2
+            exit 1
+          fi
+          echo "TIDAS_SPEC_CANDIDATE_ARCHIVE_PATH=$archive" >> "$GITHUB_ENV"
+
+      - name: Check the pinned public-specification copy for drift
+        if: matrix.name == 'Linux x86_64'
+        run: cargo run --locked -p tidas-assets --bin tidas-asset-lock -- spec-check --archive "$TIDAS_SPEC_CANDIDATE_ARCHIVE_PATH"
 
       - name: Check formatting
         run: cargo fmt --all --check

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": "tidas.spec-pin.v1",
+  "package": "@tiangong-lca/tidas-spec",
+  "version": "0.1.0",
+  "specRepository": "https://github.com/tiangong-lca/tidas-spec",
+  "specRevision": "41e078b63336a31cd8c4bcab748afeb09c19c1e7",
+  "importedSourceRepository": "https://github.com/tiangong-lca/tidas-toolkit",
+  "importedSourceCommit": "9c0d8b1c8ceb1841074f5bc6de5fbb7fcc9318f5",
+  "archiveFile": "tiangong-lca-tidas-spec-0.1.0.tgz",
+  "archiveSha256": "921a0ffa0d3703bc2d9bd8a5bbb02d327be7746177487af8245ac2788a7cf91e",
+  "manifestPath": "assets/spec/spec-manifest.json",
+  "manifestSha256": "646699afaf5c3bdfa6ccfe5153b11d6978ee62227fdace19f3b7715b59c50010",
+  "importedFileCount": 39,
+  "publicAssetsSha256": "c562cce28ebe46e843fd6ea6b4d3f550663e4c6ce6616d09f1e0e62b87a641f4"
+}

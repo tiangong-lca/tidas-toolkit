@@ -14,6 +14,7 @@ whenToUpdate:
   - when product ownership, supported platforms, validation, asset, SDK dispatch, or release automation changes
   - when repo-local documentation governance changes
 checkPaths:
+  - assets/spec/**
   - AGENTS.md
   - README.md
   - README_CN.md
@@ -30,9 +31,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: 2026-09-16
-lastReviewedCommit: 7ab6910686e614540d67128071ac8aa1241f9b64
-lastReviewedNote: "Reviewed for Toolkit #198: the deletion-only OID predicate now uses explicit lowercase ASCII characters without overriding the production locale. Existing shell trace cases plus C/en_US.UTF-8 SHA1/SHA256 cases pass on macOS (43 passing trace cases, no locale skip); source/tag/mixed/unknown input, argument order and failure fallback remain. Runtime, assets, upstream pins, packages and release behavior are unchanged. Full repository gates, independent source review, native CI and root integration remain pending."
+lastReviewedAt: "2026-09-16"
+lastReviewedCommit: 2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b
+lastReviewedNote: "Reviewed for Toolkit #197 and #198: the qualified public-spec import remains pinned outside executable runtime assets, while the deletion-only OID predicate uses explicit lowercase ASCII characters. W2 local gates and the 43-case deletion-only trace passed; final merged-chain review records both changes."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -81,10 +82,29 @@ differences, and content/contract hashes. `assets/asset-lock.v1.json` owns the
 complete executable-asset byte set. Both locks are generated and checked by
 `tidas-asset-lock`.
 
-The public TIDAS specification belongs in `tiangong-lca/tidas`; generated SDK
-surfaces belong in `tiangong-lca/tidas-sdks`; root multi-repo integration belongs
-in `lca-workspace`. This repo may dispatch an SDK refresh when owned schema or
-methodology assets change, but it does not own generated SDK code.
+The 36 public schemas, the two shared methodology documents, and the paired
+`schema.lock.json` are a generated copy of the qualified public specification
+published by `tiangong-lca/tidas-spec`. The pin — package version, archive
+SHA-256, manifest SHA-256, and the tools commit the assets were extracted from —
+is Rust source in `crates/tidas-assets/src/spec_pin.rs`; the candidate's own
+manifest and the import provenance record live under `assets/spec/`, which is
+*not* an executable asset root and is not covered by `assets/asset-lock.v1.json`.
+Do not hand-edit a public schema or methodology: regenerate it with
+`tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>`, and let
+`tidas-asset-lock spec-check` prove the copy still matches the candidate.
+
+Tools-owned methodology inputs — `runtime_rulesets.json`,
+`runtime_rulesets.schema.json`, and `elementary_flow_taxonomy_extension.v1.json`
+— stay owned here, remain in the executable asset lock, and are never replaced
+by a public-specification import. eILCD schemas/stylesheets and validation
+indexes stay owned here too.
+
+The public TIDAS specification source belongs in `tiangong-lca/tidas-spec`;
+generated SDK surfaces belong in `tiangong-lca/tidas-sdks`; root multi-repo
+integration belongs in `lca-workspace`. This repo consumes the public
+specification as a pinned artifact and may dispatch an SDK refresh when owned
+schema or methodology assets change, but it does not own the specification or
+generated SDK code.
 
 ## Required load order
 
@@ -137,6 +157,8 @@ Rust 1.98.1 is the required source-build and CI/release toolchain.
 ```bash
 scripts/audit-rust-only.sh
 cargo run --locked -p tidas-assets --bin tidas-asset-lock -- check
+cargo run --locked -p tidas-assets --bin tidas-asset-lock -- spec-check \
+  --archive <QUALIFIED_CANDIDATE.tgz>
 cargo fmt --all --check
 cargo clippy --locked --workspace --all-targets -- -D warnings
 cargo test --locked --workspace --all-targets
@@ -161,6 +183,10 @@ affected domain. Run Docpact strict validation and lint before handoff.
   accompanied by SBOM/provenance evidence.
 - External Homebrew tap creation and Winget community submission require
   separate approval and must not rebuild the executable.
+
+CI fetches the qualified candidate from its exact source commit, verifies the
+archive digest against the pin, and runs `spec-check`, which fails if a public
+copy has been edited by hand. The download is never resolved through a branch.
 
 The pre-cutover implementation is immutable historical evidence only. Its
 reviewed terminal commit and tag are declared in
