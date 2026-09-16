@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: "2026-09-16"
-lastReviewedCommit: e4afb1628a1112a0866cc01dbaebc429f94228ea
-lastReviewedNote: "Reviewed for #197 W2: tidas-tools consumes the qualified public specification (@tiangong-lca/tidas-spec 0.1.0) as an explicit pinned artifact. The pin is Rust source; the candidate manifest and import provenance live under assets/spec, outside the executable asset roots and the full executable asset lock, so the runtime asset set and fingerprint are unchanged. The 39-file public subset is byte-identical to the candidate, tools-owned methodologies, eILCD inputs and indexes are untouched, and spec-check detects manual drift. Freshness: this note describes uncommitted work at baseline 9c0d8b1; record the merge commit when the change lands."
+lastReviewedCommit: 2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b
+lastReviewedNote: "Reviewed for Toolkit #197 and #198: the qualified public-spec import remains pinned outside executable runtime assets, while the deletion-only OID predicate uses explicit lowercase ASCII characters. W2 local gates and the 43-case deletion-only trace passed; final merged-chain review records both changes."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
