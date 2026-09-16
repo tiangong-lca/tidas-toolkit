@@ -12,6 +12,7 @@ whenToUse:
 whenToUpdate:
   - when crate ownership, asset locations, release architecture, or downstream dispatch changes
 checkPaths:
+  - assets/spec/**
   - docs/agents/repo-architecture.md
   - AGENTS.md
   - .docpact/config.yaml
@@ -26,9 +27,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-09-15
+lastReviewedAt: "2026-09-16"
 lastReviewedCommit: e4afb1628a1112a0866cc01dbaebc429f94228ea
-lastReviewedNote: "Reviewed for #195: only complete branch-deletion-only wire input skips source validation. Full code/tag/mixed/unknown/manual gates and exit/argv behavior remain; 35 fixture cases, real TTY and argv mutation probes, actionlint and all seven canonical local gates pass. Four-platform CI and root integration remain pending."
+lastReviewedNote: "Reviewed for #197 W2: tidas-tools consumes the qualified public specification (@tiangong-lca/tidas-spec 0.1.0) as an explicit pinned artifact. The pin is Rust source; the candidate manifest and import provenance live under assets/spec, outside the executable asset roots and the full executable asset lock, so the runtime asset set and fingerprint are unchanged. The 39-file public subset is byte-identical to the candidate, tools-owned methodologies, eILCD inputs and indexes are untouched, and spec-check detects manual drift. Freshness: this note describes uncommitted work at baseline 9c0d8b1; record the merge commit when the change lands."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -127,6 +128,39 @@ and SHA-256. `cargo run -p tidas-assets --bin tidas-asset-lock -- write`
 regenerates the paired lock first and the full lock second; `check` validates
 both.
 
+The public subset of that tree — 36 schemas, the two shared methodology
+documents, and the paired `schema.lock.json` — is a generated copy of the
+qualified public specification published by `tiangong-lca/tidas-spec`. Its
+identity is Rust source in `crates/tidas-assets/src/spec_pin.rs`: package
+version, archive SHA-256, manifest SHA-256, and the tools commit the assets were
+extracted from. `tidas-asset-lock spec-import --archive <CANDIDATE>` validates
+the archive, every declared file, the candidate's import manifest, and its
+reviewed baseline before staging, and publishes with rollback on failure;
+`tidas-asset-lock spec-check` proves the checked-in copy still matches and writes
+nothing. Publication is rollback-safe rather than one indivisible multi-file
+transaction: every destination is replaced by renaming a fully written file over
+it, so no reader sees a truncated file, and any failure restores the prior bytes
+and mode of everything already replaced. A reader that reads two files across
+the rename window can still see one updated and one not-yet-updated file.
+Writers are serialized by an exclusively created lock held across prior-state
+capture, replacement, and rollback, so a failing import cannot undo a successful
+one. Each import stages into its own exclusively created directory and removes
+only that directory, so another writer's staging state is never touched.
+Directory ownership is tracked explicitly: only directories the operation
+actually created are removed, deepest first and only while empty, so a
+pre-existing empty directory and every ancestor above the created chain survive
+a rollback.
+
+Import provenance lives under `assets/spec/` — the candidate manifest verbatim
+and a small pin record. That directory is deliberately outside the executable
+asset roots (`assets/eilcd`, `assets/tidas`, `assets/validation_indexes`), so
+adopting a specification does not by itself alter the asset set, the full lock,
+or the runtime fingerprint derived from them. Adopting a candidate whose public
+bytes genuinely differ *is* an executable-asset change and must be regenerated
+and reviewed as one. The tools-owned runtime rulesets, the elementary taxonomy
+extension, eILCD inputs, and validation indexes never come from the public
+specification.
+
 Owned schema/methodology changes may dispatch `tidas-sdk` refresh automation.
 Generated SDK code remains downstream and never becomes source of truth here.
 The canonical sender is `tiangong-lca/tidas-toolkit` (repository ID
@@ -194,10 +228,11 @@ installation, release, or invocation surface.
 
 ## Repository boundaries
 
-- `tiangong-lca/tidas` owns the public specification and human-facing schema
-  source.
+- `tiangong-lca/tidas-spec` owns the public specification, its human-facing
+  schema source, and its language variants.
 - `tiangong-lca/tidas-sdks` owns generated SDK packages.
-- `tidas-tools` owns executable behavior and packaged runtime assets.
+- `tidas-tools` owns executable behavior, packaged runtime assets, and the
+  pinned import of the public specification subset.
 - `lca-workspace` owns multi-repo coordination and exact submodule integration.
 
 A merged tidas-tools PR is not workspace integration. The root pointer must be

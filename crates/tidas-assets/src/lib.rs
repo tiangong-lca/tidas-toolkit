@@ -1,6 +1,8 @@
 //! Offline executable-asset catalog and deterministic integrity lock.
 
 mod schema_lock;
+pub mod spec_import;
+pub mod spec_pin;
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::fmt::Write as _;
@@ -329,6 +331,19 @@ pub enum AssetError {
     Walk(#[from] walkdir::Error),
     #[error("TIDAS paired-schema lock violation: {0}")]
     SchemaLock(String),
+    #[error("public specification input is invalid: {0}")]
+    SpecInvalid(String),
+    #[error("public specification archive digest mismatch: expected {expected}, found {found}")]
+    SpecArchiveDigest { expected: String, found: String },
+    #[error("public specification manifest digest mismatch: expected {expected}, found {found}")]
+    SpecManifestDigest { expected: String, found: String },
+    #[error("the public specification copy has drifted from its pin: {} paths differ", .0.len())]
+    SpecDrift(Vec<String>),
+    #[error("public specification rollback failed after: {cause}; unrestored: {failures:?}")]
+    SpecRollback {
+        cause: String,
+        failures: Vec<String>,
+    },
 }
 
 #[cfg(test)]

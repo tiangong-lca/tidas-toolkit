@@ -2479,11 +2479,15 @@ dependencies = [
 name = "tidas-assets"
 version = "0.3.0"
 dependencies = [
+ "flate2",
  "include_dir",
  "jsonschema",
+ "noyalib",
  "serde",
  "serde_json",
  "sha2",
+ "tar",
+ "tempfile",
  "thiserror",
  "walkdir",
 ]

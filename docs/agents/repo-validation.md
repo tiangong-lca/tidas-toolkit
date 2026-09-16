@@ -13,6 +13,7 @@ whenToUse:
 whenToUpdate:
   - when canonical checks, supported platforms, scale budgets, or release proof changes
 checkPaths:
+  - assets/spec/**
   - docs/agents/repo-validation.md
   - AGENTS.md
   - .docpact/config.yaml
@@ -27,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-09-15
+lastReviewedAt: "2026-09-16"
 lastReviewedCommit: e4afb1628a1112a0866cc01dbaebc429f94228ea
-lastReviewedNote: "Reviewed for #195: only complete branch-deletion-only wire input skips source validation. Full code/tag/mixed/unknown/manual gates and exit/argv behavior remain; 35 fixture cases, real TTY and argv mutation probes, actionlint and all seven canonical local gates pass. Four-platform CI and root integration remain pending."
+lastReviewedNote: "Reviewed for #197 W2: tidas-tools consumes the qualified public specification (@tiangong-lca/tidas-spec 0.1.0) as an explicit pinned artifact. The pin is Rust source; the candidate manifest and import provenance live under assets/spec, outside the executable asset roots and the full executable asset lock, so the runtime asset set and fingerprint are unchanged. The 39-file public subset is byte-identical to the candidate, tools-owned methodologies, eILCD inputs and indexes are untouched, and spec-check detects manual drift. Freshness: this note describes uncommitted work at baseline 9c0d8b1; record the merge commit when the change lands."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -47,6 +48,8 @@ Run this for every non-documentation change:
 ```bash
 scripts/audit-rust-only.sh
 cargo run --locked -p tidas-assets --bin tidas-asset-lock -- check
+cargo run --locked -p tidas-assets --bin tidas-asset-lock -- spec-check \
+  --archive <QUALIFIED_CANDIDATE.tgz>
 cargo fmt --all --check
 cargo clippy --locked --workspace --all-targets -- -D warnings
 cargo test --locked --workspace --all-targets
@@ -58,7 +61,14 @@ Rust 1.98.1 is the required compiler for local, CI and release validation;
 there is no separate Rust 1.88 compatibility matrix.
 
 The asset command checks both the paired English/Chinese schema contract and
-the complete executable-asset byte lock. The pre-push hook adds strict
+the complete executable-asset byte lock. `spec-check` additionally proves the
+generated public copy still matches the qualified `tidas-spec` candidate; CI
+fetches that candidate from its exact source commit and verifies the archive
+digest against the Rust pin before running it, so a hand-edited generated copy
+fails the pull request. Import provenance lives under `assets/spec/`, outside
+the executable asset roots, so pinning a specification cannot silently move the
+runtime fingerprint; adopting genuinely different public bytes regenerates the
+locks as a deliberate, reviewed change. The pre-push hook adds strict
 Docpact. Pull requests run the product matrix on Linux x86_64/ARM64, macOS
 Apple Silicon, and Windows x86_64. macOS Intel and Windows ARM64 are
 intentionally absent; the POSIX installer rejects macOS Intel before any
@@ -85,6 +95,7 @@ to install a redistributable or copy a development-machine DLL.
 | release | closure/order/round-trip golden fixtures; missing/inexact reference failure; four deterministic ZIPs; native validation; cancellation/budget; atomic directory publication | run the local 237 MiB package twice, compare all four archives, and record wall time/RSS |
 | validation/batch/references | compile every bundled schema/XSD root offline; schema and semantic fixtures including internal keyrefs; complete TIDAS projection/XSD/recovery proof; explicit schema-only diagnostic behavior; oversized rejected-instance event below the 1 MiB frame ceiling; bounded issue spool; batch preflight/drift/final-event hash; extraction schema/roles | local large-package validation twice, recording native time, projection/XSD/recovery time, peak RSS, cancellation, and spool hash |
 | assets | baseline asset check; representative `git check-attr eol`; schema-local-reference and translation-parity tests | regenerate locks only after reviewing every changed path/hash; compare fingerprints twice |
+| public-specification pin | `tidas-asset-lock spec-check`; record the runtime `asset_fingerprint` before and after; confirm the retained tools-owned methodologies, eILCD inputs, and validation indexes are byte-identical | `spec-import` against the qualified archive: negative, rollback (failure after staging, not only input parsing), no-write check mode, repeated-import idempotency, manual drift detection, and `.crate` parity of the public subset |
 | XML/XSD/XSLT | focused `tidas-xml` and validation tests; resolver/security tests; four-platform CI | representative production schemas/stylesheets and static-release dependency inspection |
 | native distribution | focused `tidas-dist`; package twice; archive/checksum equality; extract and run version/help/JSON/ruleset; installer syntax and hermetic installer contract tests | four release jobs, clean-machine archive execution, runtime dependency inspection, SBOM and attestation |
 | crates.io | sync check; public-set qualification; verify exact version set and `tidas-dist` exclusion; script syntax | inspect each `.crate`; source install; registry absent/existing checksum simulations without a real token |

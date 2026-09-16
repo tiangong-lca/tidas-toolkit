@@ -1,0 +1,1094 @@
+{
+  "manifestVersion": 1,
+  "package": {
+    "name": "@tiangong-lca/tidas-spec",
+    "version": "0.1.0"
+  },
+  "specVersion": "0.1.0",
+  "source": {
+    "repository": "https://github.com/tiangong-lca/tidas-toolkit",
+    "repositoryId": "tidas-toolkit",
+    "commit": "9c0d8b1c8ceb1841074f5bc6de5fbb7fcc9318f5",
+    "commitRef": "main",
+    "license": {
+      "path": "LICENSE",
+      "sha256": "557e792f4b9868b7f25f60fca4e47e8857bbf2b88d0c8f733c2ce3fd0cbcc484",
+      "notice": "MIT, Copyright (c) 2026 TianGong LCA"
+    },
+    "excludedPaths": [
+      "assets/tidas/methodologies/runtime_rulesets.json",
+      "assets/tidas/methodologies/runtime_rulesets.schema.json",
+      "assets/tidas/methodologies/elementary_flow_taxonomy_extension.v1.json"
+    ],
+    "ownedMetadataOrigin": "tidas-spec"
+  },
+  "counts": {
+    "schemasPerLanguage": 18,
+    "languages": [
+      "en",
+      "zh"
+    ],
+    "methodologies": 2,
+    "importedAssets": 39,
+    "packageMetadata": 5,
+    "files": 44,
+    "packagedFiles": 45
+  },
+  "assetRoot": "assets/tidas",
+  "lock": "assets/tidas/schema.lock.json",
+  "findings": {
+    "refSiblings": {
+      "references": 52,
+      "patterns": [
+        {
+          "siblings": [
+            "const"
+          ],
+          "count": 48
+        },
+        {
+          "siblings": [
+            "format"
+          ],
+          "count": 2
+        },
+        {
+          "siblings": [
+            "type"
+          ],
+          "count": 2
+        }
+      ],
+      "keywords": [
+        {
+          "keyword": "const",
+          "count": 48
+        },
+        {
+          "keyword": "format",
+          "count": 2
+        },
+        {
+          "keyword": "type",
+          "count": 2
+        }
+      ],
+      "locations": [
+        {
+          "path": "assets/tidas/schemas/tidas_contacts.json",
+          "pointer": "assets/tidas/schemas/tidas_contacts.json#/properties/contactDataSet/properties/contactInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_contacts.json",
+          "pointer": "assets/tidas/schemas/tidas_contacts.json#/properties/contactDataSet/properties/contactInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_contacts.json",
+          "pointer": "assets/tidas/schemas/tidas_contacts.json#/properties/contactDataSet/properties/contactInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_contacts.json",
+          "pointer": "assets/tidas/schemas/tidas_contacts.json#/properties/contactDataSet/properties/contactInformation/properties/dataSetInformation/properties/email",
+          "reference": "tidas_data_types.json#/$defs/String",
+          "siblings": [
+            "format"
+          ],
+          "assertionSiblings": [
+            "format"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flowproperties.json",
+          "pointer": "assets/tidas/schemas/tidas_flowproperties.json#/properties/flowPropertyDataSet/properties/administrativeInformation/properties/dataEntryBy/properties/common:referenceToDataSetFormat",
+          "reference": "tidas_data_types.json#/$defs/GlobalReferenceType",
+          "siblings": [
+            "type",
+            "description"
+          ],
+          "assertionSiblings": [
+            "type"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flows.json",
+          "pointer": "assets/tidas/schemas/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flows.json",
+          "pointer": "assets/tidas/schemas/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flows.json",
+          "pointer": "assets/tidas/schemas/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flows.json",
+          "pointer": "assets/tidas/schemas/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/3/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flows.json",
+          "pointer": "assets/tidas/schemas/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/4/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flows.json",
+          "pointer": "assets/tidas/schemas/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:elementaryFlowCategorization/properties/common:category/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flows.json",
+          "pointer": "assets/tidas/schemas/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:elementaryFlowCategorization/properties/common:category/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_flows.json",
+          "pointer": "assets/tidas/schemas/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:elementaryFlowCategorization/properties/common:category/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_lciamethods.json",
+          "pointer": "assets/tidas/schemas/tidas_lciamethods.json#/properties/LCIAMethodDataSet/properties/LCIAMethodInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_lciamethods.json",
+          "pointer": "assets/tidas/schemas/tidas_lciamethods.json#/properties/LCIAMethodDataSet/properties/LCIAMethodInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_lciamethods.json",
+          "pointer": "assets/tidas/schemas/tidas_lciamethods.json#/properties/LCIAMethodDataSet/properties/LCIAMethodInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_lifecyclemodels.json",
+          "pointer": "assets/tidas/schemas/tidas_lifecyclemodels.json#/properties/lifeCycleModelDataSet/properties/lifeCycleModelInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_lifecyclemodels.json",
+          "pointer": "assets/tidas/schemas/tidas_lifecyclemodels.json#/properties/lifeCycleModelDataSet/properties/lifeCycleModelInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_lifecyclemodels.json",
+          "pointer": "assets/tidas/schemas/tidas_lifecyclemodels.json#/properties/lifeCycleModelDataSet/properties/lifeCycleModelInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_lifecyclemodels.json",
+          "pointer": "assets/tidas/schemas/tidas_lifecyclemodels.json#/properties/lifeCycleModelDataSet/properties/lifeCycleModelInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/3/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_processes.json",
+          "pointer": "assets/tidas/schemas/tidas_processes.json#/properties/processDataSet/properties/processInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_processes.json",
+          "pointer": "assets/tidas/schemas/tidas_processes.json#/properties/processDataSet/properties/processInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_processes.json",
+          "pointer": "assets/tidas/schemas/tidas_processes.json#/properties/processDataSet/properties/processInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_processes.json",
+          "pointer": "assets/tidas/schemas/tidas_processes.json#/properties/processDataSet/properties/processInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/3/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_sources.json",
+          "pointer": "assets/tidas/schemas/tidas_sources.json#/properties/sourceDataSet/properties/sourceInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas/tidas_unitgroups.json",
+          "pointer": "assets/tidas/schemas/tidas_unitgroups.json#/properties/unitGroupDataSet/properties/unitGroupInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const",
+            "description"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_contacts.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_contacts.json#/properties/contactDataSet/properties/contactInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_contacts.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_contacts.json#/properties/contactDataSet/properties/contactInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_contacts.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_contacts.json#/properties/contactDataSet/properties/contactInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_contacts.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_contacts.json#/properties/contactDataSet/properties/contactInformation/properties/dataSetInformation/properties/email",
+          "reference": "tidas_data_types.json#/$defs/String",
+          "siblings": [
+            "format"
+          ],
+          "assertionSiblings": [
+            "format"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flowproperties.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flowproperties.json#/properties/flowPropertyDataSet/properties/administrativeInformation/properties/dataEntryBy/properties/common:referenceToDataSetFormat",
+          "reference": "tidas_data_types.json#/$defs/GlobalReferenceType",
+          "siblings": [
+            "type",
+            "description"
+          ],
+          "assertionSiblings": [
+            "type"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flows.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flows.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flows.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flows.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/3/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flows.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/4/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flows.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:elementaryFlowCategorization/properties/common:category/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flows.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:elementaryFlowCategorization/properties/common:category/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_flows.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_flows.json#/properties/flowDataSet/properties/flowInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:elementaryFlowCategorization/properties/common:category/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_lciamethods.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_lciamethods.json#/properties/LCIAMethodDataSet/properties/LCIAMethodInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_lciamethods.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_lciamethods.json#/properties/LCIAMethodDataSet/properties/LCIAMethodInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_lciamethods.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_lciamethods.json#/properties/LCIAMethodDataSet/properties/LCIAMethodInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/anyOf/0/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json#/properties/lifeCycleModelDataSet/properties/lifeCycleModelInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json#/properties/lifeCycleModelDataSet/properties/lifeCycleModelInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json#/properties/lifeCycleModelDataSet/properties/lifeCycleModelInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json#/properties/lifeCycleModelDataSet/properties/lifeCycleModelInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/3/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_processes.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_processes.json#/properties/processDataSet/properties/processInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/0/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_processes.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_processes.json#/properties/processDataSet/properties/processInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/1/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_processes.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_processes.json#/properties/processDataSet/properties/processInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/2/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_processes.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_processes.json#/properties/processDataSet/properties/processInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/anyOf/0/properties/common:class/items/3/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_sources.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_sources.json#/properties/sourceDataSet/properties/sourceInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        },
+        {
+          "path": "assets/tidas/schemas_zh/tidas_unitgroups.json",
+          "pointer": "assets/tidas/schemas_zh/tidas_unitgroups.json#/properties/unitGroupDataSet/properties/unitGroupInformation/properties/dataSetInformation/properties/classificationInformation/properties/common:classification/properties/common:class/properties/@level",
+          "reference": "tidas_data_types.json#/$defs/LevelType",
+          "siblings": [
+            "const",
+            "description"
+          ],
+          "assertionSiblings": [
+            "const"
+          ]
+        }
+      ],
+      "nonAssertingReferences": 552,
+      "unclassifiedReferences": 0,
+      "referencesWithoutSiblings": 482,
+      "totalReferences": 1086
+    }
+  },
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "557e792f4b9868b7f25f60fca4e47e8857bbf2b88d0c8f733c2ce3fd0cbcc484",
+      "contentSha256": "557e792f4b9868b7f25f60fca4e47e8857bbf2b88d0c8f733c2ce3fd0cbcc484",
+      "origin": "tidas-spec",
+      "source": null
+    },
+    {
+      "path": "README.md",
+      "sha256": "6044d34fb89c373d7ddfe68fb740ed6dfa2e8e2f9231270a241a594523b05380",
+      "contentSha256": "6044d34fb89c373d7ddfe68fb740ed6dfa2e8e2f9231270a241a594523b05380",
+      "origin": "tidas-spec",
+      "source": null
+    },
+    {
+      "path": "assets/tidas/methodologies/tidas_flows.yaml",
+      "sha256": "4a389d060f5c901b7c11625675948c0152df95ad33bedc87eca0f93341038d6d",
+      "contentSha256": "4a389d060f5c901b7c11625675948c0152df95ad33bedc87eca0f93341038d6d",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/methodologies/tidas_flows.yaml",
+        "sha256": "4a389d060f5c901b7c11625675948c0152df95ad33bedc87eca0f93341038d6d"
+      }
+    },
+    {
+      "path": "assets/tidas/methodologies/tidas_processes.yaml",
+      "sha256": "3f67155faf703dd85729cf359315250a2a92562398cc41bcccaa46078b1fe79e",
+      "contentSha256": "3f67155faf703dd85729cf359315250a2a92562398cc41bcccaa46078b1fe79e",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/methodologies/tidas_processes.yaml",
+        "sha256": "3f67155faf703dd85729cf359315250a2a92562398cc41bcccaa46078b1fe79e"
+      }
+    },
+    {
+      "path": "assets/tidas/schema.lock.json",
+      "sha256": "47ca2a51efb654312422d8cb6ac415cc1798bd993467b138cf8d220a0b7eb9a1",
+      "contentSha256": "47ca2a51efb654312422d8cb6ac415cc1798bd993467b138cf8d220a0b7eb9a1",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schema.lock.json",
+        "sha256": "47ca2a51efb654312422d8cb6ac415cc1798bd993467b138cf8d220a0b7eb9a1"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_contacts.json",
+      "sha256": "f16868bcdb99b4785b03a9b36dfe103d8f3ec61a463be9274d22884e6b7d8bda",
+      "contentSha256": "f16868bcdb99b4785b03a9b36dfe103d8f3ec61a463be9274d22884e6b7d8bda",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_contacts.json",
+        "sha256": "f16868bcdb99b4785b03a9b36dfe103d8f3ec61a463be9274d22884e6b7d8bda"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_contacts_category.json",
+      "sha256": "2d043a6686320b5fec5d4012dfd03bdb57897375002b25fc6a64df8ea10092b5",
+      "contentSha256": "2d043a6686320b5fec5d4012dfd03bdb57897375002b25fc6a64df8ea10092b5",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_contacts_category.json",
+        "sha256": "2d043a6686320b5fec5d4012dfd03bdb57897375002b25fc6a64df8ea10092b5"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_data_types.json",
+      "sha256": "d9e7fa47e2dd2a665332dc50b1d3b3fc03bba1ae2ab80b07bd52ed01471b1b81",
+      "contentSha256": "d9e7fa47e2dd2a665332dc50b1d3b3fc03bba1ae2ab80b07bd52ed01471b1b81",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_data_types.json",
+        "sha256": "d9e7fa47e2dd2a665332dc50b1d3b3fc03bba1ae2ab80b07bd52ed01471b1b81"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_flowproperties.json",
+      "sha256": "bfc56348c4be7d8e20faebf197680b6a38c9e9b91812382710c6ab205f218432",
+      "contentSha256": "bfc56348c4be7d8e20faebf197680b6a38c9e9b91812382710c6ab205f218432",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_flowproperties.json",
+        "sha256": "bfc56348c4be7d8e20faebf197680b6a38c9e9b91812382710c6ab205f218432"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_flowproperties_category.json",
+      "sha256": "0fd7f4b2e350532ba5809019a079f8fadb90f91702358c1ff7deea19c956a846",
+      "contentSha256": "0fd7f4b2e350532ba5809019a079f8fadb90f91702358c1ff7deea19c956a846",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_flowproperties_category.json",
+        "sha256": "0fd7f4b2e350532ba5809019a079f8fadb90f91702358c1ff7deea19c956a846"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_flows.json",
+      "sha256": "e773b188271174f834dba5ab410644b9e246385c8005fb6d02e4c7a0a073d283",
+      "contentSha256": "e773b188271174f834dba5ab410644b9e246385c8005fb6d02e4c7a0a073d283",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_flows.json",
+        "sha256": "e773b188271174f834dba5ab410644b9e246385c8005fb6d02e4c7a0a073d283"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_flows_elementary_category.json",
+      "sha256": "e817d6e40dfa7b21cb947548027f32b393d1b06ee2a7326f7c59686a2cd3552d",
+      "contentSha256": "e817d6e40dfa7b21cb947548027f32b393d1b06ee2a7326f7c59686a2cd3552d",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_flows_elementary_category.json",
+        "sha256": "e817d6e40dfa7b21cb947548027f32b393d1b06ee2a7326f7c59686a2cd3552d"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_flows_product_category.json",
+      "sha256": "e62e1f676dedaeb6028b05f0c1cc84f53c1c47058ae6e17897f77b2cb17b7cb2",
+      "contentSha256": "e62e1f676dedaeb6028b05f0c1cc84f53c1c47058ae6e17897f77b2cb17b7cb2",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_flows_product_category.json",
+        "sha256": "e62e1f676dedaeb6028b05f0c1cc84f53c1c47058ae6e17897f77b2cb17b7cb2"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_lciamethods.json",
+      "sha256": "6a96fa34bda4d848eeaa1edb124a544f4511c824436514e62b58626919e57836",
+      "contentSha256": "6a96fa34bda4d848eeaa1edb124a544f4511c824436514e62b58626919e57836",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_lciamethods.json",
+        "sha256": "6a96fa34bda4d848eeaa1edb124a544f4511c824436514e62b58626919e57836"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_lciamethods_category.json",
+      "sha256": "83b4bbfb53a2ad1cb1f9c97c261cc867ea6f509020a8ea9041ffba08601eaac9",
+      "contentSha256": "83b4bbfb53a2ad1cb1f9c97c261cc867ea6f509020a8ea9041ffba08601eaac9",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_lciamethods_category.json",
+        "sha256": "83b4bbfb53a2ad1cb1f9c97c261cc867ea6f509020a8ea9041ffba08601eaac9"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_lifecyclemodels.json",
+      "sha256": "d3355d3c7910efadbee87fe36dacd6ca515c8fe1c5671f6dee2ba63d43c5d108",
+      "contentSha256": "d3355d3c7910efadbee87fe36dacd6ca515c8fe1c5671f6dee2ba63d43c5d108",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_lifecyclemodels.json",
+        "sha256": "d3355d3c7910efadbee87fe36dacd6ca515c8fe1c5671f6dee2ba63d43c5d108"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_locations_category.json",
+      "sha256": "415fe8c7ba4991a88bc66d9cd55541ee27b74f731541c64a9bc354679d109a71",
+      "contentSha256": "415fe8c7ba4991a88bc66d9cd55541ee27b74f731541c64a9bc354679d109a71",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_locations_category.json",
+        "sha256": "415fe8c7ba4991a88bc66d9cd55541ee27b74f731541c64a9bc354679d109a71"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_processes.json",
+      "sha256": "8476530740d2af11fe3c607afbeab68a318c6b08d7558417ebcad8ac33f0efdd",
+      "contentSha256": "8476530740d2af11fe3c607afbeab68a318c6b08d7558417ebcad8ac33f0efdd",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_processes.json",
+        "sha256": "8476530740d2af11fe3c607afbeab68a318c6b08d7558417ebcad8ac33f0efdd"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_processes_category.json",
+      "sha256": "cea1b97b46fd9faa2f7f4d7b911ff19f24a1655ff98b488ebaf5cc9ee6fdec64",
+      "contentSha256": "cea1b97b46fd9faa2f7f4d7b911ff19f24a1655ff98b488ebaf5cc9ee6fdec64",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_processes_category.json",
+        "sha256": "cea1b97b46fd9faa2f7f4d7b911ff19f24a1655ff98b488ebaf5cc9ee6fdec64"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_sources.json",
+      "sha256": "2f37df9004a05ed83f8c708b7edc5f482ec1f848c050fd9f54e1aad49687dd5d",
+      "contentSha256": "2f37df9004a05ed83f8c708b7edc5f482ec1f848c050fd9f54e1aad49687dd5d",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_sources.json",
+        "sha256": "2f37df9004a05ed83f8c708b7edc5f482ec1f848c050fd9f54e1aad49687dd5d"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_sources_category.json",
+      "sha256": "dc22fa07e7a2b4742133ea642505b6a18011552459b84764908166d1994c985f",
+      "contentSha256": "dc22fa07e7a2b4742133ea642505b6a18011552459b84764908166d1994c985f",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_sources_category.json",
+        "sha256": "dc22fa07e7a2b4742133ea642505b6a18011552459b84764908166d1994c985f"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_unitgroups.json",
+      "sha256": "d83ada361908ffc047d38ded3aa15be748c7d3421dc294f34c5afbcc6a58f127",
+      "contentSha256": "d83ada361908ffc047d38ded3aa15be748c7d3421dc294f34c5afbcc6a58f127",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_unitgroups.json",
+        "sha256": "d83ada361908ffc047d38ded3aa15be748c7d3421dc294f34c5afbcc6a58f127"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas/tidas_unitgroups_category.json",
+      "sha256": "c490544c405ee6ef06e52e121f29994d112040a3f4888541fa69569c998d8b72",
+      "contentSha256": "c490544c405ee6ef06e52e121f29994d112040a3f4888541fa69569c998d8b72",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas/tidas_unitgroups_category.json",
+        "sha256": "c490544c405ee6ef06e52e121f29994d112040a3f4888541fa69569c998d8b72"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_contacts.json",
+      "sha256": "c8eecba163ad58ef9a61f17268f398ccd3f056f9d90a2c78f08ea7a02c7d0f4f",
+      "contentSha256": "c8eecba163ad58ef9a61f17268f398ccd3f056f9d90a2c78f08ea7a02c7d0f4f",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_contacts.json",
+        "sha256": "c8eecba163ad58ef9a61f17268f398ccd3f056f9d90a2c78f08ea7a02c7d0f4f"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_contacts_category.json",
+      "sha256": "d95c48c28fc2a88ad058d4ae15b9f83b8664f27b691780c9556e590783c0fdb1",
+      "contentSha256": "d95c48c28fc2a88ad058d4ae15b9f83b8664f27b691780c9556e590783c0fdb1",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_contacts_category.json",
+        "sha256": "d95c48c28fc2a88ad058d4ae15b9f83b8664f27b691780c9556e590783c0fdb1"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_data_types.json",
+      "sha256": "b2860813916df4cf92dac84f90909222aa6189f9f9abb058c0c0f49534bd306c",
+      "contentSha256": "b2860813916df4cf92dac84f90909222aa6189f9f9abb058c0c0f49534bd306c",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_data_types.json",
+        "sha256": "b2860813916df4cf92dac84f90909222aa6189f9f9abb058c0c0f49534bd306c"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_flowproperties.json",
+      "sha256": "3e53f2b983bece302f33f189efc0fbea9341ec7aebd8d36e87cbac245a3fdbb8",
+      "contentSha256": "3e53f2b983bece302f33f189efc0fbea9341ec7aebd8d36e87cbac245a3fdbb8",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_flowproperties.json",
+        "sha256": "3e53f2b983bece302f33f189efc0fbea9341ec7aebd8d36e87cbac245a3fdbb8"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_flowproperties_category.json",
+      "sha256": "d2962260c52de1af02ed8a40766b3b5391518c6c7df02ab263db3feaa32da523",
+      "contentSha256": "d2962260c52de1af02ed8a40766b3b5391518c6c7df02ab263db3feaa32da523",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_flowproperties_category.json",
+        "sha256": "d2962260c52de1af02ed8a40766b3b5391518c6c7df02ab263db3feaa32da523"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_flows.json",
+      "sha256": "eaaa690b7512e3507431c4f102d4697bf6696aaf611f981f569eadfe6bb076bb",
+      "contentSha256": "eaaa690b7512e3507431c4f102d4697bf6696aaf611f981f569eadfe6bb076bb",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_flows.json",
+        "sha256": "eaaa690b7512e3507431c4f102d4697bf6696aaf611f981f569eadfe6bb076bb"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_flows_elementary_category.json",
+      "sha256": "289b439014d85971b2f435aff25a6f5b2926469ee75000a8b57f1cdedb152f4c",
+      "contentSha256": "289b439014d85971b2f435aff25a6f5b2926469ee75000a8b57f1cdedb152f4c",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_flows_elementary_category.json",
+        "sha256": "289b439014d85971b2f435aff25a6f5b2926469ee75000a8b57f1cdedb152f4c"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_flows_product_category.json",
+      "sha256": "49e6444a61f833ccf97aeb5863f520971a6c7c3c0ed005a57142f040cfae2223",
+      "contentSha256": "49e6444a61f833ccf97aeb5863f520971a6c7c3c0ed005a57142f040cfae2223",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_flows_product_category.json",
+        "sha256": "49e6444a61f833ccf97aeb5863f520971a6c7c3c0ed005a57142f040cfae2223"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_lciamethods.json",
+      "sha256": "5cb03a77267346d9655b8d3803f4f839f04caf080d866764c73bd4eaed6388dd",
+      "contentSha256": "5cb03a77267346d9655b8d3803f4f839f04caf080d866764c73bd4eaed6388dd",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_lciamethods.json",
+        "sha256": "5cb03a77267346d9655b8d3803f4f839f04caf080d866764c73bd4eaed6388dd"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_lciamethods_category.json",
+      "sha256": "b11483c16aa5f0d47251b56598109085785168ef88facd28d770df6bb37ebe4c",
+      "contentSha256": "b11483c16aa5f0d47251b56598109085785168ef88facd28d770df6bb37ebe4c",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_lciamethods_category.json",
+        "sha256": "b11483c16aa5f0d47251b56598109085785168ef88facd28d770df6bb37ebe4c"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json",
+      "sha256": "0c847ddbd80a594c320642fcc76a8bedd0c4b00926d9263455d4da34f27a10da",
+      "contentSha256": "0c847ddbd80a594c320642fcc76a8bedd0c4b00926d9263455d4da34f27a10da",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_lifecyclemodels.json",
+        "sha256": "0c847ddbd80a594c320642fcc76a8bedd0c4b00926d9263455d4da34f27a10da"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_locations_category.json",
+      "sha256": "e20c3f168481bca8197b58a97a3bd4e12aa8a3f66553ff54f7dea7a40b044141",
+      "contentSha256": "e20c3f168481bca8197b58a97a3bd4e12aa8a3f66553ff54f7dea7a40b044141",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_locations_category.json",
+        "sha256": "e20c3f168481bca8197b58a97a3bd4e12aa8a3f66553ff54f7dea7a40b044141"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_processes.json",
+      "sha256": "db81ac7dfca82a0a05982a8add4ba91ebe274dfc929c52c538f6f5fddd081b03",
+      "contentSha256": "db81ac7dfca82a0a05982a8add4ba91ebe274dfc929c52c538f6f5fddd081b03",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_processes.json",
+        "sha256": "db81ac7dfca82a0a05982a8add4ba91ebe274dfc929c52c538f6f5fddd081b03"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_processes_category.json",
+      "sha256": "05107a1aab2869a38ffafc05461778a272117a6a1f2805b3c37a9354e7158bdd",
+      "contentSha256": "05107a1aab2869a38ffafc05461778a272117a6a1f2805b3c37a9354e7158bdd",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_processes_category.json",
+        "sha256": "05107a1aab2869a38ffafc05461778a272117a6a1f2805b3c37a9354e7158bdd"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_sources.json",
+      "sha256": "33ab4a934a47fe3e74453cda9710437b1124ad900272f3a2caa3812ae711198a",
+      "contentSha256": "33ab4a934a47fe3e74453cda9710437b1124ad900272f3a2caa3812ae711198a",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_sources.json",
+        "sha256": "33ab4a934a47fe3e74453cda9710437b1124ad900272f3a2caa3812ae711198a"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_sources_category.json",
+      "sha256": "7d6882f088f9ad7c2ed9aa212e5d0030716a209196d8471bd650c75e3c3e4dad",
+      "contentSha256": "7d6882f088f9ad7c2ed9aa212e5d0030716a209196d8471bd650c75e3c3e4dad",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_sources_category.json",
+        "sha256": "7d6882f088f9ad7c2ed9aa212e5d0030716a209196d8471bd650c75e3c3e4dad"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_unitgroups.json",
+      "sha256": "515e98019b23c69b264c614b34b29e4ec1890aaca04759c22c97638ecfb0cb3e",
+      "contentSha256": "515e98019b23c69b264c614b34b29e4ec1890aaca04759c22c97638ecfb0cb3e",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_unitgroups.json",
+        "sha256": "515e98019b23c69b264c614b34b29e4ec1890aaca04759c22c97638ecfb0cb3e"
+      }
+    },
+    {
+      "path": "assets/tidas/schemas_zh/tidas_unitgroups_category.json",
+      "sha256": "c39bcc54cf03b010ebf176d18d6572ca7f65d3b656ea854cd729cfd96290faa5",
+      "contentSha256": "c39bcc54cf03b010ebf176d18d6572ca7f65d3b656ea854cd729cfd96290faa5",
+      "origin": "tidas-toolkit",
+      "source": {
+        "path": "assets/tidas/schemas_zh/tidas_unitgroups_category.json",
+        "sha256": "c39bcc54cf03b010ebf176d18d6572ca7f65d3b656ea854cd729cfd96290faa5"
+      }
+    },
+    {
+      "path": "package.json",
+      "sha256": "dc488786de761fc6588cff360f6a30aab59677f7f564d726aab713c4480c8303",
+      "contentSha256": "dc488786de761fc6588cff360f6a30aab59677f7f564d726aab713c4480c8303",
+      "origin": "tidas-spec",
+      "source": null
+    },
+    {
+      "path": "reviewed-baseline.json",
+      "sha256": "3f6861bb66b3b19ea1195fd7235c6d3bd03c22d5a42d9d3d2218cce8a8942082",
+      "contentSha256": "3f6861bb66b3b19ea1195fd7235c6d3bd03c22d5a42d9d3d2218cce8a8942082",
+      "origin": "tidas-spec",
+      "source": null
+    },
+    {
+      "path": "source-import.yaml",
+      "sha256": "2ba2e3fd7e95c56eda6930b5c725726968f9f90f846aca9dfb0dae19c4805e02",
+      "contentSha256": "2ba2e3fd7e95c56eda6930b5c725726968f9f90f846aca9dfb0dae19c4805e02",
+      "origin": "tidas-spec",
+      "source": null
+    }
+  ],
+  "aggregates": {
+    "filesSha256": "3e86778522997b3e9a92597be346459da2bcd52a300e0f037a9e4e21c37c9c70",
+    "filesContentSha256": "3e86778522997b3e9a92597be346459da2bcd52a300e0f037a9e4e21c37c9c70"
+  },
+  "selfHash": {
+    "note": "The manifest cannot contain its own digest. Its identity is the `files`/`aggregates` block above, bound externally by the archive digest record produced alongside the candidate archive; see docs/specification.md."
+  }
+}

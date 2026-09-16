@@ -26,3 +26,9 @@ Thumbs.db
 
 # Large local fixtures remain outside Git.
 /test_data/*
+
+# Disposable staging and the exclusive import lock for the public-specification
+# import. Both are transient tooling state, not executable assets or provenance,
+# and neither is committed.
+/assets/spec/.staging/
+/assets/spec/.import.lock

@@ -181,12 +181,16 @@ POSIX 安装器会在任何下载之前拒绝 macOS Intel。macOS Intel 与 Wind
 ```bash
 scripts/audit-rust-only.sh
 cargo run --locked -p tidas-assets --bin tidas-asset-lock -- check
+cargo run --locked -p tidas-assets --bin tidas-asset-lock -- spec-check \
+  --archive <QUALIFIED_CANDIDATE.tgz>
 cargo fmt --all --check
 cargo clippy --locked --workspace --all-targets -- -D warnings
 cargo test --locked --workspace --all-targets
 ```
 
 有意修改 schema 或可执行资产后，使用 `cargo run -p tidas-assets --bin tidas-asset-lock -- write` 依次更新两类锁，评审全部差异后重新运行门禁。领域与大包验证见 [验证指南](docs/agents/repo-validation.md)。
+
+36 个公共 schema、2 份共享 methodology 文档以及配套 `schema.lock.json` 是 `tiangong-lca/tidas-spec` 发布合格公共规范的受控副本，由 `crates/tidas-assets/src/spec_pin.rs` 中的归档与 manifest SHA-256 精确固定到唯一不可变候选；候选 manifest 与导入溯源记录保存在 `assets/spec/`。不要手工修改公共 schema 或 methodology：使用 `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>` 重新生成，并用 `tidas-asset-lock spec-check` 验证；CI 会用取自精确源提交的候选执行该检查。工具自有的 methodology 输入（`runtime_rulesets.json`、`runtime_rulesets.schema.json` 与 elementary taxonomy extension）、eILCD schema/style、验证索引仍归本仓库所有，不会被该导入替换。
 
 Rust-only cutover 之前的实现只作为 Git 历史以及 `migration/final-python-line.json` 声明的不可变 tag 保留，不再是安装、执行、CI 或发布路径。
 
