@@ -24,9 +24,9 @@ checkPaths:
   - scripts/validate-release-request.sh
   - scripts/sync-rust-package-assets.sh
   - .github/workflows/**
-lastReviewedAt: 2026-09-13
-lastReviewedCommit: e237a6cf1d4c55ba490719a8fcee0f659d1f840c
-lastReviewedNote: "Reviewed for toolkit #189: canonical dispatch, installers and package metadata use tidas-toolkit/tidas-sdks. The v1 notice reader preserves the historical namespace through 0.3.0 without changing provenance authority, asset locks, release requests or CLI behavior."
+lastReviewedAt: 2026-09-16
+lastReviewedCommit: a70f696587a7f062c254eac1d6da8a7d62e1a7ad
+lastReviewedNote: "W5 narrows SDK dispatch to tools-owned runtime rulesets and taxonomy assets; public schemas and shared methodologies are notified by tidas-spec. Exact commit and package selection behavior remains unchanged."
 related:
   - AGENTS.md
   - .docpact/config.yaml
@@ -215,7 +215,7 @@ cargo test --locked --workspace --all-targets
 
 Use `cargo run -p tidas-assets --bin tidas-asset-lock -- write` after an intentional schema or executable-asset change, review both lock diffs, and then rerun the checks. See [the validation guide](docs/agents/repo-validation.md) for domain and large-package proof.
 
-The 36 public schemas, the two shared methodology documents, and the paired `schema.lock.json` are a generated copy of the qualified public specification published by `tiangong-lca/tidas-spec`. They are pinned to one immutable candidate by its archive and manifest SHA-256 in `crates/tidas-assets/src/spec_pin.rs`; the candidate manifest and the import provenance record are kept under `assets/spec/`. Do not hand-edit a public schema or methodology. Regenerate the copy with `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>` and prove it with `tidas-asset-lock spec-check`, which CI runs against the candidate fetched from its exact source commit. Tools-owned methodology inputs (`runtime_rulesets.json`, `runtime_rulesets.schema.json`, and the elementary taxonomy extension), the eILCD schemas and stylesheets, and the validation indexes stay owned here and are never replaced by that import.
+The 36 public schemas, the two shared methodology documents, and the paired `schema.lock.json` are a generated copy of the qualified public specification published by `tiangong-lca/tidas-spec`. They are pinned to one immutable candidate by its archive and manifest SHA-256 in `crates/tidas-assets/src/spec_pin.rs`; the candidate manifest and the import provenance record are kept under `assets/spec/`. Do not hand-edit a public schema or methodology. Regenerate the copy with `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>` and prove it with `tidas-asset-lock spec-check`, which CI runs against the candidate fetched from its exact source commit. Tools-owned methodology inputs (`runtime_rulesets.json`, `runtime_rulesets.schema.json`, and the elementary taxonomy extension), the eILCD schemas and stylesheets, and the validation indexes stay owned here and are never replaced by that import. The SDK refresh workflow sends `tidas_tools_changed` only for those three tools-owned files; public-specification changes are notified by `tidas_spec_released` from `tidas-spec`.
 
 The implementation that preceded the Rust-only cutover is immutable historical evidence in Git history and the tag declared by `migration/final-python-line.json`. It is not an installation, execution, CI, or release path.
 

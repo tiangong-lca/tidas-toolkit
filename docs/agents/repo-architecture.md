@@ -161,12 +161,17 @@ and reviewed as one. The tools-owned runtime rulesets, the elementary taxonomy
 extension, eILCD inputs, and validation indexes never come from the public
 specification.
 
-Owned schema/methodology changes may dispatch `tidas-sdk` refresh automation.
-Generated SDK code remains downstream and never becomes source of truth here.
+Only tools-owned runtime ruleset/taxonomy changes may dispatch `tidas-sdk`
+refresh automation. Generated SDK code remains downstream and never becomes
+source of truth here.
 The canonical sender is `tiangong-lca/tidas-toolkit` (repository ID
 `936459656`, organization ID `327771381`); its dispatch targets
 `tiangong-lca/tidas-sdks`. The `tidas_tools_changed` event and exact commit
-payload retain their existing contract. Token authorization must cover the
+payload retain their existing contract. The path filter is limited to
+`runtime_rulesets.json`, `runtime_rulesets.schema.json`, and
+`elementary_flow_taxonomy_extension.v1.json`; public schemas and the shared
+`tidas_flows.yaml`/`tidas_processes.yaml` methodology files are dispatched by
+`tidas-spec` as `tidas_spec_released`. Token authorization must cover the
 renamed downstream repository. Source/metadata-only changes do not dispatch
 a generated SDK refresh.
 

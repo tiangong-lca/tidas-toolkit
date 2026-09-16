@@ -102,9 +102,16 @@ indexes stay owned here too.
 The public TIDAS specification source belongs in `tiangong-lca/tidas-spec`;
 generated SDK surfaces belong in `tiangong-lca/tidas-sdks`; root multi-repo
 integration belongs in `lca-workspace`. This repo consumes the public
-specification as a pinned artifact and may dispatch an SDK refresh when owned
-schema or methodology assets change, but it does not own the specification or
-generated SDK code.
+specification as a pinned artifact and may dispatch an SDK refresh when
+tools-owned runtime rulesets or taxonomy assets change, but it does not own the
+specification or generated SDK code.
+
+The SDK dispatch workflow is intentionally narrow: public schemas and
+`tidas_flows.yaml`/`tidas_processes.yaml` are notified by `tidas-spec`'s
+`tidas_spec_released` event. This repository sends `tidas_tools_changed` only
+for `runtime_rulesets.json`, `runtime_rulesets.schema.json`, and
+`elementary_flow_taxonomy_extension.v1.json`, with the exact merged commit and
+affected package list.
 
 ## Required load order
 
