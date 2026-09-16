@@ -341,6 +341,7 @@ struct StagedFile {
     staged: String,
     bytes: Vec<u8>,
     /// Mode to apply on publication (`0o644` for public assets).
+    #[cfg_attr(not(unix), allow(dead_code))]
     mode: u32,
 }
 
