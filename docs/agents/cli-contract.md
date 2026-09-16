@@ -29,7 +29,7 @@ checkPaths:
   - README_CN.md
 lastReviewedAt: "2026-09-16"
 lastReviewedCommit: 2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b
-lastReviewedNote: "Reviewed for Toolkit #197 and #198: the qualified public-spec import remains pinned outside executable runtime assets, while the deletion-only OID predicate uses explicit lowercase ASCII characters. W2 local gates and the 43-case deletion-only trace passed; final merged-chain review records both changes."
+lastReviewedNote: "Reviewed for W5: the SDK dispatch change is workflow-only and does not alter CLI parsing, output, contracts, or runtime behavior. Public-spec ownership remains separate from tools-owned runtime assets."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

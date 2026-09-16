@@ -5,9 +5,9 @@ on:
     branches:
       - main
     paths:
-      - "assets/tidas/schemas/**"
-      - "assets/tidas/schemas_zh/**"
-      - "assets/tidas/methodologies/**"
+      - "assets/tidas/methodologies/runtime_rulesets.json"
+      - "assets/tidas/methodologies/runtime_rulesets.schema.json"
+      - "assets/tidas/methodologies/elementary_flow_taxonomy_extension.v1.json"
 
 permissions:
   contents: read
@@ -54,36 +54,19 @@ jobs:
             exit 0
           fi
 
-          TYPESCRIPT=false
-          PYTHON=false
-          REASON_PARTS=()
-
-          if printf '%s\n' "$CHANGED_FILES" | grep -Eq '^assets/tidas/schemas(_zh)?/'; then
-            TYPESCRIPT=true
-            PYTHON=true
-            REASON_PARTS+=("schema update")
-          fi
-
-          if printf '%s\n' "$CHANGED_FILES" | grep -q '^assets/tidas/methodologies/'; then
-            TYPESCRIPT=true
-            REASON_PARTS+=("methodology update")
-          fi
-
-          PACKAGES_JSON="[]"
-          if [ "$TYPESCRIPT" = "true" ] && [ "$PYTHON" = "true" ]; then
-            PACKAGES_JSON='["typescript","python"]'
-          elif [ "$TYPESCRIPT" = "true" ]; then
-            PACKAGES_JSON='["typescript"]'
-          elif [ "$PYTHON" = "true" ]; then
-            PACKAGES_JSON='["python"]'
-          fi
+          IMPACT_JSON="$(printf '%s\n' "$CHANGED_FILES" | python3 scripts/ci/detect-sdk-impact.py)"
+          ANY_CHANGED="$(jq -r '.any_changed' <<<"$IMPACT_JSON")"
+          PACKAGES_JSON="$(jq -r '.packages_json' <<<"$IMPACT_JSON")"
+          TYPESCRIPT_BUMP="$(jq -r '.typescript_bump' <<<"$IMPACT_JSON")"
+          PYTHON_BUMP="$(jq -r '.python_bump' <<<"$IMPACT_JSON")"
+          REASON="$(jq -r '.reason' <<<"$IMPACT_JSON")"
 
           {
-            echo "any_changed=true"
+            echo "any_changed=$ANY_CHANGED"
             echo "packages_json=$PACKAGES_JSON"
-            echo "typescript_bump=patch"
-            echo "python_bump=patch"
-            echo "reason=${REASON_PARTS[*]}"
+            echo "typescript_bump=$TYPESCRIPT_BUMP"
+            echo "python_bump=$PYTHON_BUMP"
+            echo "reason=$REASON"
             echo "changed_files<<EOF"
             printf '%s\n' "$CHANGED_FILES"
             echo "EOF"
