@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "8487862a82bb221ea7499f5a7c52fb379f87a60a"
-lastReviewedNote: "Reviewed Toolkit #207: immutable v0.3.1 request binds 8487862a82bb221ea7499f5a7c52fb379f87a60a, including merged import diagnostic metadata, one consistent version set and canonical notice fixtures. Preserve target ancestry on merge. Existing runtime validation, packaging and publication gates are unchanged."
+lastReviewedCommit: "9d3779d6de7b689aec1fc8fcb22cef67f46fc559"
+lastReviewedNote: "Reviewed for Toolkit #209: adopt the exact reviewed tidas-spec 0.2.0 candidate, including its 34 imported and five public authored assets, and synchronize CI's immutable candidate commit/archive/digest tuple. Verify optional complete-review-report references in Process and LCIA Method while retaining strict validation when supplied. CLI behavior, package versions, and formal-release state are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -83,15 +83,20 @@ complete executable-asset byte set. Both locks are generated and checked by
 `tidas-asset-lock`.
 
 The 36 public schemas, the two shared methodology documents, and the paired
-`schema.lock.json` are a generated copy of the qualified public specification
+`schema.lock.json` are a generated copy of the reviewed 0.2.0 specification candidate
 published by `tiangong-lca/tidas-spec`. The pin — package version, archive
-SHA-256, manifest SHA-256, and the tools commit the assets were extracted from —
+SHA-256, manifest SHA-256, specification revision, and the tools commit from
+which the imported subset was extracted —
 is Rust source in `crates/tidas-assets/src/spec_pin.rs`; the candidate's own
 manifest and the import provenance record live under `assets/spec/`, which is
 *not* an executable asset root and is not covered by `assets/asset-lock.v1.json`.
 Do not hand-edit a public schema or methodology: regenerate it with
 `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>`, and let
 `tidas-asset-lock spec-check` prove the copy still matches the candidate.
+The candidate contains 34 imported public assets plus five public assets authored
+or derived by `tidas-spec`; its remaining authored evidence and package metadata
+are verified but are not copied into the executable asset tree. This candidate
+binding is not a formal release claim.
 
 The W8 public definitions under `assets/tidas/rules/` are an exact
 candidate-bound copy owned by `tidas-spec`. Toolkit owns

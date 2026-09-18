@@ -522,6 +522,128 @@ mod tests {
         }
     }
 
+    #[test]
+    fn complete_review_report_is_optional_but_validated_when_supplied() {
+        let localized = json!({"@xml:lang": "en", "#text": "Reviewed documentation"});
+        let reference = |kind: &str, id: &str, folder: &str| {
+            json!({
+                "@type": kind,
+                "@refObjectId": id,
+                "@version": "01.00.000",
+                "@uri": format!("../{folder}/{id}.xml"),
+                "common:shortDescription": localized.clone(),
+            })
+        };
+        for catalog in [
+            SchemaCatalog::load().unwrap(),
+            schema_catalog("assets/tidas/schemas_zh/"),
+        ] {
+            for (filename, root, scope_method) in [
+                ("tidas_processes.json", "processDataSet", "Documentation"),
+                (
+                    "tidas_lciamethods.json",
+                    "LCIAMethodDataSet",
+                    "Expert judgement",
+                ),
+            ] {
+                let mut review = catalog.schemas[filename]
+                    .pointer(&format!(
+                        "/properties/{root}/properties/modellingAndValidation/properties/validation/properties/review"
+                    ))
+                    .unwrap()
+                    .clone();
+                review["$id"] = Value::String(format!("{SCHEMA_BASE_URI}{filename}"));
+                let resources = catalog.schemas.iter().map(|(name, schema)| {
+                    (
+                        format!("{SCHEMA_BASE_URI}{name}"),
+                        Resource::from_contents(schema.clone()),
+                    )
+                });
+                let validator = jsonschema::draft7::options()
+                    .with_resources(resources)
+                    .build(&review)
+                    .unwrap();
+                let completed = json!({
+                    "@type": "Independent external review",
+                    "common:scope": {
+                        "@name": "Documentation",
+                        "common:method": {"@name": scope_method},
+                    },
+                    "common:reviewDetails": localized.clone(),
+                    "common:referenceToNameOfReviewerAndInstitution": reference(
+                        "contact data set",
+                        "11111111-1111-1111-1111-111111111111",
+                        "contacts",
+                    ),
+                });
+                assert!(
+                    validator.is_valid(&completed),
+                    "{filename} must allow an omitted report reference"
+                );
+                let mut valid = completed.clone();
+                valid["common:referenceToCompleteReviewReport"] = reference(
+                    "source data set",
+                    "22222222-2222-2222-2222-222222222222",
+                    "sources",
+                );
+                assert!(
+                    validator.is_valid(&valid),
+                    "{filename} must allow a valid report reference"
+                );
+                let mut incomplete = completed.clone();
+                incomplete["common:referenceToCompleteReviewReport"] = json!({
+                    "@refObjectId": "22222222-2222-2222-2222-222222222222"
+                });
+                assert!(
+                    !validator.is_valid(&incomplete),
+                    "{filename} must reject an incomplete report reference"
+                );
+                assert!(
+                    !validator.is_valid(&json!({"@type": "Independent external review"})),
+                    "{filename} must retain the other completed-review requirements"
+                );
+            }
+
+            let lifecycle = &catalog.schemas["tidas_lifecyclemodels.json"];
+            let serialized = serde_json::to_string(lifecycle).unwrap();
+            assert!(serialized.contains("common:referenceToCompleteReviewReport"));
+            assert!(
+                !lifecycle_required_arrays(lifecycle).iter().any(|required| {
+                    required
+                        .iter()
+                        .any(|value| value == "common:referenceToCompleteReviewReport")
+                })
+            );
+        }
+    }
+
+    fn lifecycle_required_arrays(value: &Value) -> Vec<Vec<String>> {
+        let mut found = Vec::new();
+        match value {
+            Value::Object(object) => {
+                if let Some(required) = object.get("required").and_then(Value::as_array) {
+                    found.push(
+                        required
+                            .iter()
+                            .filter_map(Value::as_str)
+                            .map(str::to_owned)
+                            .collect(),
+                    );
+                }
+                for child in object.values() {
+                    found.extend(lifecycle_required_arrays(child));
+                }
+            }
+            Value::Array(array) => {
+                for child in array {
+                    found.extend(lifecycle_required_arrays(child));
+                }
+            }
+            _ => {}
+        }
+        found
+    }
+
     fn schema_catalog(prefix: &str) -> SchemaCatalog {
         let schemas = bundled_assets()
             .into_iter()

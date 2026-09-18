@@ -25,9 +25,9 @@ env:
   # are pinned in `crates/tidas-assets/src/spec_pin.rs`, and the drift gate below
   # fails if this download does not reproduce them. A branch name is never used
   # as a source of truth.
-  TIDAS_SPEC_CANDIDATE_COMMIT: 41e078b63336a31cd8c4bcab748afeb09c19c1e7
-  TIDAS_SPEC_CANDIDATE_ARCHIVE: tiangong-lca-tidas-spec-0.1.0.tgz
-  TIDAS_SPEC_CANDIDATE_SHA256: 921a0ffa0d3703bc2d9bd8a5bbb02d327be7746177487af8245ac2788a7cf91e
+  TIDAS_SPEC_CANDIDATE_COMMIT: 58dc72f5cb2d203a00388fec71d31091911f7dde
+  TIDAS_SPEC_CANDIDATE_ARCHIVE: tiangong-lca-tidas-spec-0.2.0.tgz
+  TIDAS_SPEC_CANDIDATE_SHA256: 45da9de790ffcdadd1984ffc3544c67a1503c0947470a629e8252aed19100228
 
 jobs:
   rust:

@@ -676,8 +676,7 @@
                         "required": [
                           "common:scope",
                           "common:reviewDetails",
-                          "common:referenceToNameOfReviewerAndInstitution",
-                          "common:referenceToCompleteReviewReport"
+                          "common:referenceToNameOfReviewerAndInstitution"
                         ]
                       }
                     }

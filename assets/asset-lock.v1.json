@@ -291,7 +291,7 @@
     {
       "path": "assets/tidas/schema.lock.json",
       "kind": "legacy-schema-lock",
-      "sha256": "47ca2a51efb654312422d8cb6ac415cc1798bd993467b138cf8d220a0b7eb9a1",
+      "sha256": "c04f869140635800cd5533c9dd225ae606902894b8c4e6c984dbb7698cec374b",
       "bytes": 15573
     },
     {
@@ -345,8 +345,8 @@
     {
       "path": "assets/tidas/schemas/tidas_lciamethods.json",
       "kind": "json-schema",
-      "sha256": "6a96fa34bda4d848eeaa1edb124a544f4511c824436514e62b58626919e57836",
-      "bytes": 73636
+      "sha256": "ccaee6c3f1ee48712b6280df07e973c9b8225d95b78dd441566ffcc4a2f9561e",
+      "bytes": 73568
     },
     {
       "path": "assets/tidas/schemas/tidas_lciamethods_category.json",
@@ -369,8 +369,8 @@
     {
       "path": "assets/tidas/schemas/tidas_processes.json",
       "kind": "json-schema",
-      "sha256": "8476530740d2af11fe3c607afbeab68a318c6b08d7558417ebcad8ac33f0efdd",
-      "bytes": 102898
+      "sha256": "385448c7f2f5f41aa31efad649a61758ef39fcfdc8e55984438fed1b56ccf6a7",
+      "bytes": 102830
     },
     {
       "path": "assets/tidas/schemas/tidas_processes_category.json",
@@ -453,8 +453,8 @@
     {
       "path": "assets/tidas/schemas_zh/tidas_lciamethods.json",
       "kind": "chinese-json-schema",
-      "sha256": "5cb03a77267346d9655b8d3803f4f839f04caf080d866764c73bd4eaed6388dd",
-      "bytes": 68664
+      "sha256": "3e810733ce50f1cbc83ff8a7835b6fce81220a6320078988661773e9ff5ebd10",
+      "bytes": 68596
     },
     {
       "path": "assets/tidas/schemas_zh/tidas_lciamethods_category.json",
@@ -477,8 +477,8 @@
     {
       "path": "assets/tidas/schemas_zh/tidas_processes.json",
       "kind": "chinese-json-schema",
-      "sha256": "db81ac7dfca82a0a05982a8add4ba91ebe274dfc929c52c538f6f5fddd081b03",
-      "bytes": 95747
+      "sha256": "00c43bf0265bdf2570a3e8cce4b22004d6c776cb0c659ab2c565c684b05951b8",
+      "bytes": 95679
     },
     {
       "path": "assets/tidas/schemas_zh/tidas_processes_category.json",

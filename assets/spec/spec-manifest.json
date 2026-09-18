@@ -2,9 +2,9 @@
   "manifestVersion": 1,
   "package": {
     "name": "@tiangong-lca/tidas-spec",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
-  "specVersion": "0.1.0",
+  "specVersion": "0.2.0",
   "source": {
     "repository": "https://github.com/tiangong-lca/tidas-toolkit",
     "repositoryId": "tidas-toolkit",
@@ -18,7 +18,12 @@
     "excludedPaths": [
       "assets/tidas/methodologies/runtime_rulesets.json",
       "assets/tidas/methodologies/runtime_rulesets.schema.json",
-      "assets/tidas/methodologies/elementary_flow_taxonomy_extension.v1.json"
+      "assets/tidas/methodologies/elementary_flow_taxonomy_extension.v1.json",
+      "assets/tidas/schema.lock.json",
+      "assets/tidas/schemas/tidas_lciamethods.json",
+      "assets/tidas/schemas/tidas_processes.json",
+      "assets/tidas/schemas_zh/tidas_lciamethods.json",
+      "assets/tidas/schemas_zh/tidas_processes.json"
     ],
     "ownedMetadataOrigin": "tidas-spec"
   },
@@ -29,10 +34,11 @@
       "zh"
     ],
     "methodologies": 2,
-    "importedAssets": 39,
+    "importedAssets": 34,
+    "authoredAssets": 7,
     "packageMetadata": 5,
-    "files": 44,
-    "packagedFiles": 45
+    "files": 46,
+    "packagedFiles": 47
   },
   "assetRoot": "assets/tidas",
   "lock": "assets/tidas/schema.lock.json",
@@ -667,8 +673,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "6044d34fb89c373d7ddfe68fb740ed6dfa2e8e2f9231270a241a594523b05380",
-      "contentSha256": "6044d34fb89c373d7ddfe68fb740ed6dfa2e8e2f9231270a241a594523b05380",
+      "sha256": "f18729be37c8d38a4d9766aaab6358f3c883d6aaf1a87f3623bae9b201385d43",
+      "contentSha256": "f18729be37c8d38a4d9766aaab6358f3c883d6aaf1a87f3623bae9b201385d43",
       "origin": "tidas-spec",
       "source": null
     },
@@ -693,14 +699,25 @@
       }
     },
     {
+      "path": "assets/tidas/rules/public-rules.v1.json",
+      "sha256": "a2b94cc563358f5e561afd376540aff652f78e949bb18a27c2704ef226268ec7",
+      "contentSha256": "a2b94cc563358f5e561afd376540aff652f78e949bb18a27c2704ef226268ec7",
+      "origin": "tidas-spec",
+      "source": null
+    },
+    {
+      "path": "assets/tidas/rules/public-rules.v1.schema.json",
+      "sha256": "552a8c5fb87300dbe4ff5021d3d09a2b2d369999e887c223bc5c9738a99549f5",
+      "contentSha256": "552a8c5fb87300dbe4ff5021d3d09a2b2d369999e887c223bc5c9738a99549f5",
+      "origin": "tidas-spec",
+      "source": null
+    },
+    {
       "path": "assets/tidas/schema.lock.json",
-      "sha256": "47ca2a51efb654312422d8cb6ac415cc1798bd993467b138cf8d220a0b7eb9a1",
-      "contentSha256": "47ca2a51efb654312422d8cb6ac415cc1798bd993467b138cf8d220a0b7eb9a1",
-      "origin": "tidas-toolkit",
-      "source": {
-        "path": "assets/tidas/schema.lock.json",
-        "sha256": "47ca2a51efb654312422d8cb6ac415cc1798bd993467b138cf8d220a0b7eb9a1"
-      }
+      "sha256": "c04f869140635800cd5533c9dd225ae606902894b8c4e6c984dbb7698cec374b",
+      "contentSha256": "c04f869140635800cd5533c9dd225ae606902894b8c4e6c984dbb7698cec374b",
+      "origin": "tidas-spec",
+      "source": null
     },
     {
       "path": "assets/tidas/schemas/tidas_contacts.json",
@@ -784,13 +801,10 @@
     },
     {
       "path": "assets/tidas/schemas/tidas_lciamethods.json",
-      "sha256": "6a96fa34bda4d848eeaa1edb124a544f4511c824436514e62b58626919e57836",
-      "contentSha256": "6a96fa34bda4d848eeaa1edb124a544f4511c824436514e62b58626919e57836",
-      "origin": "tidas-toolkit",
-      "source": {
-        "path": "assets/tidas/schemas/tidas_lciamethods.json",
-        "sha256": "6a96fa34bda4d848eeaa1edb124a544f4511c824436514e62b58626919e57836"
-      }
+      "sha256": "ccaee6c3f1ee48712b6280df07e973c9b8225d95b78dd441566ffcc4a2f9561e",
+      "contentSha256": "ccaee6c3f1ee48712b6280df07e973c9b8225d95b78dd441566ffcc4a2f9561e",
+      "origin": "tidas-spec",
+      "source": null
     },
     {
       "path": "assets/tidas/schemas/tidas_lciamethods_category.json",
@@ -824,13 +838,10 @@
     },
     {
       "path": "assets/tidas/schemas/tidas_processes.json",
-      "sha256": "8476530740d2af11fe3c607afbeab68a318c6b08d7558417ebcad8ac33f0efdd",
-      "contentSha256": "8476530740d2af11fe3c607afbeab68a318c6b08d7558417ebcad8ac33f0efdd",
-      "origin": "tidas-toolkit",
-      "source": {
-        "path": "assets/tidas/schemas/tidas_processes.json",
-        "sha256": "8476530740d2af11fe3c607afbeab68a318c6b08d7558417ebcad8ac33f0efdd"
-      }
+      "sha256": "385448c7f2f5f41aa31efad649a61758ef39fcfdc8e55984438fed1b56ccf6a7",
+      "contentSha256": "385448c7f2f5f41aa31efad649a61758ef39fcfdc8e55984438fed1b56ccf6a7",
+      "origin": "tidas-spec",
+      "source": null
     },
     {
       "path": "assets/tidas/schemas/tidas_processes_category.json",
@@ -964,13 +975,10 @@
     },
     {
       "path": "assets/tidas/schemas_zh/tidas_lciamethods.json",
-      "sha256": "5cb03a77267346d9655b8d3803f4f839f04caf080d866764c73bd4eaed6388dd",
-      "contentSha256": "5cb03a77267346d9655b8d3803f4f839f04caf080d866764c73bd4eaed6388dd",
-      "origin": "tidas-toolkit",
-      "source": {
-        "path": "assets/tidas/schemas_zh/tidas_lciamethods.json",
-        "sha256": "5cb03a77267346d9655b8d3803f4f839f04caf080d866764c73bd4eaed6388dd"
-      }
+      "sha256": "3e810733ce50f1cbc83ff8a7835b6fce81220a6320078988661773e9ff5ebd10",
+      "contentSha256": "3e810733ce50f1cbc83ff8a7835b6fce81220a6320078988661773e9ff5ebd10",
+      "origin": "tidas-spec",
+      "source": null
     },
     {
       "path": "assets/tidas/schemas_zh/tidas_lciamethods_category.json",
@@ -1004,13 +1012,10 @@
     },
     {
       "path": "assets/tidas/schemas_zh/tidas_processes.json",
-      "sha256": "db81ac7dfca82a0a05982a8add4ba91ebe274dfc929c52c538f6f5fddd081b03",
-      "contentSha256": "db81ac7dfca82a0a05982a8add4ba91ebe274dfc929c52c538f6f5fddd081b03",
-      "origin": "tidas-toolkit",
-      "source": {
-        "path": "assets/tidas/schemas_zh/tidas_processes.json",
-        "sha256": "db81ac7dfca82a0a05982a8add4ba91ebe274dfc929c52c538f6f5fddd081b03"
-      }
+      "sha256": "00c43bf0265bdf2570a3e8cce4b22004d6c776cb0c659ab2c565c684b05951b8",
+      "contentSha256": "00c43bf0265bdf2570a3e8cce4b22004d6c776cb0c659ab2c565c684b05951b8",
+      "origin": "tidas-spec",
+      "source": null
     },
     {
       "path": "assets/tidas/schemas_zh/tidas_processes_category.json",
@@ -1064,29 +1069,29 @@
     },
     {
       "path": "package.json",
-      "sha256": "dc488786de761fc6588cff360f6a30aab59677f7f564d726aab713c4480c8303",
-      "contentSha256": "dc488786de761fc6588cff360f6a30aab59677f7f564d726aab713c4480c8303",
+      "sha256": "a81cd2c404a14a44b126e19798e97fb71dbbd92e3533ffccbb8fb2cf65fb67a0",
+      "contentSha256": "a81cd2c404a14a44b126e19798e97fb71dbbd92e3533ffccbb8fb2cf65fb67a0",
       "origin": "tidas-spec",
       "source": null
     },
     {
       "path": "reviewed-baseline.json",
-      "sha256": "3f6861bb66b3b19ea1195fd7235c6d3bd03c22d5a42d9d3d2218cce8a8942082",
-      "contentSha256": "3f6861bb66b3b19ea1195fd7235c6d3bd03c22d5a42d9d3d2218cce8a8942082",
+      "sha256": "1bad9d8452fa497b37f1b568c42ccac88fde03042c081bec88d7752b0296fa71",
+      "contentSha256": "1bad9d8452fa497b37f1b568c42ccac88fde03042c081bec88d7752b0296fa71",
       "origin": "tidas-spec",
       "source": null
     },
     {
       "path": "source-import.yaml",
-      "sha256": "2ba2e3fd7e95c56eda6930b5c725726968f9f90f846aca9dfb0dae19c4805e02",
-      "contentSha256": "2ba2e3fd7e95c56eda6930b5c725726968f9f90f846aca9dfb0dae19c4805e02",
+      "sha256": "cfefd55656face419847d929f03cecba78bc7fd3118b47b26b614950842e1fb0",
+      "contentSha256": "cfefd55656face419847d929f03cecba78bc7fd3118b47b26b614950842e1fb0",
       "origin": "tidas-spec",
       "source": null
     }
   ],
   "aggregates": {
-    "filesSha256": "3e86778522997b3e9a92597be346459da2bcd52a300e0f037a9e4e21c37c9c70",
-    "filesContentSha256": "3e86778522997b3e9a92597be346459da2bcd52a300e0f037a9e4e21c37c9c70"
+    "filesSha256": "e32bc87e6df72dadacf61c2d232c82c3efed05b1895e537c8b89e08941001a99",
+    "filesContentSha256": "e32bc87e6df72dadacf61c2d232c82c3efed05b1895e537c8b89e08941001a99"
   },
   "selfHash": {
     "note": "The manifest cannot contain its own digest. Its identity is the `files`/`aggregates` block above, bound externally by the archive digest record produced alongside the candidate archive; see docs/specification.md."
