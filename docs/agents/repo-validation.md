@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "e380f99dc1c0490ad1723b357a44d6806d1273a1"
-lastReviewedNote: "Reviewed Toolkit #207 release qualification: current notice fixtures use the canonical repository, while explicit historical compatibility and future-legacy rejection remain tested. Production validation and source-identity rules are unchanged; the release request will bind the qualified source including this test correction."
+lastReviewedCommit: "8487862a82bb221ea7499f5a7c52fb379f87a60a"
+lastReviewedNote: "Reviewed Toolkit #207: immutable v0.3.1 request binds 8487862a82bb221ea7499f5a7c52fb379f87a60a, including merged import diagnostic metadata, one consistent version set and canonical notice fixtures. Preserve target ancestry on merge. Existing runtime validation, packaging and publication gates are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
