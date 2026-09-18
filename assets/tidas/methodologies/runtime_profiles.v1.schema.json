@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tiangong.earth/tidas/runtime-profiles.v1.schema.json",
+  "title": "TIDAS toolkit runtime profile policy v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "ruleset_version", "public_rules_source", "rule_order", "rulesets", "public_rule_policy", "local_rules"],
+  "properties": {
+    "schema_version": { "const": "tidas.runtime-profiles.v1" },
+    "ruleset_version": { "type": "string", "minLength": 1 },
+    "public_rules_source": { "const": "assets/tidas/rules/public-rules.source.v1.json" },
+    "rule_order": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+    "rulesets": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/ruleset" } },
+    "public_rule_policy": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/publicPolicy" } },
+    "local_rules": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/runtimeRule" } }
+  },
+  "$defs": {
+    "ruleset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "dataset_type", "phase", "rule_ids"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "dataset_type": { "enum": ["process", "flow"] },
+        "phase": { "type": "string", "minLength": 1 },
+        "rule_ids": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["id", "severity", "phases", "default_blocker"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^tidas\\.(process|flow)\\.[a-z0-9.-]+$" },
+        "severity": { "enum": ["info", "warning", "blocker"] },
+        "phases": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+        "default_blocker": { "type": "boolean" }
+      }
+    },
+    "publicPolicy": { "$ref": "#/$defs/policy" },
+    "runtimeRule": {
+      "allOf": [
+        { "$ref": "#/$defs/policy" },
+        {
+          "type": "object",
+          "required": ["dataset_type", "summary", "field_paths", "source_rule_refs"],
+          "properties": {
+            "dataset_type": { "enum": ["process", "flow"] },
+            "summary": { "type": "string", "minLength": 1 },
+            "field_paths": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "minLength": 1 } },
+            "source_rule_refs": {
+              "type": "array", "minItems": 1,
+              "items": {
+                "type": "object", "additionalProperties": false,
+                "required": ["asset", "path"],
+                "properties": {
+                  "asset": { "type": "string", "minLength": 1 },
+                  "path": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

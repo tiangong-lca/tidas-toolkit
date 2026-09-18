@@ -31,9 +31,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: "2026-09-16"
-lastReviewedCommit: 2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b
-lastReviewedNote: "Reviewed for Toolkit #197 and #198: the qualified public-spec import remains pinned outside executable runtime assets, while the deletion-only OID predicate uses explicit lowercase ASCII characters. W2 local gates and the 43-case deletion-only trace passed; final merged-chain review records both changes."
+lastReviewedAt: "2026-09-18"
+lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
+lastReviewedNote: "Reviewed for W9: exact W8 public definitions and toolkit-owned runtime profile policy are separate locked inputs; tidas-rulesets composes and verifies the W11 compatibility projection."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -93,11 +93,14 @@ Do not hand-edit a public schema or methodology: regenerate it with
 `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>`, and let
 `tidas-asset-lock spec-check` prove the copy still matches the candidate.
 
-Tools-owned methodology inputs — `runtime_rulesets.json`,
-`runtime_rulesets.schema.json`, and `elementary_flow_taxonomy_extension.v1.json`
-— stay owned here, remain in the executable asset lock, and are never replaced
-by a public-specification import. eILCD schemas/stylesheets and validation
-indexes stay owned here too.
+The W8 public definitions under `assets/tidas/rules/` are an exact
+candidate-bound copy owned by `tidas-spec`. Toolkit owns
+`runtime_profiles.v1.json`: profile membership, severity, phase, blocker
+defaults, local-only rules, authorization, and result disposition.
+`runtime_rulesets.json` is a deterministic W11 compatibility projection
+composed from those inputs, not a second public-definition authority. The
+elementary taxonomy extension, eILCD inputs, and validation indexes remain
+tools-owned.
 
 The public TIDAS specification source belongs in `tiangong-lca/tidas-spec`;
 generated SDK surfaces belong in `tiangong-lca/tidas-sdks`; root multi-repo

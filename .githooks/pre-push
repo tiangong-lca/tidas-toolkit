@@ -19,6 +19,9 @@ echo "Auditing the Rust-only active tree."
 echo "Checking executable asset lock."
 cargo run --locked -p tidas-assets --bin tidas-asset-lock -- check
 
+echo "Checking public-rule source and toolkit profile composition."
+cargo run --locked -p tidas-assets --bin tidas-asset-lock -- public-rules-check
+
 echo "Running Rust formatting, lint, and test gates."
 cargo fmt --all --check
 cargo clippy --locked --workspace --all-targets -- -D warnings

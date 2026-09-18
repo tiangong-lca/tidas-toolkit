@@ -235,10 +235,22 @@
       "bytes": 2910
     },
     {
+      "path": "assets/tidas/methodologies/runtime_profiles.v1.json",
+      "kind": "runtime-ruleset",
+      "sha256": "439489c831e2e15fa764cf1dc3b1b4b1dd31a2c3decb7ae0c64a624928382f31",
+      "bytes": 10194
+    },
+    {
+      "path": "assets/tidas/methodologies/runtime_profiles.v1.schema.json",
+      "kind": "runtime-ruleset",
+      "sha256": "ff10afe009ef340397b71ae734d3e9b7d8e76d888132abc8b64b38010b869199",
+      "bytes": 3049
+    },
+    {
       "path": "assets/tidas/methodologies/runtime_rulesets.json",
       "kind": "runtime-ruleset",
-      "sha256": "6e9227dd8b174d365dbcbb3380e29566b9d210eb52d49771f11ca12063cdb2bd",
-      "bytes": 14206
+      "sha256": "a61105dcb2ce9de8d10b47be246a910034018fd88a1830539758a6cdfc4887a2",
+      "bytes": 15029
     },
     {
       "path": "assets/tidas/methodologies/runtime_rulesets.schema.json",
@@ -257,6 +269,24 @@
       "kind": "methodology",
       "sha256": "3f67155faf703dd85729cf359315250a2a92562398cc41bcccaa46078b1fe79e",
       "bytes": 23612
+    },
+    {
+      "path": "assets/tidas/rules/public-rules.source.v1.json",
+      "kind": "public-rule",
+      "sha256": "1451b871afbbb182730d376c3eebc1423321c8611dcf6a0aca2936f02ee88c2a",
+      "bytes": 417
+    },
+    {
+      "path": "assets/tidas/rules/public-rules.v1.json",
+      "kind": "public-rule",
+      "sha256": "a2b94cc563358f5e561afd376540aff652f78e949bb18a27c2704ef226268ec7",
+      "bytes": 8822
+    },
+    {
+      "path": "assets/tidas/rules/public-rules.v1.schema.json",
+      "kind": "public-rule",
+      "sha256": "552a8c5fb87300dbe4ff5021d3d09a2b2d369999e887c223bc5c9738a99549f5",
+      "bytes": 2319
     },
     {
       "path": "assets/tidas/schema.lock.json",

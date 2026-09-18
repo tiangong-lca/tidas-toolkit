@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: "2026-09-16"
-lastReviewedCommit: 2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b
-lastReviewedNote: "Reviewed for W5: the SDK dispatch change is workflow-only and does not alter CLI parsing, output, contracts, or runtime behavior. Public-spec ownership remains separate from tools-owned runtime assets."
+lastReviewedAt: "2026-09-18"
+lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
+lastReviewedNote: "Reviewed for W9: the ruleset command keeps its schema, IDs, ordering, policy and exit behavior while its catalog is composed from public definitions plus toolkit-owned profile policy."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -391,7 +391,11 @@ breaking the final logical issue-stream hash.
 
 `tidas ruleset --format json` validates and returns the packaged methodology
 catalog. `tidas ruleset --id <RULESET_ID> --format json` returns its ordered
-rules; unknown ids use the usage exit class.
+rules; unknown ids use the usage exit class. Public statements, locations and
+source references come from the exact W8 index; severity, phases, blocker
+defaults, profile membership and local-only rules remain toolkit policy. The
+mixed catalog is a deterministic W11 compatibility projection, and loading
+fails closed if it differs from the composition.
 
 ## Exit classes
 

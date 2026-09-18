@@ -28,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-16"
-lastReviewedCommit: 2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b
-lastReviewedNote: "Reviewed for Toolkit #197 and #198: the qualified public-spec import remains pinned outside executable runtime assets, while the deletion-only OID predicate uses explicit lowercase ASCII characters. W2 local gates and the 43-case deletion-only trace passed; final merged-chain review records both changes."
+lastReviewedAt: "2026-09-18"
+lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
+lastReviewedNote: "Reviewed for W9 exact public-rule/profile composition, deterministic compatibility projection, negative identity/reference checks, and Rust-only dispatch gating."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -96,7 +96,8 @@ to install a redistributable or copy a development-machine DLL.
 | validation/batch/references | compile every bundled schema/XSD root offline; schema and semantic fixtures including internal keyrefs; complete TIDAS projection/XSD/recovery proof; explicit schema-only diagnostic behavior; oversized rejected-instance event below the 1 MiB frame ceiling; bounded issue spool; batch preflight/drift/final-event hash; extraction schema/roles | local large-package validation twice, recording native time, projection/XSD/recovery time, peak RSS, cancellation, and spool hash |
 | assets | baseline asset check; representative `git check-attr eol`; schema-local-reference and translation-parity tests | regenerate locks only after reviewing every changed path/hash; compare fingerprints twice |
 | public-specification pin | `tidas-asset-lock spec-check`; record the runtime `asset_fingerprint` before and after; confirm the retained tools-owned methodologies, eILCD inputs, and validation indexes are byte-identical | `spec-import` against the qualified archive: negative, rollback (failure after staging, not only input parsing), no-write check mode, repeated-import idempotency, manual drift detection, and `.crate` parity of the public subset |
-| SDK dispatch classifier | `python3 scripts/ci/test-dispatch-impact.py` | exercise tools-only, spec-owned-only, mixed, and unrelated path sets; confirm only the three tools-owned runtime assets emit `tidas_tools_changed` |
+| W8 public-rule/profile composition | `tidas-asset-lock public-rules-check`; focused `tidas-assets` and `tidas-rulesets` tests; `tidas ruleset` JSON probes | exact-checkout `public-rules-sync`; stale identity, tampered bytes, unknown/duplicate IDs, incomplete ordering, and invalid profile references; compare rule IDs/order and toolkit policy with the pre-W9 baseline |
+| SDK dispatch path contract | `bash scripts/ci/test-dispatch-impact.sh` | confirm only the three exact tools-owned compatibility assets can emit `tidas_tools_changed`; public-rule definitions and toolkit profiles do not independently dispatch the legacy SDK refresh |
 | XML/XSD/XSLT | focused `tidas-xml` and validation tests; resolver/security tests; four-platform CI | representative production schemas/stylesheets and static-release dependency inspection |
 | native distribution | focused `tidas-dist`; package twice; archive/checksum equality; extract and run version/help/JSON/ruleset; installer syntax and hermetic installer contract tests | four release jobs, clean-machine archive execution, runtime dependency inspection, SBOM and attestation |
 | crates.io | sync check; public-set qualification; verify exact version set and `tidas-dist` exclusion; script syntax | inspect each `.crate`; source install; registry absent/existing checksum simulations without a real token |
