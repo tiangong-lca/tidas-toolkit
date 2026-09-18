@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
-lastReviewedNote: "Reviewed for W9: exact W8 public definitions and toolkit-owned runtime profile policy are separate locked inputs; tidas-rulesets composes and verifies the W11 compatibility projection."
+lastReviewedCommit: "d07a5460ad7d99f10afe391aff755f8c67b72854"
+lastReviewedNote: "Reviewed Toolkit #205: add bounded structured required_property diagnostic context without changing schemas, validation rules, severity, counts or command behavior. Worker #295 consumes exact metadata. Toolchain and test evidence are recorded in the task."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

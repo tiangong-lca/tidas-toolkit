@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
-lastReviewedNote: "Reviewed for W9 exact public-rule/profile composition, deterministic compatibility projection, negative identity/reference checks, and Rust-only dispatch gating."
+lastReviewedCommit: "d07a5460ad7d99f10afe391aff755f8c67b72854"
+lastReviewedNote: "Reviewed Toolkit #205: add bounded structured required_property diagnostic context without changing schemas, validation rules, severity, counts or command behavior. Worker #295 consumes exact metadata. Toolchain and test evidence are recorded in the task."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -243,3 +243,5 @@ warm independently; do not attribute the entire job delta solely to this new
 archive cache. Compare actual keys/images, restored-package logs, archive size,
 transfer overhead and all qualification results. Synthetic skipped jobs are not
 timing samples. Default-branch seeding is still pending delivery.
+
+Required-field diagnostic changes must prove that the exact missing property is machine-readable while missing review/compliance fields remain validator errors. Keep schemas, exit class and raw issue counts unchanged; verify bounded context and ordinary non-required issues too.

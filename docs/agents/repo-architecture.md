@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
-lastReviewedNote: "Reviewed for W9: public definitions, toolkit runtime policy, and the generated legacy projection are separate integrity-bound layers composed by tidas-rulesets."
+lastReviewedCommit: "d07a5460ad7d99f10afe391aff755f8c67b72854"
+lastReviewedNote: "Reviewed Toolkit #205: add bounded structured required_property diagnostic context without changing schemas, validation rules, severity, counts or command behavior. Worker #295 consumes exact metadata. Toolchain and test evidence are recorded in the task."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

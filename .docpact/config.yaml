@@ -2,8 +2,8 @@ version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "4ad5967b1174e194f00277dcb27d9962ec3db6cc"
-lastReviewedNote: "W9 routes exact public-rule candidate assets, toolkit-owned runtime profile policy, Rust composition/check tooling, and the retained W11 compatibility projection through existing asset/runtime/automation governance."
+lastReviewedCommit: "d07a5460ad7d99f10afe391aff755f8c67b72854"
+lastReviewedNote: "Reviewed Toolkit #205: additive bounded required_property context supports exact consumer result filtering without modifying validator rules, schemas, severities or counts. Ownership, branch and gate contracts remain unchanged."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
 # and ownership/routing/validation governance is otherwise unchanged.
