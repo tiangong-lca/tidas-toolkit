@@ -30,7 +30,7 @@ checkPaths:
   - scripts/**
 lastReviewedAt: "2026-09-18"
 lastReviewedCommit: "9d3779d6de7b689aec1fc8fcb22cef67f46fc559"
-lastReviewedNote: "Reviewed for Toolkit #209: adopt the exact reviewed tidas-spec 0.2.0 candidate, including its 34 imported and five public authored assets; verify optional complete-review-report references in Process and LCIA Method while retaining strict validation when supplied. CLI behavior, package versions, and formal-release state are unchanged."
+lastReviewedNote: "Reviewed for Toolkit #209: adopt the exact reviewed tidas-spec 0.2.0 candidate, including its 34 imported and five public authored assets, and synchronize CI's immutable candidate commit/archive/digest tuple. Verify optional complete-review-report references in Process and LCIA Method while retaining strict validation when supplied. CLI behavior, package versions, and formal-release state are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

@@ -29,7 +29,7 @@ checkPaths:
   - README_CN.md
 lastReviewedAt: "2026-09-18"
 lastReviewedCommit: "9d3779d6de7b689aec1fc8fcb22cef67f46fc559"
-lastReviewedNote: "Reviewed for Toolkit #209: the tidas-spec 0.2.0 candidate changes bundled validation data and internal pin bookkeeping only. The public command tree, arguments, output contracts, exit classes, and completion behavior are unchanged."
+lastReviewedNote: "Reviewed for Toolkit #209: the tidas-spec 0.2.0 candidate changes bundled validation data, internal pin bookkeeping, and CI's immutable candidate fetch tuple only. The public command tree, arguments, output contracts, exit classes, and completion behavior are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
