@@ -3,7 +3,7 @@
 //! The public TIDAS specification is produced by `tiangong-lca/tidas-spec` and
 //! consumed here as one immutable candidate archive. The identity of that
 //! archive is recorded as Rust constants so it cannot drift as data: the
-//! committed `assets/tidas/spec-manifest.json`, the 39 public assets it binds,
+//! committed `assets/spec/spec-manifest.json`, the 39 public assets it binds,
 //! and the archive itself are all checked against these constants.
 //!
 //! Nothing in this module mutates the repository. Import lives in
@@ -21,8 +21,8 @@ use crate::{AssetError, sha256_hex};
 
 /// npm package name of the public specification.
 pub const SPEC_PACKAGE_NAME: &str = "@tiangong-lca/tidas-spec";
-/// Published specification version this repository is pinned to.
-pub const SPEC_VERSION: &str = "0.1.0";
+/// Candidate package version this repository is pinned to.
+pub const SPEC_VERSION: &str = "0.2.0";
 /// Canonical repository of the public specification package.
 ///
 /// This is provenance, not an enforceable claim: the specification repository
@@ -32,7 +32,7 @@ pub const SPEC_VERSION: &str = "0.1.0";
 /// were qualified at, and it is recorded so an upgrade is an explicit event.
 pub const SPEC_REPOSITORY: &str = "https://github.com/tiangong-lca/tidas-spec";
 /// Reviewed specification-repository revision the qualified archive came from.
-pub const SPEC_REVISION: &str = "41e078b63336a31cd8c4bcab748afeb09c19c1e7";
+pub const SPEC_REVISION: &str = "58dc72f5cb2d203a00388fec71d31091911f7dde";
 /// Tools repository the candidate extracted its public assets from.
 ///
 /// Unlike the specification-repository revision, this one travels inside the
@@ -43,29 +43,33 @@ pub const SPEC_IMPORTED_SOURCE_REPOSITORY: &str = "https://github.com/tiangong-l
 pub const SPEC_IMPORTED_SOURCE_COMMIT: &str = "9c0d8b1c8ceb1841074f5bc6de5fbb7fcc9318f5";
 /// Owner of the assets the candidate imports from the tools repository.
 ///
-/// The candidate keeps two origins strictly apart: the 39 public assets it
-/// imports still carry the `tidas-toolkit` origin they were extracted from,
-/// while its own metadata (manifest, import manifest, baseline, licence, README,
-/// package.json) carries [`SPEC_PACKAGE_METADATA_ORIGIN`]. Only the former is a
-/// public specification asset, and conflating the two would import the
-/// candidate's own bookkeeping into the runtime asset tree.
+/// The candidate keeps two origins strictly apart: 34 public assets retain the
+/// `tidas-toolkit` origin they were extracted from, while seven authored assets
+/// and five package-metadata files carry [`SPEC_PACKAGE_METADATA_ORIGIN`]. Five
+/// authored assets belong to the 39-file public runtime subset; the other two
+/// and all package metadata are evidence/bookkeeping and are not copied into
+/// the runtime asset tree.
 pub const SPEC_IMPORTED_ORIGIN: &str = "tidas-toolkit";
 /// Owner of the candidate's own package metadata.
 pub const SPEC_PACKAGE_METADATA_ORIGIN: &str = "tidas-spec";
 /// Canonical archive file name.
-pub const SPEC_ARCHIVE_FILE: &str = "tiangong-lca-tidas-spec-0.1.0.tgz";
+pub const SPEC_ARCHIVE_FILE: &str = "tiangong-lca-tidas-spec-0.2.0.tgz";
 /// SHA-256 of the qualified candidate archive.
 pub const SPEC_ARCHIVE_SHA256: &str =
-    "921a0ffa0d3703bc2d9bd8a5bbb02d327be7746177487af8245ac2788a7cf91e";
+    "45da9de790ffcdadd1984ffc3544c67a1503c0947470a629e8252aed19100228";
 /// SHA-256 of the candidate's own `spec-manifest.json`.
 pub const SPEC_MANIFEST_SHA256: &str =
-    "646699afaf5c3bdfa6ccfe5153b11d6978ee62227fdace19f3b7715b59c50010";
+    "4677b9cf864326be9d430bf9760c754c4c0c1905d90e62c161655a159fd758c7";
 /// Public specification assets imported into this repository.
-pub const SPEC_IMPORTED_FILE_COUNT: usize = 39;
+pub const SPEC_IMPORTED_FILE_COUNT: usize = 34;
+/// Public assets authored or derived in the specification repository.
+pub const SPEC_AUTHORED_FILE_COUNT: usize = 7;
+/// Complete public runtime subset copied into this repository.
+pub const SPEC_PUBLIC_FILE_COUNT: usize = 39;
 /// Candidate files that belong to the specification repository itself.
 pub const SPEC_PACKAGE_METADATA_FILE_COUNT: usize = 5;
 /// Every file carried by the candidate archive, including its manifest.
-pub const SPEC_PACKAGE_FILE_COUNT: usize = 45;
+pub const SPEC_PACKAGE_FILE_COUNT: usize = 47;
 /// Schemas per language (English and Chinese are paired).
 pub const SPEC_SCHEMAS_PER_LANGUAGE: usize = 18;
 
@@ -133,6 +137,8 @@ pub struct SpecPin {
     pub archive_sha256: String,
     pub manifest_sha256: String,
     pub imported_file_count: usize,
+    pub authored_file_count: usize,
+    pub public_file_count: usize,
     pub package_file_count: usize,
     pub schemas_per_language: usize,
 }
@@ -152,6 +158,8 @@ impl SpecPin {
             archive_sha256: SPEC_ARCHIVE_SHA256.to_owned(),
             manifest_sha256: SPEC_MANIFEST_SHA256.to_owned(),
             imported_file_count: SPEC_IMPORTED_FILE_COUNT,
+            authored_file_count: SPEC_AUTHORED_FILE_COUNT,
+            public_file_count: SPEC_PUBLIC_FILE_COUNT,
             package_file_count: SPEC_PACKAGE_FILE_COUNT,
             schemas_per_language: SPEC_SCHEMAS_PER_LANGUAGE,
         }
@@ -212,6 +220,8 @@ pub struct SpecManifestCounts {
     pub languages: Vec<String>,
     pub methodologies: usize,
     pub imported_assets: usize,
+    #[serde(default)]
+    pub authored_assets: usize,
     pub package_metadata: usize,
     pub files: usize,
     pub packaged_files: usize,
@@ -295,16 +305,16 @@ pub struct SpecReviewedBaseline {
 pub struct SpecCandidate {
     pub manifest: SpecManifest,
     pub manifest_bytes: Vec<u8>,
-    /// Imported public assets in repository-relative path order.
+    /// Public runtime assets in repository-relative path order.
     pub assets: BTreeMap<String, Vec<u8>>,
     /// Digest of the archive the candidate was read from, when one was read.
     pub archive_sha256: Option<String>,
-    /// Canonical digest of the imported public subset.
+    /// Canonical digest of the complete public runtime subset.
     pub public_assets_sha256: String,
 }
 
 impl SpecCandidate {
-    /// Imported asset paths in deterministic order.
+    /// Public runtime asset paths in deterministic order.
     #[must_use]
     pub fn asset_paths(&self) -> Vec<&str> {
         self.assets.keys().map(String::as_str).collect()
@@ -509,6 +519,11 @@ fn validate_manifest(manifest: &SpecManifest, pin: &SpecPin) -> Result<(), Asset
             manifest.asset_root
         )));
     }
+    validate_manifest_counts(manifest, pin)?;
+    validate_manifest_files(&manifest.files)
+}
+
+fn validate_manifest_counts(manifest: &SpecManifest, pin: &SpecPin) -> Result<(), AssetError> {
     if manifest.counts.files != manifest.files.len() {
         return Err(AssetError::SpecInvalid(format!(
             "spec manifest counts.files {} disagrees with {} bound files",
@@ -534,7 +549,17 @@ fn validate_manifest(manifest: &SpecManifest, pin: &SpecPin) -> Result<(), Asset
             manifest.counts.package_metadata
         )));
     }
-    if manifest.counts.imported_assets + manifest.counts.package_metadata != manifest.counts.files {
+    if manifest.counts.authored_assets != pin.authored_file_count {
+        return Err(AssetError::SpecInvalid(format!(
+            "spec manifest declares {} authored assets; the pin declares {}",
+            manifest.counts.authored_assets, pin.authored_file_count
+        )));
+    }
+    if manifest.counts.imported_assets
+        + manifest.counts.authored_assets
+        + manifest.counts.package_metadata
+        != manifest.counts.files
+    {
         return Err(AssetError::SpecInvalid(
             "spec manifest counts do not partition its bound files".to_owned(),
         ));
@@ -559,7 +584,7 @@ fn validate_manifest(manifest: &SpecManifest, pin: &SpecPin) -> Result<(), Asset
             SPEC_METHODOLOGY_PATHS.len()
         )));
     }
-    validate_manifest_files(&manifest.files)
+    Ok(())
 }
 
 /// Every bound file must have a safe path, a known origin, and valid digests.
@@ -627,7 +652,7 @@ pub fn imported_paths(manifest: &SpecManifest) -> Result<BTreeSet<String>, Asset
     Ok(imported)
 }
 
-/// Confirm the imported subset is exactly the reviewed public specification.
+/// Confirm the imported and authored runtime subset is exactly the reviewed public specification.
 ///
 /// The public subset is 36 schemas (18 English plus 18 Chinese), 2 shared
 /// methodology documents, and the paired `schema.lock.json`. Anything else in
@@ -645,9 +670,27 @@ pub fn validate_public_subset(
         )));
     }
 
+    let public: BTreeSet<String> = manifest
+        .files
+        .iter()
+        .map(|file| file.path.clone())
+        .filter(|path| {
+            path.starts_with("assets/tidas/schemas/")
+                || path.starts_with("assets/tidas/schemas_zh/")
+                || SPEC_METHODOLOGY_PATHS.contains(&path.as_str())
+                || path == "assets/tidas/schema.lock.json"
+        })
+        .collect();
+    if public.len() != pin.public_file_count {
+        return Err(AssetError::SpecInvalid(format!(
+            "the candidate carries {} public assets; the pin declares {}",
+            public.len(),
+            pin.public_file_count
+        )));
+    }
     let mut en = 0_usize;
     let mut zh = 0_usize;
-    for path in &imported {
+    for path in &public {
         if path.starts_with("assets/tidas/schemas/") {
             en += 1;
         } else if path.starts_with("assets/tidas/schemas_zh/") {
@@ -666,7 +709,7 @@ pub fn validate_public_subset(
             pin.schemas_per_language
         )));
     }
-    if imported.len() != 2 * pin.schemas_per_language + SPEC_METHODOLOGY_PATHS.len() + 1 {
+    if public.len() != 2 * pin.schemas_per_language + SPEC_METHODOLOGY_PATHS.len() + 1 {
         return Err(AssetError::SpecInvalid(
             "the candidate's public subset is not 2 schema sets, the shared methodologies, and the paired lock"
                 .to_owned(),
@@ -679,13 +722,13 @@ pub fn validate_public_subset(
         "assets/tidas/methodologies/runtime_rulesets.schema.json",
         "assets/tidas/methodologies/elementary_flow_taxonomy_extension.v1.json",
     ] {
-        if imported.contains(excluded) {
+        if public.contains(excluded) {
             return Err(AssetError::SpecInvalid(format!(
                 "{excluded} is tools-owned and must not be imported from the public specification"
             )));
         }
     }
-    Ok(imported)
+    Ok(public)
 }
 
 /// Canonical digest of a set of `path -> sha256` pairs.
@@ -928,7 +971,7 @@ pub fn validate_candidate(
         });
     }
     let manifest = parse_manifest(manifest_bytes, pin)?;
-    let imported = validate_public_subset(&manifest, pin)?;
+    let public = validate_public_subset(&manifest, pin)?;
 
     if all_files.len() != manifest.files.len()
         || all_files.len() + 1 != manifest.counts.packaged_files
@@ -966,7 +1009,7 @@ pub fn validate_candidate(
                 file.path, file.content_sha256
             )));
         }
-        if imported.contains(&file.path) {
+        if public.contains(&file.path) {
             assets.insert(file.path.clone(), bytes.clone());
         }
         shipped.insert(file.path.clone(), digest);
@@ -979,11 +1022,11 @@ pub fn validate_candidate(
             )));
         }
     }
-    if assets.len() != pin.imported_file_count {
+    if assets.len() != pin.public_file_count {
         return Err(AssetError::SpecInvalid(format!(
             "the candidate yielded {} public assets; the pin declares {}",
             assets.len(),
-            pin.imported_file_count
+            pin.public_file_count
         )));
     }
 
@@ -1072,7 +1115,7 @@ pub fn check_repository_public_copy(
         });
     }
     let manifest = parse_manifest(&manifest_bytes, pin)?;
-    let imported = validate_public_subset(&manifest, pin)?;
+    let public = validate_public_subset(&manifest, pin)?;
 
     // Only the public subset lives in this repository. The candidate's own
     // metadata (its README, licence, package.json, import manifest, and
@@ -1080,7 +1123,7 @@ pub fn check_repository_public_copy(
     // here, so it is never expected on disk.
     let mut repository_files = BTreeMap::new();
     for file in &manifest.files {
-        if !imported.contains(&file.path) {
+        if !public.contains(&file.path) {
             continue;
         }
         let absolute = root.join(&file.path);
@@ -1095,11 +1138,11 @@ pub fn check_repository_public_copy(
         }
         repository_files.insert(file.path.clone(), bytes);
     }
-    if repository_files.len() != pin.imported_file_count {
+    if repository_files.len() != pin.public_file_count {
         return Err(AssetError::SpecInvalid(format!(
             "the repository holds {} public assets; the pin declares {}",
             repository_files.len(),
-            pin.imported_file_count
+            pin.public_file_count
         )));
     }
 
@@ -1172,7 +1215,7 @@ pub fn check_repository_public_copy(
         version: manifest.spec_version.clone(),
         spec_revision: pin.revision.clone(),
         imported_source_commit: manifest.source.commit.clone(),
-        asset_count: imported.len(),
+        asset_count: public.len(),
         archive_verified,
     })
 }
@@ -1188,21 +1231,20 @@ pub struct SpecProvenance {
     pub spec_repository: String,
     /// Reviewed specification-repository revision the qualified archive came from.
     pub spec_revision: String,
-    /// Tools repository the extracted public assets came from.
+    /// Tools repository the imported subset came from.
     pub imported_source_repository: String,
-    /// Tools commit the extracted public assets came from.
+    /// Tools commit the imported subset came from.
     pub imported_source_commit: String,
     pub archive_file: String,
     pub archive_sha256: String,
     pub manifest_path: String,
     pub manifest_sha256: String,
     pub imported_file_count: usize,
-    /// Canonical digest of the imported public subset.
+    /// Canonical digest of the complete 39-file public runtime subset.
     ///
-    /// The candidate computes this same value over the same 39 paths and
-    /// digests in its own `reviewed-baseline.json` (`packageFilesSha256`) with a
-    /// different implementation, so recomputing it here is an offline parity
-    /// check of the canonical-JSON encoding rather than a restatement.
+    /// This includes the five public assets authored or derived by the
+    /// specification repository, so it intentionally differs from the
+    /// reviewed baseline digest over the 34 historical toolkit imports.
     pub public_assets_sha256: String,
 }
 
@@ -1254,11 +1296,8 @@ impl SpecProvenance {
                 self.public_assets_sha256
             )));
         }
-        let expected = Self::for_candidate(
-            pin,
-            pin.imported_file_count,
-            public_assets_sha256.to_owned(),
-        );
+        let expected =
+            Self::for_candidate(pin, pin.public_file_count, public_assets_sha256.to_owned());
         if self != &expected {
             return Err(AssetError::SpecInvalid(format!(
                 "{SPEC_PROVENANCE_PATH} does not record the pinned qualified candidate"

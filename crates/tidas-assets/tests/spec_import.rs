@@ -259,6 +259,8 @@ fn synthetic_with(overrides: &[(&str, &[u8])]) -> Synthetic {
         archive_sha256: sha256(&archive),
         manifest_sha256: sha256(&manifest_bytes),
         imported_file_count: 39,
+        authored_file_count: 0,
+        public_file_count: 39,
         package_file_count: 45,
         schemas_per_language: SCHEMAS,
     };
@@ -1157,18 +1159,20 @@ fn a_repository_copy_bound_to_a_different_candidate_fails_closed() {
 #[test]
 fn committed_pin_binds_the_qualified_candidate_identity() {
     let pin = SpecPin::qualified_candidate();
-    assert_eq!(pin.version, "0.1.0");
-    assert_eq!(pin.archive_file, "tiangong-lca-tidas-spec-0.1.0.tgz");
+    assert_eq!(pin.version, "0.2.0");
+    assert_eq!(pin.archive_file, "tiangong-lca-tidas-spec-0.2.0.tgz");
     assert_eq!(
         pin.archive_sha256,
-        "921a0ffa0d3703bc2d9bd8a5bbb02d327be7746177487af8245ac2788a7cf91e"
+        "45da9de790ffcdadd1984ffc3544c67a1503c0947470a629e8252aed19100228"
     );
     assert_eq!(
         pin.manifest_sha256,
-        "646699afaf5c3bdfa6ccfe5153b11d6978ee62227fdace19f3b7715b59c50010"
+        "4677b9cf864326be9d430bf9760c754c4c0c1905d90e62c161655a159fd758c7"
     );
-    assert_eq!(pin.imported_file_count, 39);
-    assert_eq!(pin.package_file_count, 45);
+    assert_eq!(pin.imported_file_count, 34);
+    assert_eq!(pin.authored_file_count, 7);
+    assert_eq!(pin.public_file_count, 39);
+    assert_eq!(pin.package_file_count, 47);
     assert_eq!(pin.schemas_per_language, 18);
 }
 
@@ -1208,7 +1212,7 @@ fn the_committed_public_copy_matches_the_pinned_manifest() {
         serde_json::from_slice(&fs::read(root.join("assets/spec/spec-pin.json")).unwrap()).unwrap();
     assert_eq!(
         provenance["publicAssetsSha256"],
-        "c562cce28ebe46e843fd6ea6b4d3f550663e4c6ce6616d09f1e0e62b87a641f4"
+        "b23252b293e2e584fbbd5d8ce72fce4dd575d9facdcb2462bcb15ad3724b2391"
     );
 }
 

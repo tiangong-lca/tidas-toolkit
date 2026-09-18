@@ -1274,6 +1274,8 @@ mod tests {
             archive_sha256: hex(&archive),
             manifest_sha256: hex(&manifest),
             imported_file_count: 39,
+            authored_file_count: 0,
+            public_file_count: 39,
             package_file_count: 45,
             schemas_per_language: SPEC_SCHEMAS_PER_LANGUAGE,
         };

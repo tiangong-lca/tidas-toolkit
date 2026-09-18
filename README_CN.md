@@ -190,7 +190,7 @@ cargo test --locked --workspace --all-targets
 
 有意修改 schema 或可执行资产后，使用 `cargo run -p tidas-assets --bin tidas-asset-lock -- write` 依次更新两类锁，评审全部差异后重新运行门禁。领域与大包验证见 [验证指南](docs/agents/repo-validation.md)。
 
-36 个公共 schema、2 份共享 methodology 文档及 `schema.lock.json` 仍是已资格化的 0.1.0 公共规范副本。W9 另外在 `assets/tidas/rules/` 以精确 commit/hash 固定经审查的公共规则候选；`runtime_profiles.v1.json` 只保存 toolkit 的 severity、phase、blocker、profile membership 与 5 条局部规则，`runtime_rulesets.json` 则是为 W11 兼容生成的组合投影。使用 `tidas-asset-lock public-rules-sync --source-root <EXACT_TIDAS_SPEC_CHECKOUT>` 重新生成，使用 `public-rules-check` 校验。该候选绑定不代表正式发布完成。
+36 个公共 schema、2 份共享 methodology 文档及 `schema.lock.json` 是经审查的 0.2.0 公共规范候选的精确副本：34 个资产保留 toolkit 导入来源，另有 5 个公共资产由 `tidas-spec` 编写或派生。W9 另外在 `assets/tidas/rules/` 以精确 commit/hash 固定经审查的公共规则候选；`runtime_profiles.v1.json` 只保存 toolkit 的 severity、phase、blocker、profile membership 与 5 条局部规则，`runtime_rulesets.json` 则是为 W11 兼容生成的组合投影。使用 `tidas-asset-lock public-rules-sync --source-root <EXACT_TIDAS_SPEC_CHECKOUT>` 重新生成，使用 `public-rules-check` 校验。该候选绑定不代表正式发布完成。
 
 Rust-only cutover 之前的实现只作为 Git 历史以及 `migration/final-python-line.json` 声明的不可变 tag 保留，不再是安装、执行、CI 或发布路径。
 

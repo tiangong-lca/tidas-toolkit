@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "8487862a82bb221ea7499f5a7c52fb379f87a60a"
-lastReviewedNote: "Reviewed Toolkit #207: immutable v0.3.1 request binds 8487862a82bb221ea7499f5a7c52fb379f87a60a, including merged import diagnostic metadata, one consistent version set and canonical notice fixtures. Preserve target ancestry on merge. Existing runtime validation, packaging and publication gates are unchanged."
+lastReviewedCommit: "9d3779d6de7b689aec1fc8fcb22cef67f46fc559"
+lastReviewedNote: "Reviewed for Toolkit #209: adopt the exact reviewed tidas-spec 0.2.0 candidate, including its 34 imported and five public authored assets; verify optional complete-review-report references in Process and LCIA Method while retaining strict validation when supplied. CLI behavior, package versions, and formal-release state are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -130,10 +130,13 @@ both.
 
 The public subset of that tree — 36 schemas, the two shared methodology
 documents, and the paired `schema.lock.json` — is a generated copy of the
-qualified public specification published by `tiangong-lca/tidas-spec`. Its
+reviewed 0.2.0 specification candidate published by `tiangong-lca/tidas-spec`. It
+contains 34 assets imported from the historical toolkit source and five public
+assets authored or derived in the specification repository. Its
 identity is Rust source in `crates/tidas-assets/src/spec_pin.rs`: package
-version, archive SHA-256, manifest SHA-256, and the tools commit the assets were
-extracted from. `tidas-asset-lock spec-import --archive <CANDIDATE>` validates
+version, archive SHA-256, manifest SHA-256, specification revision, and the
+tools commit from which the imported subset was extracted. `tidas-asset-lock
+spec-import --archive <CANDIDATE>` validates
 the archive, every declared file, the candidate's import manifest, and its
 reviewed baseline before staging, and publishes with rollback on failure;
 `tidas-asset-lock spec-check` proves the checked-in copy still matches and writes
@@ -150,6 +153,7 @@ Directory ownership is tracked explicitly: only directories the operation
 actually created are removed, deepest first and only while empty, so a
 pre-existing empty directory and every ancestor above the created chain survive
 a rollback.
+The pin is candidate qualification evidence, not a formal release claim.
 
 Import provenance lives under `assets/spec/` — the candidate manifest verbatim
 and a small pin record. That directory is deliberately outside the executable
