@@ -177,6 +177,16 @@ impl TidasValidator {
             issue
                 .context
                 .insert("schema_path".to_owned(), Value::String(schema_path));
+            if let ValidationErrorKind::Required { property } = error.kind()
+                && let Some(property) = property.as_str()
+            {
+                let bounded = bounded_text(property, MAX_LOCATION_BYTES);
+                issue.context.insert(
+                    "required_property".to_owned(),
+                    Value::String(bounded.value.clone()),
+                );
+                add_truncation_context("required_property", &bounded, &mut issue.context);
+            }
             add_instance_context(error.instance(), &mut issue.context);
             add_truncation_context("location", &bounded_location, &mut issue.context);
             add_truncation_context("diagnostic", &bounded_message, &mut issue.context);
@@ -398,6 +408,29 @@ mod tests {
         let catalog = SchemaCatalog::load().unwrap();
         for category in SUPPORTED_TIDAS_CATEGORIES {
             catalog.validator(category).unwrap();
+        }
+    }
+
+    #[test]
+    fn missing_review_fields_are_structured_errors_without_relaxing_validation() {
+        for (category, root) in [
+            (TidasCategory::Processes, "processDataSet"),
+            (TidasCategory::Lifecyclemodels, "lifeCycleModelDataSet"),
+        ] {
+            let validator = SchemaCatalog::load().unwrap().validator(category).unwrap();
+            let document = json!({root: {"modellingAndValidation": {}}});
+            let issues = validator
+                .issues(&document, "fixture.json")
+                .collect::<Vec<_>>();
+            for field in ["validation", "complianceDeclarations"] {
+                let issue = issues
+                    .iter()
+                    .find(|issue| issue.context.get("required_property") == Some(&json!(field)))
+                    .unwrap();
+                assert_eq!(issue.location, format!("{root}/modellingAndValidation"));
+                assert_eq!(issue.context["schema_keyword"], "required");
+                assert_eq!(serde_json::to_value(issue).unwrap()["severity"], "error");
+            }
         }
     }
 

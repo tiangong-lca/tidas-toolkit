@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
-lastReviewedNote: "Reviewed for W9: the ruleset command keeps its schema, IDs, ordering, policy and exit behavior while its catalog is composed from public definitions plus toolkit-owned profile policy."
+lastReviewedCommit: "d07a5460ad7d99f10afe391aff755f8c67b72854"
+lastReviewedNote: "Reviewed Toolkit #205: add bounded structured required_property diagnostic context without changing schemas, validation rules, severity, counts or command behavior. Worker #295 consumes exact metadata. Toolchain and test evidence are recorded in the task."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -383,7 +383,7 @@ protocol/profile and engine/asset handshake.
 
 Schema issue diagnostics never serialize the complete rejected JSON instance.
 Their human message is capped at 16 KiB and uses an instance placeholder;
-structured context carries the schema keyword/path, instance type, bounded
+structured context carries the schema keyword/path, a bounded `required_property` for required-field errors (plus truncation metadata when needed), instance type, bounded
 scalar preview or collection size, and SHA-256/original-byte metadata whenever
 text is truncated. This keeps each Worker-facing JSONL issue below the 1 MiB
 protocol frame ceiling without dropping the issue, changing its ordinal, or
@@ -426,3 +426,5 @@ Public CLI changes must prove:
 - migration parity fixtures whose semantics are sourced from the frozen Python
   oracle without preserving legacy command names or flag layouts
 - Rust 1.98.1 fmt, clippy, tests, and the four-platform CI matrix
+
+`required_property` is additive diagnostic context. Missing Process/LifecycleModel validation or complianceDeclarations still produces ordinary schema errors; downstream import-result filtering does not change this validator, its schemas, severities, counts or pass/fail rules.
