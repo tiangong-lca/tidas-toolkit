@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "d07a5460ad7d99f10afe391aff755f8c67b72854"
-lastReviewedNote: "Reviewed Toolkit #205: add bounded structured required_property diagnostic context without changing schemas, validation rules, severity, counts or command behavior. Worker #295 consumes exact metadata. Toolchain and test evidence are recorded in the task."
+lastReviewedCommit: "ba0fd9c09faffa0d391e3d40548db7fe6d873a62"
+lastReviewedNote: "Reviewed Toolkit #207: prepare the shared 0.3.1 release and exact internal crate requirements, including merged required_property metadata. External dependencies, rules, schemas, CLI contracts and all release gates remain unchanged; immutable publication follows a reviewed exact-target request."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

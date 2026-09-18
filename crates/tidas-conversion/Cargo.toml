@@ -19,13 +19,13 @@ serde_json = { workspace = true, features = ["arbitrary_precision", "preserve_or
 sha2.workspace = true
 tempfile.workspace = true
 thiserror.workspace = true
-tidas-assets = { version = "=0.3.0", path = "../.." }
-tidas-runtime = { version = "=0.3.0", path = "../tidas-runtime" }
+tidas-assets = { version = "=0.3.1", path = "../.." }
+tidas-runtime = { version = "=0.3.1", path = "../tidas-runtime" }
 walkdir.workspace = true
 
 [dev-dependencies]
 jsonschema.workspace = true
-tidas-validation = { version = "=0.3.0", path = "../tidas-validation" }
+tidas-validation = { version = "=0.3.1", path = "../tidas-validation" }
 
 [lints]
 workspace = true
