@@ -90,8 +90,15 @@ jobs:
         if: matrix.name == 'Linux x86_64'
         run: scripts/audit-rust-only.sh
 
+      - name: Check SDK dispatch path contract
+        if: matrix.name == 'Linux x86_64'
+        run: bash scripts/ci/test-dispatch-impact.sh
+
       - name: Check executable asset lock
         run: cargo run --locked -p tidas-assets --bin tidas-asset-lock -- check
+
+      - name: Check public-rule source and toolkit profile composition
+        run: cargo run --locked -p tidas-assets --bin tidas-asset-lock -- public-rules-check
 
       - name: Fetch the qualified public-specification candidate
         if: matrix.name == 'Linux x86_64'

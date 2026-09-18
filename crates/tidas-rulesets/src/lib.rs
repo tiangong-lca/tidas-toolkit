@@ -12,6 +12,12 @@ use tidas_assets::{AssetKind, bundled_asset};
 const RUNTIME_RULESETS_PATH: &str = "assets/tidas/methodologies/runtime_rulesets.json";
 const RUNTIME_RULESETS_SCHEMA_PATH: &str =
     "assets/tidas/methodologies/runtime_rulesets.schema.json";
+const RUNTIME_PROFILES_PATH: &str = "assets/tidas/methodologies/runtime_profiles.v1.json";
+const RUNTIME_PROFILES_SCHEMA_PATH: &str =
+    "assets/tidas/methodologies/runtime_profiles.v1.schema.json";
+const PUBLIC_RULES_PATH: &str = "assets/tidas/rules/public-rules.v1.json";
+const PUBLIC_RULES_SCHEMA_PATH: &str = "assets/tidas/rules/public-rules.v1.schema.json";
+const PUBLIC_RULES_SOURCE_PATH: &str = "assets/tidas/rules/public-rules.source.v1.json";
 pub const RULESET_DESCRIPTION_SCHEMA_V1: &str = "tidas.ruleset-description.v1";
 pub const METHODOLOGY_VALIDATION_REPORT_SCHEMA_V1: &str = "tidas.methodology-validation-report.v1";
 pub const RULESET_DESCRIPTION_JSON_SCHEMA_V1: &str = include_str!(concat!(
@@ -70,12 +76,16 @@ impl RulesetCatalog {
     pub fn load() -> Result<Self, RulesetError> {
         let metadata_asset = required_asset(RUNTIME_RULESETS_PATH)?;
         let schema_asset = required_asset(RUNTIME_RULESETS_SCHEMA_PATH)?;
-        let metadata: Value = serde_json::from_slice(metadata_asset.bytes)?;
+        let compatibility_metadata: Value = serde_json::from_slice(metadata_asset.bytes)?;
         let schema: Value = serde_json::from_slice(schema_asset.bytes)?;
         let validator = jsonschema::draft202012::new(&schema)
             .map_err(|error| RulesetError::SchemaCompile(error.to_string()))?;
-        if let Some(error) = validator.iter_errors(&metadata).next() {
+        if let Some(error) = validator.iter_errors(&compatibility_metadata).next() {
             return Err(RulesetError::SchemaValidation(error.to_string()));
+        }
+        let metadata = compose_runtime_catalog()?;
+        if metadata != compatibility_metadata {
+            return Err(RulesetError::CompatibilityProjectionDrift);
         }
 
         let rules = metadata
@@ -176,6 +186,176 @@ impl RulesetCatalog {
             })
             .collect())
     }
+}
+
+fn compose_runtime_catalog() -> Result<Value, RulesetError> {
+    let (public_rules, profile) = load_composition_inputs()?;
+    compose_runtime_values(&public_rules, &profile)
+}
+
+fn load_composition_inputs() -> Result<(Value, Value), RulesetError> {
+    let public_rules_asset = required_asset(PUBLIC_RULES_PATH)?;
+    let public_schema_asset = required_asset(PUBLIC_RULES_SCHEMA_PATH)?;
+    let source_identity: Value =
+        serde_json::from_slice(required_asset(PUBLIC_RULES_SOURCE_PATH)?.bytes)?;
+    verify_public_source_identity(
+        &source_identity,
+        public_rules_asset.bytes,
+        public_schema_asset.bytes,
+    )?;
+    let public_rules: Value = serde_json::from_slice(public_rules_asset.bytes)?;
+    let public_schema: Value = serde_json::from_slice(public_schema_asset.bytes)?;
+    let public_validator = jsonschema::draft7::new(&public_schema)
+        .map_err(|error| RulesetError::PublicSchemaCompile(error.to_string()))?;
+    if let Some(error) = public_validator.iter_errors(&public_rules).next() {
+        return Err(RulesetError::PublicSchemaValidation(error.to_string()));
+    }
+    let profile: Value = serde_json::from_slice(required_asset(RUNTIME_PROFILES_PATH)?.bytes)?;
+    let profile_schema: Value =
+        serde_json::from_slice(required_asset(RUNTIME_PROFILES_SCHEMA_PATH)?.bytes)?;
+    let profile_validator = jsonschema::draft202012::new(&profile_schema)
+        .map_err(|error| RulesetError::ProfileSchemaCompile(error.to_string()))?;
+    if let Some(error) = profile_validator.iter_errors(&profile).next() {
+        return Err(RulesetError::ProfileSchemaValidation(error.to_string()));
+    }
+    Ok((public_rules, profile))
+}
+
+fn compose_runtime_values(public_rules: &Value, profile: &Value) -> Result<Value, RulesetError> {
+    let public_by_id = values_by_id(public_rules, "rules", "public rule")?;
+    let policy_by_id = values_by_id(profile, "public_rule_policy", "public rule policy")?;
+    let local_by_id = values_by_id(profile, "local_rules", "local rule")?;
+    if public_by_id.keys().collect::<Vec<_>>() != policy_by_id.keys().collect::<Vec<_>>() {
+        return Err(RulesetError::PublicPolicyMismatch);
+    }
+    if public_by_id.keys().any(|id| local_by_id.contains_key(id)) {
+        return Err(RulesetError::PublicLocalOverlap);
+    }
+
+    let order = profile
+        .get("rule_order")
+        .and_then(Value::as_array)
+        .ok_or(RulesetError::MissingRuleOrder)?;
+    let mut seen = BTreeSet::new();
+    let mut rules = Vec::with_capacity(order.len());
+    for id_value in order {
+        let id = id_value.as_str().ok_or(RulesetError::InvalidRuleOrder)?;
+        if !seen.insert(id.to_owned()) {
+            return Err(RulesetError::DuplicateRuleOrder(id.to_owned()));
+        }
+        if let Some(definition) = public_by_id.get(id) {
+            let policy = policy_by_id
+                .get(id)
+                .expect("public definition/policy key equality was checked");
+            rules.push(serde_json::json!({
+                "id": id,
+                "dataset_type": required_member(definition, "dataset_type", id)?,
+                "summary": required_member(definition, "statement", id)?,
+                "severity": required_member(policy, "severity", id)?,
+                "phases": required_member(policy, "phases", id)?,
+                "default_blocker": required_member(policy, "default_blocker", id)?,
+                "field_paths": required_member(definition, "locations", id)?,
+                "source_rule_refs": required_member(definition, "source_refs", id)?,
+            }));
+        } else if let Some(local) = local_by_id.get(id) {
+            rules.push((*local).clone());
+        } else {
+            return Err(RulesetError::UnknownRuleOrder(id.to_owned()));
+        }
+    }
+    if seen.len() != public_by_id.len() + local_by_id.len() {
+        return Err(RulesetError::IncompleteRuleOrder);
+    }
+    let known: BTreeSet<&str> = seen.iter().map(String::as_str).collect();
+    let rulesets = profile
+        .get("rulesets")
+        .and_then(Value::as_array)
+        .ok_or(RulesetError::MissingRulesets)?;
+    for ruleset in rulesets {
+        let ruleset_id = required_id(ruleset, "ruleset")?;
+        for rule_id in ruleset
+            .get("rule_ids")
+            .and_then(Value::as_array)
+            .ok_or_else(|| RulesetError::MissingRuleIds(ruleset_id.clone()))?
+        {
+            let rule_id = rule_id
+                .as_str()
+                .ok_or_else(|| RulesetError::InvalidRuleId(ruleset_id.clone()))?;
+            if !known.contains(rule_id) {
+                return Err(RulesetError::UnknownRule {
+                    ruleset: ruleset_id,
+                    rule: rule_id.to_owned(),
+                });
+            }
+        }
+    }
+    Ok(serde_json::json!({
+        "$schema": "runtime_rulesets.schema.json",
+        "schema_version": 1,
+        "ruleset_version": required_member(profile, "ruleset_version", "runtime profile")?,
+        "purpose": "Compatibility projection composed from exact public definitions and toolkit-owned runtime profile policy.",
+        "source_assets": [
+            {"asset": "public-rules.v1.json", "kind": "public rule definitions"},
+            {"asset": "runtime_profiles.v1.json", "kind": "toolkit runtime profile policy"}
+        ],
+        "rulesets": rulesets,
+        "rules": rules,
+    }))
+}
+
+fn verify_public_source_identity(
+    identity: &Value,
+    index_bytes: &[u8],
+    schema_bytes: &[u8],
+) -> Result<(), RulesetError> {
+    for (field, expected) in [
+        ("index_sha256", digest_hex(&Sha256::digest(index_bytes))),
+        ("schema_sha256", digest_hex(&Sha256::digest(schema_bytes))),
+    ] {
+        if identity.get(field).and_then(Value::as_str) != Some(expected.as_str()) {
+            return Err(RulesetError::PublicSourceIdentity(field));
+        }
+    }
+    let commit = identity
+        .get("commit")
+        .and_then(Value::as_str)
+        .ok_or(RulesetError::PublicSourceIdentity("commit"))?;
+    if commit.len() != 40 || !commit.bytes().all(|byte| byte.is_ascii_hexdigit()) {
+        return Err(RulesetError::PublicSourceIdentity("commit"));
+    }
+    Ok(())
+}
+
+fn values_by_id<'a>(
+    root: &'a Value,
+    member: &'static str,
+    kind: &'static str,
+) -> Result<BTreeMap<String, &'a Value>, RulesetError> {
+    let values = root
+        .get(member)
+        .and_then(Value::as_array)
+        .ok_or(RulesetError::MissingCompositionMember(member))?;
+    let mut by_id = BTreeMap::new();
+    for value in values {
+        let id = required_id(value, kind)?;
+        if by_id.insert(id.clone(), value).is_some() {
+            return Err(RulesetError::DuplicateRule(id));
+        }
+    }
+    Ok(by_id)
+}
+
+fn required_member<'a>(
+    value: &'a Value,
+    member: &'static str,
+    id: &str,
+) -> Result<&'a Value, RulesetError> {
+    value
+        .get(member)
+        .ok_or_else(|| RulesetError::MissingComposedField {
+            id: id.to_owned(),
+            field: member,
+        })
 }
 
 fn validate_methodologies() -> Result<MethodologyValidationReportV1, RulesetError> {
@@ -375,7 +555,10 @@ fn normalize_path(path: &str) -> String {
 
 fn required_asset(path: &str) -> Result<tidas_assets::BundledAsset, RulesetError> {
     let asset = bundled_asset(path).ok_or_else(|| RulesetError::MissingAsset(path.to_owned()))?;
-    if asset.kind != AssetKind::RuntimeRuleset {
+    if !matches!(
+        asset.kind,
+        AssetKind::RuntimeRuleset | AssetKind::PublicRule
+    ) {
         return Err(RulesetError::UnexpectedAssetKind(path.to_owned()));
     }
     Ok(asset)
@@ -406,12 +589,42 @@ pub enum RulesetError {
     UnexpectedAssetKind(String),
     #[error("runtime ruleset schema failed to compile: {0}")]
     SchemaCompile(String),
+    #[error("public rule schema failed to compile: {0}")]
+    PublicSchemaCompile(String),
+    #[error("public rule index failed schema validation: {0}")]
+    PublicSchemaValidation(String),
+    #[error("runtime profile schema failed to compile: {0}")]
+    ProfileSchemaCompile(String),
+    #[error("runtime profile failed schema validation: {0}")]
+    ProfileSchemaValidation(String),
+    #[error("public rule source identity is invalid or stale for {0}")]
+    PublicSourceIdentity(&'static str),
     #[error("runtime ruleset metadata failed schema validation: {0}")]
     SchemaValidation(String),
     #[error("runtime ruleset metadata has no rules array")]
     MissingRules,
     #[error("runtime ruleset metadata has no rulesets array")]
     MissingRulesets,
+    #[error("runtime profile has no rule_order array")]
+    MissingRuleOrder,
+    #[error("runtime profile rule_order contains a non-string value")]
+    InvalidRuleOrder,
+    #[error("runtime profile rule_order contains duplicate rule {0}")]
+    DuplicateRuleOrder(String),
+    #[error("runtime profile rule_order references unknown rule {0}")]
+    UnknownRuleOrder(String),
+    #[error("runtime profile rule_order does not cover every public and local rule exactly once")]
+    IncompleteRuleOrder,
+    #[error("runtime composition is missing required member {0}")]
+    MissingCompositionMember(&'static str),
+    #[error("rule {id} is missing composed field {field}")]
+    MissingComposedField { id: String, field: &'static str },
+    #[error("public rule definitions and toolkit policy do not have identical IDs")]
+    PublicPolicyMismatch,
+    #[error("a rule cannot be both public and toolkit-local")]
+    PublicLocalOverlap,
+    #[error("the checked-in runtime compatibility projection differs from the composed catalog")]
+    CompatibilityProjectionDrift,
     #[error("runtime ruleset metadata has no ruleset_version")]
     MissingVersion,
     #[error("{0} entry has no non-empty id")]

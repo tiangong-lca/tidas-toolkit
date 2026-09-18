@@ -24,9 +24,9 @@ checkPaths:
   - scripts/validate-release-request.sh
   - scripts/sync-rust-package-assets.sh
   - .github/workflows/**
-lastReviewedAt: 2026-09-16
-lastReviewedCommit: a70f696587a7f062c254eac1d6da8a7d62e1a7ad
-lastReviewedNote: "W5 narrows SDK dispatch to tools-owned runtime rulesets and taxonomy assets; public schemas and shared methodologies are notified by tidas-spec. Exact commit and package selection behavior remains unchanged."
+lastReviewedAt: 2026-09-18
+lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
+lastReviewedNote: "W9 composes exact W8 public definitions with toolkit-owned runtime profiles while retaining the mixed catalog only as a W11 compatibility projection."
 related:
   - AGENTS.md
   - .docpact/config.yaml
@@ -215,7 +215,7 @@ cargo test --locked --workspace --all-targets
 
 Use `cargo run -p tidas-assets --bin tidas-asset-lock -- write` after an intentional schema or executable-asset change, review both lock diffs, and then rerun the checks. See [the validation guide](docs/agents/repo-validation.md) for domain and large-package proof.
 
-The 36 public schemas, the two shared methodology documents, and the paired `schema.lock.json` are a generated copy of the qualified public specification published by `tiangong-lca/tidas-spec`. They are pinned to one immutable candidate by its archive and manifest SHA-256 in `crates/tidas-assets/src/spec_pin.rs`; the candidate manifest and the import provenance record are kept under `assets/spec/`. Do not hand-edit a public schema or methodology. Regenerate the copy with `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>` and prove it with `tidas-asset-lock spec-check`, which CI runs against the candidate fetched from its exact source commit. Tools-owned methodology inputs (`runtime_rulesets.json`, `runtime_rulesets.schema.json`, and the elementary taxonomy extension), the eILCD schemas and stylesheets, and the validation indexes stay owned here and are never replaced by that import. The SDK refresh workflow sends `tidas_tools_changed` only for those three tools-owned files; public-specification changes are notified by `tidas_spec_released` from `tidas-spec`.
+The 36 public schemas, two shared methodology documents, and paired `schema.lock.json` are the qualified 0.1.0 public-spec copy. W9 additionally pins the reviewed public-rule candidate under `assets/tidas/rules/` by exact commit and hashes. `runtime_profiles.v1.json` owns toolkit severity, phases, blocker defaults, profile membership, and five local rules; `runtime_rulesets.json` is generated from those inputs as a W11 compatibility projection. Use `tidas-asset-lock public-rules-sync --source-root <EXACT_TIDAS_SPEC_CHECKOUT>` to regenerate and `public-rules-check` to verify. This candidate binding is not a formal release claim. The legacy SDK refresh remains limited to its three exact compatibility/taxonomy paths.
 
 The implementation that preceded the Rust-only cutover is immutable historical evidence in Git history and the tag declared by `migration/final-python-line.json`. It is not an installation, execution, CI, or release path.
 

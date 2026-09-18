@@ -1,9 +1,9 @@
 version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
-lastReviewedAt: "2026-09-16"
-lastReviewedCommit: "2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b"
-lastReviewedNote: "W5 narrows SDK dispatch to three tools-owned runtime assets and adds offline classifier coverage for tools-only, spec-owned-only, mixed, and unrelated changes. Public-spec ownership and existing exact commit payload guards remain unchanged."
+lastReviewedAt: "2026-09-18"
+lastReviewedCommit: "4ad5967b1174e194f00277dcb27d9962ec3db6cc"
+lastReviewedNote: "W9 routes exact public-rule candidate assets, toolkit-owned runtime profile policy, Rust composition/check tooling, and the retained W11 compatibility projection through existing asset/runtime/automation governance."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
 # and ownership/routing/validation governance is otherwise unchanged.
@@ -56,6 +56,7 @@ ownership:
           - assets/tidas/schemas_zh/**
           - assets/tidas/methodologies/tidas_flows.yaml
           - assets/tidas/methodologies/tidas_processes.yaml
+          - assets/tidas/rules/**
           - assets/tidas/schema.lock.json
           - crates/tidas-assets/src/spec_pin.rs
           - crates/tidas-assets/src/spec_import.rs

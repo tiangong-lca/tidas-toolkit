@@ -54,19 +54,12 @@ jobs:
             exit 0
           fi
 
-          IMPACT_JSON="$(printf '%s\n' "$CHANGED_FILES" | python3 scripts/ci/detect-sdk-impact.py)"
-          ANY_CHANGED="$(jq -r '.any_changed' <<<"$IMPACT_JSON")"
-          PACKAGES_JSON="$(jq -r '.packages_json' <<<"$IMPACT_JSON")"
-          TYPESCRIPT_BUMP="$(jq -r '.typescript_bump' <<<"$IMPACT_JSON")"
-          PYTHON_BUMP="$(jq -r '.python_bump' <<<"$IMPACT_JSON")"
-          REASON="$(jq -r '.reason' <<<"$IMPACT_JSON")"
-
           {
-            echo "any_changed=$ANY_CHANGED"
-            echo "packages_json=$PACKAGES_JSON"
-            echo "typescript_bump=$TYPESCRIPT_BUMP"
-            echo "python_bump=$PYTHON_BUMP"
-            echo "reason=$REASON"
+            echo "any_changed=true"
+            echo 'packages_json=["typescript"]'
+            echo "typescript_bump=patch"
+            echo "python_bump=patch"
+            echo "reason=tools-owned runtime asset update"
             echo "changed_files<<EOF"
             printf '%s\n' "$CHANGED_FILES"
             echo "EOF"

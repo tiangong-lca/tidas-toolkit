@@ -48,7 +48,12 @@ STUB
 cat > "$fixture/bin/cargo" <<'STUB'
 #!/bin/sh
 case "$1" in
-  run) step=asset-lock ;;
+  run)
+    case " $* " in
+      *" public-rules-check "*) step=public-rules ;;
+      *) step=asset-lock ;;
+    esac
+    ;;
   fmt) step=fmt ;;
   clippy) step=clippy ;;
   test) step=test ;;
@@ -107,6 +112,7 @@ expected_gate_trace() {
   printf 'docpact-gate|2|%s|%s\n' "$remote_name" "$remote_path"
   printf 'audit-rust-only|0\n'
   printf 'asset-lock|8|run|--locked|-p|tidas-assets|--bin|tidas-asset-lock|--|check\n'
+  printf 'public-rules|8|run|--locked|-p|tidas-assets|--bin|tidas-asset-lock|--|public-rules-check\n'
   printf 'fmt|3|fmt|--all|--check\n'
   printf 'clippy|7|clippy|--locked|--workspace|--all-targets|--|-D|warnings\n'
   printf 'test|4|test|--locked|--workspace|--all-targets\n'
@@ -243,6 +249,8 @@ expect_failure "Docpact failure exits 64 and stops the gate" \
   "$fixture/code-update" docpact-gate 64 "FIXTURE_DOCPACT_EXIT=64"
 expect_failure "audit failure exits 9 and stops the gate" \
   "$fixture/code-update" audit-rust-only 9 "FIXTURE_AUDIT_EXIT=9"
+expect_failure "public-rule composition failure exits 7 and stops the gate" \
+  "$fixture/code-update" public-rules 7 "FIXTURE_FAIL_STEP=public-rules FIXTURE_FAIL_EXIT=7"
 expect_failure "intermediate Cargo failure exits 7 and stops the gate" \
   "$fixture/code-update" fmt 7 "FIXTURE_FAIL_STEP=fmt FIXTURE_FAIL_EXIT=7"
 expect_failure "final Cargo failure exits 7" \

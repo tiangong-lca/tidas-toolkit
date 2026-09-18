@@ -27,9 +27,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-16"
-lastReviewedCommit: 2bdb6b2fdbd2a8862e7cb36d5eb4ff18ed28530b
-lastReviewedNote: "Reviewed for Toolkit #197 and #198: the qualified public-spec import remains pinned outside executable runtime assets, while the deletion-only OID predicate uses explicit lowercase ASCII characters. W2 local gates and the 43-case deletion-only trace passed; final merged-chain review records both changes."
+lastReviewedAt: "2026-09-18"
+lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
+lastReviewedNote: "Reviewed for W9: public definitions, toolkit runtime policy, and the generated legacy projection are separate integrity-bound layers composed by tidas-rulesets."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -57,7 +57,7 @@ alternate executable or runtime fallback is part of the product.
 | `crates/tidas-export` | repeatable-read PostgreSQL extraction, S3-compatible streaming, deterministic ZIP |
 | `crates/tidas-validation` | offline TIDAS JSON and ILCD/XSD validation, semantic indexes, batch protocol |
 | `crates/tidas-release` | exact closure, schema-ordered ILCD derivation, native gates, deterministic release packages |
-| `crates/tidas-rulesets` | methodology catalog validation, profile selection, fingerprinting |
+| `crates/tidas-rulesets` | public-definition/profile-policy composition, methodology catalog validation, profile selection, fingerprinting |
 | `crates/tidas-references` | side-effect-free reference extraction |
 | `crates/tidas-xml` | streaming XML inspection and serialized native XSD/XSLT boundary |
 | `crates/tidas-dist` | internal deterministic archive/checksum/smoke/SBOM/package-manager tooling |
@@ -161,7 +161,7 @@ and reviewed as one. The tools-owned runtime rulesets, the elementary taxonomy
 extension, eILCD inputs, and validation indexes never come from the public
 specification.
 
-Only tools-owned runtime ruleset/taxonomy changes may dispatch `tidas-sdk`
+Only tools-owned legacy runtime projection/taxonomy changes may dispatch `tidas-sdk`
 refresh automation. Generated SDK code remains downstream and never becomes
 source of truth here.
 The canonical sender is `tiangong-lca/tidas-toolkit` (repository ID
@@ -174,6 +174,15 @@ payload retain their existing contract. The path filter is limited to
 `tidas-spec` as `tidas_spec_released`. Token authorization must cover the
 renamed downstream repository. Source/metadata-only changes do not dispatch
 a generated SDK refresh.
+
+W9 splits the catalog into three explicit layers. The exact candidate-bound
+`assets/tidas/rules/public-rules.v1.json` supplies normative public definitions;
+`runtime_profiles.v1.json` supplies toolkit-only execution policy and five
+local rules; `runtime_rulesets.json` is a checked compatibility projection kept
+for W11 consumers. `tidas-rulesets` composes the first two at load time and
+fails if the result differs from the projection. `tidas-asset-lock
+public-rules-check` independently verifies source identity, byte hashes,
+references, and deterministic projection.
 
 ## XML/XSD/XSLT portability
 

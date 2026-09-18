@@ -45,6 +45,7 @@ pub enum AssetKind {
     JsonSchema,
     ChineseJsonSchema,
     Methodology,
+    PublicRule,
     RuntimeRuleset,
     ValidationIndex,
     Xsd,
@@ -276,11 +277,16 @@ fn classify(path: &str) -> Result<AssetKind, AssetError> {
         return Ok(AssetKind::JsonSchema);
     }
     if path.contains("/methodologies/") {
-        return Ok(if path.contains("runtime_rulesets") {
-            AssetKind::RuntimeRuleset
-        } else {
-            AssetKind::Methodology
-        });
+        return Ok(
+            if path.contains("runtime_rulesets") || path.contains("runtime_profiles") {
+                AssetKind::RuntimeRuleset
+            } else {
+                AssetKind::Methodology
+            },
+        );
+    }
+    if path.contains("/rules/") && has_extension(path, "json") {
+        return Ok(AssetKind::PublicRule);
     }
     if has_extension(path, "xsd") {
         return Ok(AssetKind::Xsd);
@@ -333,6 +339,8 @@ pub enum AssetError {
     SchemaLock(String),
     #[error("public specification input is invalid: {0}")]
     SpecInvalid(String),
+    #[error("public-rule profile composition is invalid: {0}")]
+    PublicRules(String),
     #[error("public specification archive digest mismatch: expected {expected}, found {found}")]
     SpecArchiveDigest { expected: String, found: String },
     #[error("public specification manifest digest mismatch: expected {expected}, found {found}")]
@@ -384,6 +392,7 @@ mod tests {
                 AssetKind::JsonSchema,
                 AssetKind::ChineseJsonSchema,
                 AssetKind::Methodology,
+                AssetKind::PublicRule,
                 AssetKind::RuntimeRuleset,
                 AssetKind::ValidationIndex,
                 AssetKind::Xsd,

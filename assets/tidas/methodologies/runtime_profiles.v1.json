@@ -1,0 +1,344 @@
+{
+  "schema_version": "tidas.runtime-profiles.v1",
+  "ruleset_version": "2026.05.23",
+  "public_rules_source": "assets/tidas/rules/public-rules.source.v1.json",
+  "rule_order": [
+    "tidas.process.name.base-name.align-reference-flow",
+    "tidas.process.name.qualifiers.structured",
+    "tidas.process.quantitative-reference.required",
+    "tidas.process.exchange.amount.required",
+    "tidas.process.evidence.field-bindings.required",
+    "tidas.process.version.format",
+    "tidas.process.identity.duplicate-fingerprint.block",
+    "tidas.flow.name.base-name.technical",
+    "tidas.flow.type.required",
+    "tidas.flow.reference-property-unit.required",
+    "tidas.flow.flow-property.mean-value.positive",
+    "tidas.flow.classification.elementary.valid",
+    "tidas.flow.evidence.field-bindings.required",
+    "tidas.flow.identity.alias-equivalence.review"
+  ],
+  "rulesets": [
+    {
+      "id": "process-authoring/strict",
+      "version": "1",
+      "dataset_type": "process",
+      "phase": "authoring",
+      "rule_ids": [
+        "tidas.process.name.base-name.align-reference-flow",
+        "tidas.process.name.qualifiers.structured",
+        "tidas.process.quantitative-reference.required",
+        "tidas.process.exchange.amount.required",
+        "tidas.process.evidence.field-bindings.required"
+      ]
+    },
+    {
+      "id": "process-authoring/repair",
+      "version": "1",
+      "dataset_type": "process",
+      "phase": "repair",
+      "rule_ids": [
+        "tidas.process.quantitative-reference.required",
+        "tidas.process.exchange.amount.required",
+        "tidas.process.evidence.field-bindings.required",
+        "tidas.process.version.format"
+      ]
+    },
+    {
+      "id": "process-publish/default",
+      "version": "1",
+      "dataset_type": "process",
+      "phase": "publish",
+      "rule_ids": [
+        "tidas.process.name.base-name.align-reference-flow",
+        "tidas.process.quantitative-reference.required",
+        "tidas.process.exchange.amount.required",
+        "tidas.process.evidence.field-bindings.required",
+        "tidas.process.version.format"
+      ]
+    },
+    {
+      "id": "process-dedup/default",
+      "version": "1",
+      "dataset_type": "process",
+      "phase": "identity",
+      "rule_ids": [
+        "tidas.process.identity.duplicate-fingerprint.block"
+      ]
+    },
+    {
+      "id": "flow-authoring/strict",
+      "version": "1",
+      "dataset_type": "flow",
+      "phase": "authoring",
+      "rule_ids": [
+        "tidas.flow.name.base-name.technical",
+        "tidas.flow.type.required",
+        "tidas.flow.reference-property-unit.required",
+        "tidas.flow.flow-property.mean-value.positive",
+        "tidas.flow.evidence.field-bindings.required"
+      ]
+    },
+    {
+      "id": "flow-publish/default",
+      "version": "1",
+      "dataset_type": "flow",
+      "phase": "publish",
+      "rule_ids": [
+        "tidas.flow.name.base-name.technical",
+        "tidas.flow.type.required",
+        "tidas.flow.reference-property-unit.required",
+        "tidas.flow.classification.elementary.valid",
+        "tidas.flow.flow-property.mean-value.positive",
+        "tidas.flow.evidence.field-bindings.required"
+      ]
+    },
+    {
+      "id": "flow-dedup/default",
+      "version": "1",
+      "dataset_type": "flow",
+      "phase": "identity",
+      "rule_ids": [
+        "tidas.flow.identity.alias-equivalence.review"
+      ]
+    }
+  ],
+  "public_rule_policy": [
+    {
+      "id": "tidas.process.name.base-name.align-reference-flow",
+      "severity": "blocker",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build",
+        "save-draft",
+        "publish-run"
+      ],
+      "default_blocker": true
+    },
+    {
+      "id": "tidas.process.name.qualifiers.structured",
+      "severity": "warning",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build"
+      ],
+      "default_blocker": false
+    },
+    {
+      "id": "tidas.process.exchange.amount.required",
+      "severity": "blocker",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build",
+        "save-draft",
+        "publish-run"
+      ],
+      "default_blocker": true
+    },
+    {
+      "id": "tidas.process.version.format",
+      "severity": "blocker",
+      "phases": [
+        "save-draft",
+        "publish-build",
+        "publish-run"
+      ],
+      "default_blocker": true
+    },
+    {
+      "id": "tidas.flow.name.base-name.technical",
+      "severity": "blocker",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build",
+        "save-draft",
+        "publish-run"
+      ],
+      "default_blocker": true
+    },
+    {
+      "id": "tidas.flow.type.required",
+      "severity": "blocker",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build",
+        "save-draft",
+        "publish-run"
+      ],
+      "default_blocker": true
+    },
+    {
+      "id": "tidas.flow.reference-property-unit.required",
+      "severity": "blocker",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build",
+        "save-draft",
+        "publish-run"
+      ],
+      "default_blocker": true
+    },
+    {
+      "id": "tidas.flow.flow-property.mean-value.positive",
+      "severity": "blocker",
+      "phases": [
+        "materialize",
+        "publish-build",
+        "save-draft",
+        "publish-run"
+      ],
+      "default_blocker": true
+    },
+    {
+      "id": "tidas.flow.classification.elementary.valid",
+      "severity": "blocker",
+      "phases": [
+        "materialize",
+        "publish-build",
+        "save-draft",
+        "publish-run"
+      ],
+      "default_blocker": true
+    }
+  ],
+  "local_rules": [
+    {
+      "id": "tidas.process.quantitative-reference.required",
+      "dataset_type": "process",
+      "summary": "A process must identify a quantitative reference exchange or reference flow before authoring or publishing.",
+      "severity": "blocker",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build",
+        "save-draft",
+        "publish-run"
+      ],
+      "default_blocker": true,
+      "field_paths": [
+        "processDataSet.exchanges.exchange[*].@dataSetInternalID",
+        "processDataSet.exchanges.exchange[*].referenceToFlowDataSet"
+      ],
+      "source_rule_refs": [
+        {
+          "asset": "tidas_processes.yaml",
+          "path": "processDataSet.exchanges.exchange.referenceToFlowDataSet.<rules>"
+        }
+      ]
+    },
+    {
+      "id": "tidas.process.evidence.field-bindings.required",
+      "dataset_type": "process",
+      "summary": "Process authoring and publish gates require evidence bindings for identity, names, quantitative reference, exchanges, source, geography, time, and technology.",
+      "severity": "blocker",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build",
+        "publish-run"
+      ],
+      "default_blocker": true,
+      "field_paths": [
+        "EvidenceManifest.sources",
+        "EvidenceManifest.field_bindings"
+      ],
+      "source_rule_refs": [
+        {
+          "asset": "tidas_processes.yaml",
+          "path": "processDataSet.processInformation.technology.technologyDescriptionAndIncludedProcesses.<rules>"
+        },
+        {
+          "asset": "tidas_processes.yaml",
+          "path": "processDataSet.modellingAndValidation.dataSourcesTreatmentAndRepresentativeness.dataCollectionPeriod.<rules>"
+        }
+      ]
+    },
+    {
+      "id": "tidas.process.identity.duplicate-fingerprint.block",
+      "dataset_type": "process",
+      "summary": "A new process is blocked when reference flow, route, geography, system boundary, and exchange fingerprint are equivalent to an existing candidate.",
+      "severity": "blocker",
+      "phases": [
+        "identity-preflight",
+        "dedup-review"
+      ],
+      "default_blocker": true,
+      "field_paths": [
+        "IdentityDecision.decision",
+        "ProcessIdentity.reference_flow",
+        "ProcessIdentity.exchange_fingerprint"
+      ],
+      "source_rule_refs": [
+        {
+          "asset": "tidas_processes.yaml",
+          "path": "processDataSet.exchanges.exchange.referenceToFlowDataSet.<rules>"
+        },
+        {
+          "asset": "tidas_processes.yaml",
+          "path": "processDataSet.processInformation.dataSetInformation.name.<rules>"
+        }
+      ]
+    },
+    {
+      "id": "tidas.flow.evidence.field-bindings.required",
+      "dataset_type": "flow",
+      "summary": "Flow authoring and publish gates require evidence bindings for identity, flow type, name, property, unit, classification, and source.",
+      "severity": "blocker",
+      "phases": [
+        "build-plan",
+        "materialize",
+        "publish-build",
+        "publish-run"
+      ],
+      "default_blocker": true,
+      "field_paths": [
+        "EvidenceManifest.sources",
+        "EvidenceManifest.field_bindings"
+      ],
+      "source_rule_refs": [
+        {
+          "asset": "tidas_flows.yaml",
+          "path": "flowDataSet.flowInformation.dataSetInformation.name.<rules>"
+        },
+        {
+          "asset": "tidas_flows.yaml",
+          "path": "flowDataSet.flowProperties.flowProperty.<rules>"
+        }
+      ]
+    },
+    {
+      "id": "tidas.flow.identity.alias-equivalence.review",
+      "dataset_type": "flow",
+      "summary": "Flow identity preflight should reuse or review flows with equivalent type, property, unit, CAS/category, synonyms, and aliases.",
+      "severity": "warning",
+      "phases": [
+        "identity-preflight",
+        "dedup-review"
+      ],
+      "default_blocker": false,
+      "field_paths": [
+        "IdentityDecision.decision",
+        "FlowIdentity.flow_type",
+        "FlowIdentity.reference_property",
+        "FlowIdentity.reference_unit",
+        "FlowIdentity.aliases"
+      ],
+      "source_rule_refs": [
+        {
+          "asset": "tidas_flows.yaml",
+          "path": "flowDataSet.flowInformation.dataSetInformation.name.common:synonyms.<rules>"
+        },
+        {
+          "asset": "tidas_flows.yaml",
+          "path": "flowDataSet.flowProperties.flowProperty.<rules>"
+        }
+      ]
+    }
+  ]
+}

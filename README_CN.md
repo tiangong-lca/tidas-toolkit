@@ -27,9 +27,9 @@ checkPaths:
   - scripts/test-release-request.sh
   - scripts/validate-release-request.sh
   - scripts/sync-rust-package-assets.sh
-lastReviewedAt: 2026-09-13
-lastReviewedCommit: e237a6cf1d4c55ba490719a8fcee0f659d1f840c
-lastReviewedNote: "Reviewed for toolkit #189: canonical dispatch, installers and package metadata use tidas-toolkit/tidas-sdks. The v1 notice reader preserves the historical namespace through 0.3.0 without changing provenance authority, asset locks, release requests or CLI behavior."
+lastReviewedAt: 2026-09-18
+lastReviewedCommit: 4ad5967b1174e194f00277dcb27d9962ec3db6cc
+lastReviewedNote: "W9 将精确固定的 W8 公共定义与 toolkit 自有 runtime profile 分层组合，并仅为 W11 兼容保留生成的混合 catalog。"
 related:
   - AGENTS.md
   - .docpact/config.yaml
@@ -190,7 +190,7 @@ cargo test --locked --workspace --all-targets
 
 有意修改 schema 或可执行资产后，使用 `cargo run -p tidas-assets --bin tidas-asset-lock -- write` 依次更新两类锁，评审全部差异后重新运行门禁。领域与大包验证见 [验证指南](docs/agents/repo-validation.md)。
 
-36 个公共 schema、2 份共享 methodology 文档以及配套 `schema.lock.json` 是 `tiangong-lca/tidas-spec` 发布合格公共规范的受控副本，由 `crates/tidas-assets/src/spec_pin.rs` 中的归档与 manifest SHA-256 精确固定到唯一不可变候选；候选 manifest 与导入溯源记录保存在 `assets/spec/`。不要手工修改公共 schema 或 methodology：使用 `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>` 重新生成，并用 `tidas-asset-lock spec-check` 验证；CI 会用取自精确源提交的候选执行该检查。工具自有的 methodology 输入（`runtime_rulesets.json`、`runtime_rulesets.schema.json` 与 elementary taxonomy extension）、eILCD schema/style、验证索引仍归本仓库所有，不会被该导入替换。
+36 个公共 schema、2 份共享 methodology 文档及 `schema.lock.json` 仍是已资格化的 0.1.0 公共规范副本。W9 另外在 `assets/tidas/rules/` 以精确 commit/hash 固定经审查的公共规则候选；`runtime_profiles.v1.json` 只保存 toolkit 的 severity、phase、blocker、profile membership 与 5 条局部规则，`runtime_rulesets.json` 则是为 W11 兼容生成的组合投影。使用 `tidas-asset-lock public-rules-sync --source-root <EXACT_TIDAS_SPEC_CHECKOUT>` 重新生成，使用 `public-rules-check` 校验。该候选绑定不代表正式发布完成。
 
 Rust-only cutover 之前的实现只作为 Git 历史以及 `migration/final-python-line.json` 声明的不可变 tag 保留，不再是安装、执行、CI 或发布路径。
 

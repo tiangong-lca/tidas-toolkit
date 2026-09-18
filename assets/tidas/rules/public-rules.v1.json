@@ -1,0 +1,97 @@
+{
+  "$schema": "public-rules.v1.schema.json",
+  "schema_version": 1,
+  "rules_version": "2026.09.18",
+  "rules": [
+    {
+      "id": "tidas.flow.classification.elementary.valid",
+      "dataset_type": "flow",
+      "normative_level": "requirement",
+      "statement": "Elementary-flow classification uses valid controlled category identifiers with continuous levels and no skipped intermediate level.",
+      "locations": ["flowDataSet.flowInformation.dataSetInformation.classificationInformation.common:elementaryFlowCategorization"],
+      "applicability": { "scope": "Flow datasets whose type is Elementary flow and that provide elementary-flow categorization." },
+      "source_refs": [{ "asset": "tidas_flows.yaml", "path": "flowDataSet.flowInformation.dataSetInformation.classificationInformation.common:elementaryFlowCategorization.<rules>" }],
+      "cases": { "positive": ["Levels 0, 1, and 2 use identifiers present in the shipped controlled category hierarchy."], "negative": ["A level-2 category is supplied without level 1, or an identifier is absent from the shipped hierarchy."] }
+    },
+    {
+      "id": "tidas.flow.flow-property.mean-value.positive",
+      "dataset_type": "flow",
+      "normative_level": "requirement",
+      "statement": "Every flow-property mean value is a positive real number and the referenced quantitative property has mean value 1.0 relative to itself.",
+      "locations": ["flowDataSet.flowProperties.flowProperty[*].meanValue"],
+      "applicability": { "scope": "Every flow-property entry; the 1.0 condition applies to the entry selected by the quantitative reference." },
+      "source_refs": [{ "asset": "tidas_flows.yaml", "path": "flowDataSet.flowProperties.flowProperty.meanValue.<rules>" }],
+      "cases": { "positive": ["The selected reference property has meanValue 1.0 and every additional property has a positive conversion ratio."], "negative": ["A flow property has meanValue 0, a negative value, or the selected reference property differs from 1.0."] }
+    },
+    {
+      "id": "tidas.flow.name.base-name.technical",
+      "dataset_type": "flow",
+      "normative_level": "requirement",
+      "statement": "The flow base name uses technical terminology and keeps geography, time, and quantitative qualifiers in their dedicated fields.",
+      "locations": ["flowDataSet.flowInformation.dataSetInformation.name.baseName"],
+      "applicability": { "scope": "Every flow dataset." },
+      "source_refs": [{ "asset": "tidas_flows.yaml", "path": "flowDataSet.flowInformation.dataSetInformation.name.baseName.<rules>" }],
+      "cases": { "positive": ["The base name identifies the technical flow and records geography in location metadata."], "negative": ["The base name embeds a year or location instead of using the dedicated metadata field."] }
+    },
+    {
+      "id": "tidas.flow.reference-property-unit.required",
+      "dataset_type": "flow",
+      "normative_level": "requirement",
+      "statement": "A flow identifies an existing reference flow-property entry and that entry references the maintained flow-property dataset defining its quantity and unit.",
+      "locations": ["flowDataSet.flowInformation.quantitativeReference.referenceToReferenceFlowProperty", "flowDataSet.flowProperties.flowProperty[*].referenceToFlowPropertyDataSet"],
+      "applicability": { "scope": "Every flow dataset." },
+      "source_refs": [{ "asset": "tidas_flows.yaml", "path": "flowDataSet.flowInformation.quantitativeReference.referenceToReferenceFlowProperty.<rules>" }, { "asset": "tidas_flows.yaml", "path": "flowDataSet.flowProperties.flowProperty.referenceToFlowPropertyDataSet.<rules>" }],
+      "cases": { "positive": ["The quantitative reference points to an existing local flow-property ID whose global reference identifies the intended physical quantity."], "negative": ["The quantitative reference points to a missing local ID or the selected property lacks its flow-property dataset reference."] }
+    },
+    {
+      "id": "tidas.flow.type.required",
+      "dataset_type": "flow",
+      "normative_level": "requirement",
+      "statement": "A flow declares exactly one allowed dataset type: Elementary flow, Product flow, or Waste flow.",
+      "locations": ["flowDataSet.modellingAndValidation.LCIMethod.typeOfDataSet"],
+      "applicability": { "scope": "Every flow dataset." },
+      "source_refs": [{ "asset": "tidas_flows.yaml", "path": "flowDataSet.modellingAndValidation.LCIMethod.typeOfDataSet.<rules>" }],
+      "cases": { "positive": ["typeOfDataSet is Product flow and its classification and reference property are consistent with that choice."], "negative": ["typeOfDataSet is absent, custom text, or inconsistent with an elementary-flow categorization."] }
+    },
+    {
+      "id": "tidas.process.exchange.amount.required",
+      "dataset_type": "process",
+      "normative_level": "requirement",
+      "statement": "Every process exchange provides the numerical amount required by the methodology and its applicable amount constraints.",
+      "locations": ["processDataSet.exchanges.exchange[*].meanAmount", "processDataSet.exchanges.exchange[*].resultingAmount"],
+      "applicability": { "scope": "Every process exchange, using the amount representation applicable to that exchange." },
+      "source_refs": [{ "asset": "tidas_processes.yaml", "path": "processDataSet.exchanges.exchange.meanAmount.<rules>" }],
+      "cases": { "positive": ["An exchange provides a finite mean amount consistent with its documented unit and source evidence."], "negative": ["An exchange provides no applicable numerical amount or supplies a non-numeric value."] }
+    },
+    {
+      "id": "tidas.process.name.base-name.align-reference-flow",
+      "dataset_type": "process",
+      "normative_level": "requirement",
+      "statement": "The process base name follows the reference-flow naming structure and excludes geography and time qualifiers owned by dedicated metadata fields.",
+      "locations": ["processDataSet.processInformation.dataSetInformation.name.baseName"],
+      "applicability": { "scope": "Every process dataset; multi-functional processes name each reference flow." },
+      "source_refs": [{ "asset": "tidas_processes.yaml", "path": "processDataSet.processInformation.dataSetInformation.name.baseName.<rules>" }],
+      "cases": { "positive": ["A single-output process reuses the technical reference-flow name and stores geography separately."], "negative": ["A multi-functional process omits one reference flow or embeds a year in baseName."] }
+    },
+    {
+      "id": "tidas.process.name.qualifiers.structured",
+      "dataset_type": "process",
+      "normative_level": "recommendation",
+      "statement": "Process-name qualifiers are separated into treatment/standards/routes, mix/location type, and quantitative-property segments according to their meaning.",
+      "locations": ["processDataSet.processInformation.dataSetInformation.name.treatmentStandardsRoutes", "processDataSet.processInformation.dataSetInformation.name.mixAndLocationTypes", "processDataSet.processInformation.dataSetInformation.name.functionalUnitFlowProperties"],
+      "applicability": { "scope": "Process datasets that have the corresponding qualifier information." },
+      "source_refs": [{ "asset": "tidas_processes.yaml", "path": "processDataSet.processInformation.dataSetInformation.name.treatmentStandardsRoutes.<rules>" }, { "asset": "tidas_processes.yaml", "path": "processDataSet.processInformation.dataSetInformation.name.mixAndLocationTypes.<rules>" }, { "asset": "tidas_processes.yaml", "path": "processDataSet.processInformation.dataSetInformation.name.functionalUnitFlowProperties.<rules>" }],
+      "cases": { "positive": ["A production mix qualifier is placed in mixAndLocationTypes and a grade standard in treatmentStandardsRoutes."], "negative": ["A location/mix qualifier is placed in treatmentStandardsRoutes or all qualifiers are flattened into baseName."] }
+    },
+    {
+      "id": "tidas.process.version.format",
+      "dataset_type": "process",
+      "normative_level": "requirement",
+      "statement": "The process dataset version uses fixed-width ILCD three-tier numeric notation and increases when content changes.",
+      "locations": ["processDataSet.administrativeInformation.publicationAndOwnership.common:dataSetVersion"],
+      "applicability": { "scope": "Every versioned process dataset; monotonic comparison applies when a previous published version exists." },
+      "source_refs": [{ "asset": "tidas_processes.yaml", "path": "processDataSet.administrativeInformation.publicationAndOwnership.common:dataSetVersion.<rules>" }],
+      "cases": { "positive": ["01.01.000 follows 01.00.000 after a content change."], "negative": ["1.1, 01.00, or a version not greater than the previous published version."] }
+    }
+  ]
+}
