@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "d07a5460ad7d99f10afe391aff755f8c67b72854"
-lastReviewedNote: "Reviewed Toolkit #205: add bounded structured required_property diagnostic context without changing schemas, validation rules, severity, counts or command behavior. Worker #295 consumes exact metadata. Toolchain and test evidence are recorded in the task."
+lastReviewedCommit: "8487862a82bb221ea7499f5a7c52fb379f87a60a"
+lastReviewedNote: "Reviewed Toolkit #207: immutable v0.3.1 request binds 8487862a82bb221ea7499f5a7c52fb379f87a60a, including merged import diagnostic metadata, one consistent version set and canonical notice fixtures. Preserve target ancestry on merge. Existing runtime validation, packaging and publication gates are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
