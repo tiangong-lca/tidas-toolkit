@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "ba0fd9c09faffa0d391e3d40548db7fe6d873a62"
-lastReviewedNote: "Reviewed Toolkit #207: prepare the shared 0.3.1 release and exact internal crate requirements, including merged required_property metadata. External dependencies, rules, schemas, CLI contracts and all release gates remain unchanged; immutable publication follows a reviewed exact-target request."
+lastReviewedCommit: "834818e5cf797c92bbf5bf85f459c5b09e5f3442"
+lastReviewedNote: "Reviewed Toolkit #207: append immutable v0.3.1 request targeting exact source 834818e5cf797c92bbf5bf85f459c5b09e5f3442. The target contains merged import metadata and one consistent version set. Merge must preserve target ancestry; all existing validation, packaging and publication gates remain mandatory."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "ba0fd9c09faffa0d391e3d40548db7fe6d873a62"
-lastReviewedNote: "Reviewed Toolkit #207: prepare the shared 0.3.1 release and exact internal crate requirements, including merged required_property metadata. External dependencies, rules, schemas, CLI contracts and all release gates remain unchanged; immutable publication follows a reviewed exact-target request."
+lastReviewedCommit: "834818e5cf797c92bbf5bf85f459c5b09e5f3442"
+lastReviewedNote: "Reviewed Toolkit #207 immutable 0.3.1 request: exact release target has the shared new package version and required_property metadata; CLI commands and result semantics are unchanged. Publication remains gated and consumers must explicitly adopt the binary."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
