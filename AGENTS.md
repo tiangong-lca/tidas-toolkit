@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "834818e5cf797c92bbf5bf85f459c5b09e5f3442"
-lastReviewedNote: "Reviewed Toolkit #207: append immutable v0.3.1 request targeting exact source 834818e5cf797c92bbf5bf85f459c5b09e5f3442. The target contains merged import metadata and one consistent version set. Merge must preserve target ancestry; all existing validation, packaging and publication gates remain mandatory."
+lastReviewedCommit: "e380f99dc1c0490ad1723b357a44d6806d1273a1"
+lastReviewedNote: "Reviewed Toolkit #207 release qualification: current notice fixtures use the canonical repository, while explicit historical compatibility and future-legacy rejection remain tested. Production validation and source-identity rules are unchanged; the release request will bind the qualified source including this test correction."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

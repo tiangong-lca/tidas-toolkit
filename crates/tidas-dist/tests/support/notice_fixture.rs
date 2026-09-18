@@ -128,7 +128,7 @@ pub fn create(output: &Path, binary: &Path, license: &Path, target: &str, versio
     let manifest = json!({
         "schema_version":"tidas.native-notice-bundle.v1","product":"tidas","version":version,"target":target,
         "executable":digest(&fs::read(binary).unwrap()),
-        "source":{"repository":"https://github.com/tiangong-lca/tidas-tools","commit":"1".repeat(40),"cargo_lock_sha256":lock_hash,"vcpkg_commit":"2".repeat(40),"vcpkg_triplet":triplet,"rustc_commit":"3".repeat(40),"rustc_release":"1.98.0"},
+        "source":{"repository":"https://github.com/tiangong-lca/tidas-toolkit","commit":"1".repeat(40),"cargo_lock_sha256":lock_hash,"vcpkg_commit":"2".repeat(40),"vcpkg_triplet":triplet,"rustc_commit":"3".repeat(40),"rustc_release":"1.98.0"},
         "cargo_packages":packages,
         "native_packages":[
             {"name":"libxml2","version":"1","scope":"vcpkg-target-build-input","triplet":triplet,"features":[],"texts":[native]},

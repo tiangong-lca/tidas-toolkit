@@ -66,7 +66,12 @@ fn cli_success_malformed_input_determinism_and_exit_codes_are_stable() {
             ])
             .output()
             .unwrap();
-        assert_eq!(output.status.code(), Some(0));
+        assert_eq!(
+            output.status.code(),
+            Some(0),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
         let report: Value = serde_json::from_slice(&output.stdout).unwrap();
         assert_eq!(report["schema_version"], "tidas.distribution-artifact.v1");
     }

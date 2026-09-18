@@ -220,11 +220,13 @@ fn canonical_notice_source_keeps_historical_bytes_readable_without_accepting_oth
     let root = temporary.path();
     let target = "aarch64-apple-darwin";
     fixture(root, target);
-    let original = read_manifest(root);
+    let mut original = read_manifest(root);
     assert_eq!(
         original.source.repository,
-        "https://github.com/tiangong-lca/tidas-tools"
+        "https://github.com/tiangong-lca/tidas-toolkit"
     );
+    original.source.repository = "https://github.com/tiangong-lca/tidas-tools".to_owned();
+    write_manifest(root, &original);
     notice_bundle::verify(&root.join("notices"), &root.join("binary"), target, "0.2.2").unwrap();
     let mut canonical = original.clone();
     canonical.source.repository = "https://github.com/tiangong-lca/tidas-toolkit".to_owned();
