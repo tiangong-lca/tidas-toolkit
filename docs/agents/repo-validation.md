@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: "2026-09-20"
-lastReviewedCommit: "1230d4186a79a24fb17b42995641a13ed5336515"
-lastReviewedNote: "Reviewed for Toolkit #211: verify the retired mixed assets are absent from the lock and packages, direct composition is fail-closed, report fingerprint is stable, and only taxonomy dispatches SDK refresh."
+lastReviewedCommit: "41e0e05c765c5546c7f7c9b262424ff94b075603"
+lastReviewedNote: "Reviewed for Toolkit #213: the 0.3.2 version bump requires full crate, native archive, release-request, and installed-artifact qualification; no test gate is waived."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

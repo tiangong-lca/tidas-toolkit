@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: "2026-09-20"
-lastReviewedCommit: "1230d4186a79a24fb17b42995641a13ed5336515"
-lastReviewedNote: "Reviewed for Toolkit #211: retire the old mixed runtime assets and dispatch path while keeping exact public definitions and toolkit profile policy, composed catalog output, and CLI semantics."
+lastReviewedCommit: "41e0e05c765c5546c7f7c9b262424ff94b075603"
+lastReviewedNote: "Reviewed for Toolkit #213: advance the shared public crate version and exact internal dependency pins to 0.3.2; source, CLI semantics, and release controls are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: "2026-09-20"
-lastReviewedCommit: "1230d4186a79a24fb17b42995641a13ed5336515"
-lastReviewedNote: "Reviewed for Toolkit #211: the old mixed-file input is removed, while ruleset command output, catalog digest, report contracts, exit classes and completion remain unchanged."
+lastReviewedCommit: "41e0e05c765c5546c7f7c9b262424ff94b075603"
+lastReviewedNote: "Reviewed for Toolkit #213: version 0.3.2 changes the reported binary/package version only; ruleset catalog content, report contracts, exit classes, and completion remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

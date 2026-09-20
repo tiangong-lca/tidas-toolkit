@@ -21,8 +21,8 @@ serde_json = { workspace = true, features = ["preserve_order"] }
 sha2.workspace = true
 tempfile.workspace = true
 thiserror.workspace = true
-tidas-conversion = { version = "=0.3.1", path = "../tidas-conversion" }
-tidas-runtime = { version = "=0.3.1", path = "../tidas-runtime" }
+tidas-conversion = { version = "=0.3.2", path = "../tidas-conversion" }
+tidas-runtime = { version = "=0.3.2", path = "../tidas-runtime" }
 tokio.workspace = true
 tokio-postgres.workspace = true
 tokio-postgres-rustls.workspace = true

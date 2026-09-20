@@ -2,8 +2,8 @@ version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
 lastReviewedAt: "2026-09-20"
-lastReviewedCommit: "1230d4186a79a24fb17b42995641a13ed5336515"
-lastReviewedNote: "Reviewed for Toolkit #211: retired mixed runtime assets remain toolkit-owned historical exclusions, while live catalog inputs and SDK dispatch coverage now use public rules, toolkit profiles and elementary taxonomy only."
+lastReviewedCommit: "41e0e05c765c5546c7f7c9b262424ff94b075603"
+lastReviewedNote: "Reviewed for Toolkit #213: 0.3.2 version and release-request files remain under the existing native-distribution and Rust-product ownership routes."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
 # and ownership/routing/validation governance is otherwise unchanged.
