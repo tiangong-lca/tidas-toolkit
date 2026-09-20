@@ -277,13 +277,11 @@ fn classify(path: &str) -> Result<AssetKind, AssetError> {
         return Ok(AssetKind::JsonSchema);
     }
     if path.contains("/methodologies/") {
-        return Ok(
-            if path.contains("runtime_rulesets") || path.contains("runtime_profiles") {
-                AssetKind::RuntimeRuleset
-            } else {
-                AssetKind::Methodology
-            },
-        );
+        return Ok(if path.contains("runtime_profiles") {
+            AssetKind::RuntimeRuleset
+        } else {
+            AssetKind::Methodology
+        });
     }
     if path.contains("/rules/") && has_extension(path, "json") {
         return Ok(AssetKind::PublicRule);

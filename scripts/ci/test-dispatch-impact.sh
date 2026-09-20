@@ -5,8 +5,6 @@ root="$(git rev-parse --show-toplevel)"
 workflow="$root/.github/workflows/dispatch-tidas-sdk-sync.yml"
 
 for path in \
-  assets/tidas/methodologies/runtime_rulesets.json \
-  assets/tidas/methodologies/runtime_rulesets.schema.json \
   assets/tidas/methodologies/elementary_flow_taxonomy_extension.v1.json
 do
   count="$(grep -Fxc "      - \"$path\"" "$workflow")"
@@ -15,6 +13,11 @@ do
     exit 1
   fi
 done
+
+if grep -Fq 'runtime_rulesets' "$workflow"; then
+  echo "error: retired mixed runtime projection must not trigger SDK refresh" >&2
+  exit 1
+fi
 
 if grep -Eq 'assets/tidas/(schemas|schemas_zh|methodologies)/\*\*' "$workflow"; then
   echo "error: broad public-spec or methodology dispatch path is forbidden" >&2

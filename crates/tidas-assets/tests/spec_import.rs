@@ -1239,7 +1239,7 @@ fn importing_provenance_does_not_disturb_the_executable_asset_identity() {
         "provenance leaked into the embedded executable assets"
     );
     let lock = verify_embedded_assets().unwrap();
-    assert_eq!(lock.entries.len(), 85);
+    assert_eq!(lock.entries.len(), 83);
     assert_eq!(asset_fingerprint().unwrap(), asset_fingerprint().unwrap());
 }
 

@@ -247,18 +247,6 @@
       "bytes": 3049
     },
     {
-      "path": "assets/tidas/methodologies/runtime_rulesets.json",
-      "kind": "runtime-ruleset",
-      "sha256": "a61105dcb2ce9de8d10b47be246a910034018fd88a1830539758a6cdfc4887a2",
-      "bytes": 15029
-    },
-    {
-      "path": "assets/tidas/methodologies/runtime_rulesets.schema.json",
-      "kind": "runtime-ruleset",
-      "sha256": "c3db8324c41a3968d1c7f3a1a323d19261514deea0057aafe2bd27ead5e8537f",
-      "bytes": 2677
-    },
-    {
       "path": "assets/tidas/methodologies/tidas_flows.yaml",
       "kind": "methodology",
       "sha256": "4a389d060f5c901b7c11625675948c0152df95ad33bedc87eca0f93341038d6d",

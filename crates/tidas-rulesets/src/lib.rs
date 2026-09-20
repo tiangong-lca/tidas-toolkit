@@ -9,9 +9,6 @@ use sha2::{Digest, Sha256};
 use thiserror::Error;
 use tidas_assets::{AssetKind, bundled_asset};
 
-const RUNTIME_RULESETS_PATH: &str = "assets/tidas/methodologies/runtime_rulesets.json";
-const RUNTIME_RULESETS_SCHEMA_PATH: &str =
-    "assets/tidas/methodologies/runtime_rulesets.schema.json";
 const RUNTIME_PROFILES_PATH: &str = "assets/tidas/methodologies/runtime_profiles.v1.json";
 const RUNTIME_PROFILES_SCHEMA_PATH: &str =
     "assets/tidas/methodologies/runtime_profiles.v1.schema.json";
@@ -74,19 +71,7 @@ pub struct RulesetCatalog {
 
 impl RulesetCatalog {
     pub fn load() -> Result<Self, RulesetError> {
-        let metadata_asset = required_asset(RUNTIME_RULESETS_PATH)?;
-        let schema_asset = required_asset(RUNTIME_RULESETS_SCHEMA_PATH)?;
-        let compatibility_metadata: Value = serde_json::from_slice(metadata_asset.bytes)?;
-        let schema: Value = serde_json::from_slice(schema_asset.bytes)?;
-        let validator = jsonschema::draft202012::new(&schema)
-            .map_err(|error| RulesetError::SchemaCompile(error.to_string()))?;
-        if let Some(error) = validator.iter_errors(&compatibility_metadata).next() {
-            return Err(RulesetError::SchemaValidation(error.to_string()));
-        }
         let metadata = compose_runtime_catalog()?;
-        if metadata != compatibility_metadata {
-            return Err(RulesetError::CompatibilityProjectionDrift);
-        }
 
         let rules = metadata
             .get("rules")
@@ -671,6 +656,13 @@ mod tests {
         ));
         assert_eq!(catalog.methodology_report.file_count, 2);
         assert!(catalog.methodology_report.ok);
+    }
+
+    #[test]
+    fn retired_mixed_assets_are_not_required_or_bundled() {
+        assert!(bundled_asset("assets/tidas/methodologies/runtime_rulesets.json").is_none());
+        assert!(bundled_asset("assets/tidas/methodologies/runtime_rulesets.schema.json").is_none());
+        assert!(RulesetCatalog::load().is_ok());
     }
 
     #[test]
