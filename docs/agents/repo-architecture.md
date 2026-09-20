@@ -27,9 +27,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "9d3779d6de7b689aec1fc8fcb22cef67f46fc559"
-lastReviewedNote: "Reviewed for Toolkit #209: adopt the exact reviewed tidas-spec 0.2.0 candidate, including its 34 imported and five public authored assets, and synchronize CI's immutable candidate commit/archive/digest tuple. Verify optional complete-review-report references in Process and LCIA Method while retaining strict validation when supplied. CLI behavior, package versions, and formal-release state are unchanged."
+lastReviewedAt: "2026-09-20"
+lastReviewedCommit: "1230d4186a79a24fb17b42995641a13ed5336515"
+lastReviewedNote: "Reviewed for Toolkit #211: runtime rules compose from the public index and toolkit profile without the mixed input; only elementary taxonomy remains in the toolkit-to-SDK dispatch path."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -165,28 +165,25 @@ and reviewed as one. The tools-owned runtime rulesets, the elementary taxonomy
 extension, eILCD inputs, and validation indexes never come from the public
 specification.
 
-Only tools-owned legacy runtime projection/taxonomy changes may dispatch `tidas-sdk`
+Only tools-owned elementary taxonomy changes may dispatch `tidas-sdk`
 refresh automation. Generated SDK code remains downstream and never becomes
 source of truth here.
 The canonical sender is `tiangong-lca/tidas-toolkit` (repository ID
 `936459656`, organization ID `327771381`); its dispatch targets
 `tiangong-lca/tidas-sdks`. The `tidas_tools_changed` event and exact commit
 payload retain their existing contract. The path filter is limited to
-`runtime_rulesets.json`, `runtime_rulesets.schema.json`, and
 `elementary_flow_taxonomy_extension.v1.json`; public schemas and the shared
 `tidas_flows.yaml`/`tidas_processes.yaml` methodology files are dispatched by
 `tidas-spec` as `tidas_spec_released`. Token authorization must cover the
 renamed downstream repository. Source/metadata-only changes do not dispatch
 a generated SDK refresh.
 
-W9 splits the catalog into three explicit layers. The exact candidate-bound
+W9 splits the catalog into two source layers. The exact candidate-bound
 `assets/tidas/rules/public-rules.v1.json` supplies normative public definitions;
 `runtime_profiles.v1.json` supplies toolkit-only execution policy and five
-local rules; `runtime_rulesets.json` is a checked compatibility projection kept
-for W11 consumers. `tidas-rulesets` composes the first two at load time and
-fails if the result differs from the projection. `tidas-asset-lock
-public-rules-check` independently verifies source identity, byte hashes,
-references, and deterministic projection.
+local rules. `tidas-rulesets` composes the runtime catalog from both at load
+time without an old mixed-file input. `tidas-asset-lock public-rules-check`
+independently verifies source identity, byte hashes, schemas, and composition.
 
 ## XML/XSD/XSLT portability
 

@@ -31,8 +31,8 @@ usage: tidas-asset-lock [check|write|spec-check|spec-import|public-rules-check|p
   write        regenerate the paired schema lock, then the complete asset lock
   spec-check   prove the public specification copy matches the pinned candidate (writes nothing)
   spec-import  atomically replace the public subset from the qualified candidate archive
-  public-rules-check  verify exact W8 public definitions and the composed compatibility catalog
-  public-rules-sync   import exact W8 public definitions and regenerate the compatibility catalog
+  public-rules-check  verify exact W8 public definitions and toolkit profile composition
+  public-rules-sync   import exact W8 public definitions and verify toolkit profile composition
 
   --archive <PATH>  candidate archive. Required by spec-import and accepted by spec-check,
                     which then re-derives the public subset from it. The archive is never
@@ -111,7 +111,6 @@ const PUBLIC_PIN_PATH: &str = "scripts/ci/tidas-public-rules-pin.json";
 const PUBLIC_RULES_DIR: &str = "assets/tidas/rules";
 const PUBLIC_IDENTITY_PATH: &str = "assets/tidas/rules/public-rules.source.v1.json";
 const PROFILE_PATH: &str = "assets/tidas/methodologies/runtime_profiles.v1.json";
-const RUNTIME_PATH: &str = "assets/tidas/methodologies/runtime_rulesets.json";
 
 fn read_json(path: &Path) -> Result<Value, AssetError> {
     Ok(serde_json::from_slice(&fs::read(path)?)?)
@@ -304,10 +303,30 @@ fn verified_public_inputs(root: &Path) -> Result<(Value, Value), AssetError> {
 fn run_public_rules_check(root: &Path) -> Result<(), AssetError> {
     let (pin, public) = verified_public_inputs(root)?;
     let profile = read_json(&root.join(PROFILE_PATH))?;
-    let expected = canonical(&compose_runtime(&public, &profile)?)?;
-    if fs::read(root.join(RUNTIME_PATH))? != expected {
-        return Err(public_error("runtime compatibility catalog is stale"));
+    let public_schema = read_json(
+        &root
+            .join(PUBLIC_RULES_DIR)
+            .join("public-rules.v1.schema.json"),
+    )?;
+    let profile_schema =
+        read_json(&root.join("assets/tidas/methodologies/runtime_profiles.v1.schema.json"))?;
+    for (label, schema, instance, draft) in [
+        ("public rules", &public_schema, &public, 7_u8),
+        ("runtime profile", &profile_schema, &profile, 20_u8),
+    ] {
+        let validator = if draft == 7 {
+            jsonschema::draft7::new(schema)
+        } else {
+            jsonschema::draft202012::new(schema)
+        }
+        .map_err(|error| public_error(format!("{label} schema cannot compile: {error}")))?;
+        if let Some(error) = validator.iter_errors(instance).next() {
+            return Err(public_error(format!(
+                "{label} fails schema validation: {error}"
+            )));
+        }
     }
+    let _ = compose_runtime(&public, &profile)?;
     println!(
         "verified public rules and toolkit profile composition at {}",
         pin["commit"].as_str().unwrap_or("<invalid>")
@@ -347,12 +366,6 @@ fn run_public_rules_sync(root: &Path, source_root: Option<&Path>) -> Result<(), 
     fs::write(
         root.join(PUBLIC_IDENTITY_PATH),
         canonical(&expected_identity(&pin)?)?,
-    )?;
-    let (_, public) = verified_public_inputs(root)?;
-    let profile = read_json(&root.join(PROFILE_PATH))?;
-    fs::write(
-        root.join(RUNTIME_PATH),
-        canonical(&compose_runtime(&public, &profile)?)?,
     )?;
     run_public_rules_check(root)
 }
@@ -458,7 +471,7 @@ mod public_rule_tests {
             PUBLIC_PIN_PATH,
             PUBLIC_IDENTITY_PATH,
             PROFILE_PATH,
-            RUNTIME_PATH,
+            "assets/tidas/methodologies/runtime_profiles.v1.schema.json",
         ] {
             let destination = temporary.path().join(relative);
             fs::create_dir_all(destination.parent().unwrap()).unwrap();

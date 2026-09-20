@@ -31,9 +31,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "9d3779d6de7b689aec1fc8fcb22cef67f46fc559"
-lastReviewedNote: "Reviewed for Toolkit #209: adopt the exact reviewed tidas-spec 0.2.0 candidate, including its 34 imported and five public authored assets, and synchronize CI's immutable candidate commit/archive/digest tuple. Verify optional complete-review-report references in Process and LCIA Method while retaining strict validation when supplied. CLI behavior, package versions, and formal-release state are unchanged."
+lastReviewedAt: "2026-09-20"
+lastReviewedCommit: "1230d4186a79a24fb17b42995641a13ed5336515"
+lastReviewedNote: "Reviewed for Toolkit #211: retire the old mixed runtime assets and dispatch path while keeping exact public definitions and toolkit profile policy, composed catalog output, and CLI semantics."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -102,24 +102,22 @@ The W8 public definitions under `assets/tidas/rules/` are an exact
 candidate-bound copy owned by `tidas-spec`. Toolkit owns
 `runtime_profiles.v1.json`: profile membership, severity, phase, blocker
 defaults, local-only rules, authorization, and result disposition.
-`runtime_rulesets.json` is a deterministic W11 compatibility projection
-composed from those inputs, not a second public-definition authority. The
-elementary taxonomy extension, eILCD inputs, and validation indexes remain
-tools-owned.
+The runtime catalog is composed directly from those verified inputs; the old
+mixed compatibility files are no longer packaged or required. The elementary
+taxonomy extension, eILCD inputs, and validation indexes remain tools-owned.
 
 The public TIDAS specification source belongs in `tiangong-lca/tidas-spec`;
 generated SDK surfaces belong in `tiangong-lca/tidas-sdks`; root multi-repo
 integration belongs in `lca-workspace`. This repo consumes the public
 specification as a pinned artifact and may dispatch an SDK refresh when
-tools-owned runtime rulesets or taxonomy assets change, but it does not own the
+tools-owned taxonomy assets change, but it does not own the
 specification or generated SDK code.
 
 The SDK dispatch workflow is intentionally narrow: public schemas and
 `tidas_flows.yaml`/`tidas_processes.yaml` are notified by `tidas-spec`'s
 `tidas_spec_released` event. This repository sends `tidas_tools_changed` only
-for `runtime_rulesets.json`, `runtime_rulesets.schema.json`, and
-`elementary_flow_taxonomy_extension.v1.json`, with the exact merged commit and
-affected package list.
+for `elementary_flow_taxonomy_extension.v1.json`, with the exact merged commit
+and affected package list.
 
 ## Required load order
 

@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "9d3779d6de7b689aec1fc8fcb22cef67f46fc559"
-lastReviewedNote: "Reviewed for Toolkit #209: the tidas-spec 0.2.0 candidate changes bundled validation data, internal pin bookkeeping, and CI's immutable candidate fetch tuple only. The public command tree, arguments, output contracts, exit classes, and completion behavior are unchanged."
+lastReviewedAt: "2026-09-20"
+lastReviewedCommit: "1230d4186a79a24fb17b42995641a13ed5336515"
+lastReviewedNote: "Reviewed for Toolkit #211: the old mixed-file input is removed, while ruleset command output, catalog digest, report contracts, exit classes and completion remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -394,8 +394,10 @@ catalog. `tidas ruleset --id <RULESET_ID> --format json` returns its ordered
 rules; unknown ids use the usage exit class. Public statements, locations and
 source references come from the exact W8 index; severity, phases, blocker
 defaults, profile membership and local-only rules remain toolkit policy. The
-mixed catalog is a deterministic W11 compatibility projection, and loading
-fails closed if it differs from the composition.
+catalog is composed directly from the verified public definitions and
+toolkit-owned profile policy; no old mixed-file input is required. The
+serialized catalog retains its historical fields and fingerprint for W11
+consumer compatibility.
 
 ## Exit classes
 

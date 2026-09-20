@@ -28,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-18"
-lastReviewedCommit: "9d3779d6de7b689aec1fc8fcb22cef67f46fc559"
-lastReviewedNote: "Reviewed for Toolkit #209: adopt the exact reviewed tidas-spec 0.2.0 candidate, including its 34 imported and five public authored assets, and synchronize CI's immutable candidate commit/archive/digest tuple. Verify optional complete-review-report references in Process and LCIA Method while retaining strict validation when supplied. CLI behavior, package versions, and formal-release state are unchanged."
+lastReviewedAt: "2026-09-20"
+lastReviewedCommit: "1230d4186a79a24fb17b42995641a13ed5336515"
+lastReviewedNote: "Reviewed for Toolkit #211: verify the retired mixed assets are absent from the lock and packages, direct composition is fail-closed, report fingerprint is stable, and only taxonomy dispatches SDK refresh."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -97,7 +97,7 @@ to install a redistributable or copy a development-machine DLL.
 | assets | baseline asset check; representative `git check-attr eol`; schema-local-reference and translation-parity tests | regenerate locks only after reviewing every changed path/hash; compare fingerprints twice |
 | public-specification pin | `tidas-asset-lock spec-check`; focused English/Chinese validation proving Process and LCIA Method may omit `common:referenceToCompleteReviewReport`, supplied references remain structurally valid, and Lifecycle Model behavior is unchanged; confirm the retained tools-owned methodologies, eILCD inputs, and validation indexes are byte-identical | `spec-import` against the qualified archive: imported/authored/metadata partition checks, negative, rollback (failure after staging, not only input parsing), no-write check mode, repeated-import idempotency, manual drift detection, and `.crate` parity of the 39-file public subset |
 | W8 public-rule/profile composition | `tidas-asset-lock public-rules-check`; focused `tidas-assets` and `tidas-rulesets` tests; `tidas ruleset` JSON probes | exact-checkout `public-rules-sync`; stale identity, tampered bytes, unknown/duplicate IDs, incomplete ordering, and invalid profile references; compare rule IDs/order and toolkit policy with the pre-W9 baseline |
-| SDK dispatch path contract | `bash scripts/ci/test-dispatch-impact.sh` | confirm only the three exact tools-owned compatibility assets can emit `tidas_tools_changed`; public-rule definitions and toolkit profiles do not independently dispatch the legacy SDK refresh |
+| SDK dispatch path contract | `bash scripts/ci/test-dispatch-impact.sh` | confirm only the tools-owned elementary taxonomy asset can emit `tidas_tools_changed`; public-rule definitions and toolkit profiles do not independently dispatch the SDK refresh |
 | XML/XSD/XSLT | focused `tidas-xml` and validation tests; resolver/security tests; four-platform CI | representative production schemas/stylesheets and static-release dependency inspection |
 | native distribution | focused `tidas-dist`; package twice; archive/checksum equality; extract and run version/help/JSON/ruleset; installer syntax and hermetic installer contract tests | four release jobs, clean-machine archive execution, runtime dependency inspection, SBOM and attestation |
 | crates.io | sync check; public-set qualification; verify exact version set and `tidas-dist` exclusion; script syntax | inspect each `.crate`; source install; registry absent/existing checksum simulations without a real token |
