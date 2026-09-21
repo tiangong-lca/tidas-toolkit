@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
-lastReviewedNote: "Reviewed for Toolkit #215: public-spec qualification now downloads the exact 0.2.2 archive and includes singleton/repeated Process reviews, ordered XML round-trip, and an indexed second-item failure."
+lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
+lastReviewedNote: "Reviewed for Toolkit #217: public-spec qualification loads its candidate identity from the canonical Rust pin, with a regression test rejecting workflow-local pin definitions."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -63,8 +63,11 @@ there is no separate Rust 1.88 compatibility matrix.
 The asset command checks both the paired English/Chinese schema contract and
 the complete executable-asset byte lock. `spec-check` additionally proves the
 generated public copy still matches the qualified `tidas-spec` candidate; CI
-fetches that candidate from its exact source commit and verifies the archive
-digest against the Rust pin before running it, so a hand-edited generated copy
+first runs `tidas-asset-lock spec-pin-env` and uses its GitHub environment-file
+entries to fetch that candidate from its exact source commit and verify the
+archive digest before running `spec-check`. The workflow therefore carries no
+second version/revision/archive/digest tuple that can become stale, while a
+hand-edited generated copy
 fails the pull request. Import provenance lives under `assets/spec/`, outside
 the executable asset roots, so pinning a specification cannot silently move the
 runtime fingerprint; adopting genuinely different public bytes regenerates the

@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
-lastReviewedNote: "Reviewed for Toolkit #215: the 0.2.2 public candidate and matching rust-ci archive tuple change Process review cardinality while leaving crate topology and runtime ownership unchanged."
+lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
+lastReviewedNote: "Reviewed for Toolkit #217: the internal asset tool exports the canonical public-specification pin for CI, removing the workflow's independently maintained archive tuple without changing crate topology or runtime ownership."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -136,6 +136,9 @@ assets authored or derived in the specification repository. Its
 identity is Rust source in `crates/tidas-assets/src/spec_pin.rs`: package
 version, archive SHA-256, manifest SHA-256, specification revision, and the
 tools commit from which the imported subset was extracted. `tidas-asset-lock
+spec-pin-env` renders that same identity as deterministic GitHub
+environment-file entries for CI; automation must consume it rather than copy
+the values into workflow YAML. `tidas-asset-lock
 spec-import --archive <CANDIDATE>` validates
 the archive, every declared file, the candidate's import manifest, and its
 reviewed baseline before staging, and publishes with rollback on failure;

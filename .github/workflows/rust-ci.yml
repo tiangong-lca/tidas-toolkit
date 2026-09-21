@@ -19,16 +19,6 @@ on:
 permissions:
   contents: read
 
-env:
-  # The qualified public-specification candidate. Only these exact bytes are
-  # accepted: the archive digest, its manifest digest, and the source revision
-  # are pinned in `crates/tidas-assets/src/spec_pin.rs`, and the drift gate below
-  # fails if this download does not reproduce them. A branch name is never used
-  # as a source of truth.
-  TIDAS_SPEC_CANDIDATE_COMMIT: 8a9470a7dd4c074ae246bb9967b3bfae3e371e32
-  TIDAS_SPEC_CANDIDATE_ARCHIVE: tiangong-lca-tidas-spec-0.2.2.tgz
-  TIDAS_SPEC_CANDIDATE_SHA256: 208f5e0e557f605a8e7c48e3036ab8c1f659852c4a34ade64bfae914207bbf3e
-
 jobs:
   rust:
     name: ${{ matrix.name }}
@@ -99,6 +89,11 @@ jobs:
 
       - name: Check public-rule source and toolkit profile composition
         run: cargo run --locked -p tidas-assets --bin tidas-asset-lock -- public-rules-check
+
+      - name: Load the qualified public-specification pin
+        if: matrix.name == 'Linux x86_64'
+        shell: bash
+        run: cargo run --locked -p tidas-assets --bin tidas-asset-lock -- spec-pin-env >> "$GITHUB_ENV"
 
       - name: Fetch the qualified public-specification candidate
         if: matrix.name == 'Linux x86_64'
