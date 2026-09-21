@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
-lastReviewedNote: "Reviewed for Toolkit #215: qualify the exact TIDAS 0.2.2 candidate, including the rust-ci archive tuple, and preserve repeated Process review elements through conversion and indexed validation; ownership and release controls are unchanged."
+lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
+lastReviewedNote: "Reviewed for Toolkit #217: Rust CI now consumes the qualified public-specification candidate identity from the canonical Rust pin instead of maintaining a second archive tuple; ownership and release controls are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -199,7 +199,10 @@ affected domain. Run Docpact strict validation and lint before handoff.
 
 CI fetches the qualified candidate from its exact source commit, verifies the
 archive digest against the pin, and runs `spec-check`, which fails if a public
-copy has been edited by hand. The download is never resolved through a branch.
+copy has been edited by hand. CI obtains the version, revision, archive name,
+archive digest, and manifest digest from `tidas-asset-lock spec-pin-env`; the
+workflow does not duplicate those values. The download is never resolved
+through a branch.
 
 The pre-cutover implementation is immutable historical evidence only. Its
 reviewed terminal commit and tag are declared in

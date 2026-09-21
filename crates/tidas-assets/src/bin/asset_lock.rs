@@ -17,18 +17,22 @@ use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
 use tidas_assets::spec_import::{SpecImportReport, check_public_spec, import_public_spec};
-use tidas_assets::spec_pin::{SPEC_ARCHIVE_FILE, SpecPin, render_drift};
+use tidas_assets::spec_pin::{
+    SPEC_ARCHIVE_FILE, SPEC_ARCHIVE_SHA256, SPEC_MANIFEST_SHA256, SPEC_REVISION, SPEC_VERSION,
+    SpecPin, render_drift,
+};
 use tidas_assets::{
     AssetError, check_filesystem_lock, check_filesystem_schema_lock, write_lock, write_schema_lock,
 };
 
 const REPO_ROOT: &str = env!("CARGO_MANIFEST_DIR");
 const USAGE: &str = "\
-usage: tidas-asset-lock [check|write|spec-check|spec-import|public-rules-check|public-rules-sync]
+usage: tidas-asset-lock [check|write|spec-pin-env|spec-check|spec-import|public-rules-check|public-rules-sync]
                         [--archive <PATH>] [--source-root <PATH>]
 
   check        verify the paired schema lock and the complete executable asset lock
   write        regenerate the paired schema lock, then the complete asset lock
+  spec-pin-env print the qualified candidate pin as GitHub environment-file entries
   spec-check   prove the public specification copy matches the pinned candidate (writes nothing)
   spec-import  atomically replace the public subset from the qualified candidate archive
   public-rules-check  verify exact W8 public definitions and toolkit profile composition
@@ -80,8 +84,10 @@ fn main() {
 
     let action = action.unwrap_or_else(|| "check".to_owned());
     let root = Path::new(REPO_ROOT);
-    if matches!(action.as_str(), "check" | "write" | "public-rules-check")
-        && (archive.is_some() || source_root.is_some())
+    if matches!(
+        action.as_str(),
+        "check" | "write" | "spec-pin-env" | "public-rules-check"
+    ) && (archive.is_some() || source_root.is_some())
     {
         eprintln!("--archive applies only to spec-check and spec-import\n{USAGE}");
         std::process::exit(64);
@@ -89,6 +95,7 @@ fn main() {
     let result = match action.as_str() {
         "check" => run_lock_check(root),
         "write" => run_lock_write(root),
+        "spec-pin-env" => run_spec_pin_env(),
         "spec-check" => run_spec_check(root, archive.as_deref()),
         "spec-import" => run_spec_import(root, archive.as_deref()),
         "public-rules-check" => run_public_rules_check(root),
@@ -385,6 +392,31 @@ fn run_lock_write(root: &Path) -> Result<(), AssetError> {
     Ok(())
 }
 
+fn render_spec_pin_env() -> Result<String, AssetError> {
+    let entries = [
+        ("TIDAS_SPEC_CANDIDATE_VERSION", SPEC_VERSION),
+        ("TIDAS_SPEC_CANDIDATE_COMMIT", SPEC_REVISION),
+        ("TIDAS_SPEC_CANDIDATE_ARCHIVE", SPEC_ARCHIVE_FILE),
+        ("TIDAS_SPEC_CANDIDATE_SHA256", SPEC_ARCHIVE_SHA256),
+        ("TIDAS_SPEC_CANDIDATE_MANIFEST_SHA256", SPEC_MANIFEST_SHA256),
+    ];
+    let mut output = String::new();
+    for (name, value) in entries {
+        if value.is_empty() || value.contains(['\n', '\r']) {
+            return Err(AssetError::SpecInvalid(format!(
+                "{name} cannot be written safely to a GitHub environment file"
+            )));
+        }
+        writeln!(output, "{name}={value}").expect("writing to a String cannot fail");
+    }
+    Ok(output)
+}
+
+fn run_spec_pin_env() -> Result<(), AssetError> {
+    print!("{}", render_spec_pin_env()?);
+    Ok(())
+}
+
 fn run_spec_check(root: &Path, archive: Option<&Path>) -> Result<(), AssetError> {
     let pin = SpecPin::qualified_candidate();
     let summary = check_public_spec(root, archive, &pin)?;
@@ -442,6 +474,36 @@ mod public_rule_tests {
         assert_eq!(composed["rules"].as_array().unwrap().len(), 14);
         assert_eq!(profile["public_rule_policy"].as_array().unwrap().len(), 9);
         assert_eq!(profile["local_rules"].as_array().unwrap().len(), 5);
+    }
+
+    #[test]
+    fn spec_pin_env_is_deterministic_and_workflow_has_no_duplicate_pin() {
+        let rendered = render_spec_pin_env().unwrap();
+        assert_eq!(
+            rendered,
+            format!(
+                "TIDAS_SPEC_CANDIDATE_VERSION={SPEC_VERSION}\n\
+                 TIDAS_SPEC_CANDIDATE_COMMIT={SPEC_REVISION}\n\
+                 TIDAS_SPEC_CANDIDATE_ARCHIVE={SPEC_ARCHIVE_FILE}\n\
+                 TIDAS_SPEC_CANDIDATE_SHA256={SPEC_ARCHIVE_SHA256}\n\
+                 TIDAS_SPEC_CANDIDATE_MANIFEST_SHA256={SPEC_MANIFEST_SHA256}\n"
+            )
+        );
+
+        let workflow =
+            fs::read_to_string(Path::new(REPO_ROOT).join(".github/workflows/rust-ci.yml")).unwrap();
+        assert!(workflow.contains("-- spec-pin-env >> \"$GITHUB_ENV\""));
+        for line in workflow.lines() {
+            let line = line.trim_start();
+            assert!(
+                !line.starts_with("TIDAS_SPEC_CANDIDATE_COMMIT:")
+                    && !line.starts_with("TIDAS_SPEC_CANDIDATE_ARCHIVE:")
+                    && !line.starts_with("TIDAS_SPEC_CANDIDATE_SHA256:")
+                    && !line.starts_with("TIDAS_SPEC_CANDIDATE_MANIFEST_SHA256:")
+                    && !line.starts_with("TIDAS_SPEC_CANDIDATE_VERSION:"),
+                "rust-ci.yml must load the candidate pin from spec-pin-env, not define {line}"
+            );
+        }
     }
 
     #[test]

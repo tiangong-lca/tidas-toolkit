@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
-lastReviewedNote: "Reviewed for Toolkit #215: repeated Process review support and its exact rust-ci 0.2.2 archive identity change bundled schema/automation and conversion behavior only; commands, reports, exit classes, and completion remain unchanged."
+lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
+lastReviewedNote: "Reviewed for Toolkit #217: the internal asset tool's spec-pin environment export changes CI maintenance only; public commands, reports, exit classes, and completion remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -74,7 +74,9 @@ The repository also builds one internal, unpublished binary,
 `tidas-asset-lock`, for executable-asset and public-specification maintenance.
 It is not part of the product surface: the published `tidas` executable and its
 seven commands are unaffected by it. Its `check`/`write` actions own the paired
-schema lock and the complete executable-asset byte lock; `spec-check` proves the
+schema lock and the complete executable-asset byte lock; `spec-pin-env` renders
+the canonical candidate identity for CI environment-file consumption;
+`spec-check` proves the
 generated public-specification copy still matches its pinned candidate without
 writing anything; and `spec-import` replaces exactly that public subset from a
 qualified candidate archive supplied explicitly with `--archive`. No action
