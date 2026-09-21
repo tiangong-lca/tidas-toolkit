@@ -31,9 +31,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: "2026-09-20"
-lastReviewedCommit: "41e0e05c765c5546c7f7c9b262424ff94b075603"
-lastReviewedNote: "Reviewed for Toolkit #213: advance the shared public crate version and exact internal dependency pins to 0.3.2; source, CLI semantics, and release controls are unchanged."
+lastReviewedAt: "2026-09-21"
+lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
+lastReviewedNote: "Reviewed for Toolkit #215: qualify the exact TIDAS 0.2.2 candidate and preserve repeated Process review elements through conversion and indexed validation; ownership and release controls are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -83,7 +83,7 @@ complete executable-asset byte set. Both locks are generated and checked by
 `tidas-asset-lock`.
 
 The 36 public schemas, the two shared methodology documents, and the paired
-`schema.lock.json` are a generated copy of the reviewed 0.2.0 specification candidate
+`schema.lock.json` are a generated copy of the reviewed 0.2.2 specification candidate
 published by `tiangong-lca/tidas-spec`. The pin — package version, archive
 SHA-256, manifest SHA-256, specification revision, and the tools commit from
 which the imported subset was extracted —
@@ -93,8 +93,8 @@ manifest and the import provenance record live under `assets/spec/`, which is
 Do not hand-edit a public schema or methodology: regenerate it with
 `tidas-asset-lock spec-import --archive <QUALIFIED_CANDIDATE>`, and let
 `tidas-asset-lock spec-check` prove the copy still matches the candidate.
-The candidate contains 34 imported public assets plus five public assets authored
-or derived by `tidas-spec`; its remaining authored evidence and package metadata
+The candidate contains 33 imported public assets plus six public assets authored
+or derived by `tidas-spec`; its remaining two authored evidence files and package metadata
 are verified but are not copied into the executable asset tree. This candidate
 binding is not a formal release claim.
 

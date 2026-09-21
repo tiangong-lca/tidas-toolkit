@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<processDataSet xmlns="http://lca.jrc.it/ILCD/Process" xmlns:common="http://lca.jrc.it/ILCD/Common">
+  <modellingAndValidation>
+    <validation>
+      <review type="Not reviewed">
+        <common:reviewDetails xml:lang="en">First review record</common:reviewDetails>
+      </review>
+      <review type="Not reviewed">
+        <common:reviewDetails xml:lang="en">Second review record</common:reviewDetails>
+      </review>
+    </validation>
+  </modellingAndValidation>
+</processDataSet>

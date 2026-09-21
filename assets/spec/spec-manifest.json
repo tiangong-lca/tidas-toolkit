@@ -2,9 +2,9 @@
   "manifestVersion": 1,
   "package": {
     "name": "@tiangong-lca/tidas-spec",
-    "version": "0.2.0"
+    "version": "0.2.2"
   },
-  "specVersion": "0.2.0",
+  "specVersion": "0.2.2",
   "source": {
     "repository": "https://github.com/tiangong-lca/tidas-toolkit",
     "repositoryId": "tidas-toolkit",
@@ -23,7 +23,8 @@
       "assets/tidas/schemas/tidas_lciamethods.json",
       "assets/tidas/schemas/tidas_processes.json",
       "assets/tidas/schemas_zh/tidas_lciamethods.json",
-      "assets/tidas/schemas_zh/tidas_processes.json"
+      "assets/tidas/schemas_zh/tidas_processes.json",
+      "assets/tidas/methodologies/tidas_processes.yaml"
     ],
     "ownedMetadataOrigin": "tidas-spec"
   },
@@ -34,8 +35,8 @@
       "zh"
     ],
     "methodologies": 2,
-    "importedAssets": 34,
-    "authoredAssets": 7,
+    "importedAssets": 33,
+    "authoredAssets": 8,
     "packageMetadata": 5,
     "files": 46,
     "packagedFiles": 47
@@ -659,8 +660,8 @@
       ],
       "nonAssertingReferences": 552,
       "unclassifiedReferences": 0,
-      "referencesWithoutSiblings": 482,
-      "totalReferences": 1086
+      "referencesWithoutSiblings": 486,
+      "totalReferences": 1090
     }
   },
   "files": [
@@ -673,8 +674,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "f18729be37c8d38a4d9766aaab6358f3c883d6aaf1a87f3623bae9b201385d43",
-      "contentSha256": "f18729be37c8d38a4d9766aaab6358f3c883d6aaf1a87f3623bae9b201385d43",
+      "sha256": "d17e19347b9be22227359ff34153117d268f4e2e7a85d9cd6ac001fe50a75b4c",
+      "contentSha256": "d17e19347b9be22227359ff34153117d268f4e2e7a85d9cd6ac001fe50a75b4c",
       "origin": "tidas-spec",
       "source": null
     },
@@ -690,18 +691,15 @@
     },
     {
       "path": "assets/tidas/methodologies/tidas_processes.yaml",
-      "sha256": "3f67155faf703dd85729cf359315250a2a92562398cc41bcccaa46078b1fe79e",
-      "contentSha256": "3f67155faf703dd85729cf359315250a2a92562398cc41bcccaa46078b1fe79e",
-      "origin": "tidas-toolkit",
-      "source": {
-        "path": "assets/tidas/methodologies/tidas_processes.yaml",
-        "sha256": "3f67155faf703dd85729cf359315250a2a92562398cc41bcccaa46078b1fe79e"
-      }
+      "sha256": "0ba6f4d5f69fd5d9cf6f4c30d4320bf368eb3192c00af80f7b9280896493ded4",
+      "contentSha256": "0ba6f4d5f69fd5d9cf6f4c30d4320bf368eb3192c00af80f7b9280896493ded4",
+      "origin": "tidas-spec",
+      "source": null
     },
     {
       "path": "assets/tidas/rules/public-rules.v1.json",
-      "sha256": "a2b94cc563358f5e561afd376540aff652f78e949bb18a27c2704ef226268ec7",
-      "contentSha256": "a2b94cc563358f5e561afd376540aff652f78e949bb18a27c2704ef226268ec7",
+      "sha256": "d8f1e90777fe0c675d1e24cbd7f1141ee776d3ebda9d8b24c91f714779540dec",
+      "contentSha256": "d8f1e90777fe0c675d1e24cbd7f1141ee776d3ebda9d8b24c91f714779540dec",
       "origin": "tidas-spec",
       "source": null
     },
@@ -714,8 +712,8 @@
     },
     {
       "path": "assets/tidas/schema.lock.json",
-      "sha256": "c04f869140635800cd5533c9dd225ae606902894b8c4e6c984dbb7698cec374b",
-      "contentSha256": "c04f869140635800cd5533c9dd225ae606902894b8c4e6c984dbb7698cec374b",
+      "sha256": "e67c43fa365b71606a8e9c413ea5b25e5ca17e74e1694682b076e3100d4f90b9",
+      "contentSha256": "e67c43fa365b71606a8e9c413ea5b25e5ca17e74e1694682b076e3100d4f90b9",
       "origin": "tidas-spec",
       "source": null
     },
@@ -838,8 +836,8 @@
     },
     {
       "path": "assets/tidas/schemas/tidas_processes.json",
-      "sha256": "385448c7f2f5f41aa31efad649a61758ef39fcfdc8e55984438fed1b56ccf6a7",
-      "contentSha256": "385448c7f2f5f41aa31efad649a61758ef39fcfdc8e55984438fed1b56ccf6a7",
+      "sha256": "8297261f5ce1e3bbc9287febeebae256c11f011a3c878fdfe4d8d33fcdad69c6",
+      "contentSha256": "8297261f5ce1e3bbc9287febeebae256c11f011a3c878fdfe4d8d33fcdad69c6",
       "origin": "tidas-spec",
       "source": null
     },
@@ -1012,8 +1010,8 @@
     },
     {
       "path": "assets/tidas/schemas_zh/tidas_processes.json",
-      "sha256": "00c43bf0265bdf2570a3e8cce4b22004d6c776cb0c659ab2c565c684b05951b8",
-      "contentSha256": "00c43bf0265bdf2570a3e8cce4b22004d6c776cb0c659ab2c565c684b05951b8",
+      "sha256": "76b60720074bedab46830fd5c8a98325aceca0cc327c50501ec080d50c0f9c32",
+      "contentSha256": "76b60720074bedab46830fd5c8a98325aceca0cc327c50501ec080d50c0f9c32",
       "origin": "tidas-spec",
       "source": null
     },
@@ -1069,29 +1067,29 @@
     },
     {
       "path": "package.json",
-      "sha256": "a81cd2c404a14a44b126e19798e97fb71dbbd92e3533ffccbb8fb2cf65fb67a0",
-      "contentSha256": "a81cd2c404a14a44b126e19798e97fb71dbbd92e3533ffccbb8fb2cf65fb67a0",
+      "sha256": "696cf41c44ba7a07424c6899a817500df3355b0f523b7ba88517b05bf08be4c4",
+      "contentSha256": "696cf41c44ba7a07424c6899a817500df3355b0f523b7ba88517b05bf08be4c4",
       "origin": "tidas-spec",
       "source": null
     },
     {
       "path": "reviewed-baseline.json",
-      "sha256": "1bad9d8452fa497b37f1b568c42ccac88fde03042c081bec88d7752b0296fa71",
-      "contentSha256": "1bad9d8452fa497b37f1b568c42ccac88fde03042c081bec88d7752b0296fa71",
+      "sha256": "b65cd8cd653ff13a90f1f5ed0b4551162130ee02beeae6be95bdfda286ad2c98",
+      "contentSha256": "b65cd8cd653ff13a90f1f5ed0b4551162130ee02beeae6be95bdfda286ad2c98",
       "origin": "tidas-spec",
       "source": null
     },
     {
       "path": "source-import.yaml",
-      "sha256": "cfefd55656face419847d929f03cecba78bc7fd3118b47b26b614950842e1fb0",
-      "contentSha256": "cfefd55656face419847d929f03cecba78bc7fd3118b47b26b614950842e1fb0",
+      "sha256": "214aefe6a0cb26933fc753948dea68b907523d171965d93a26fde14fecbd87f9",
+      "contentSha256": "214aefe6a0cb26933fc753948dea68b907523d171965d93a26fde14fecbd87f9",
       "origin": "tidas-spec",
       "source": null
     }
   ],
   "aggregates": {
-    "filesSha256": "e32bc87e6df72dadacf61c2d232c82c3efed05b1895e537c8b89e08941001a99",
-    "filesContentSha256": "e32bc87e6df72dadacf61c2d232c82c3efed05b1895e537c8b89e08941001a99"
+    "filesSha256": "23ec298955b6ed86a16934a524a94792e9ec16a1c8fce392d11ea7d53a25e4a8",
+    "filesContentSha256": "23ec298955b6ed86a16934a524a94792e9ec16a1c8fce392d11ea7d53a25e4a8"
   },
   "selfHash": {
     "note": "The manifest cannot contain its own digest. Its identity is the `files`/`aggregates` block above, bound externally by the archive digest record produced alongside the candidate archive; see docs/specification.md."

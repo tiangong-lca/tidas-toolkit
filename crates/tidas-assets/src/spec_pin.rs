@@ -22,7 +22,7 @@ use crate::{AssetError, sha256_hex};
 /// npm package name of the public specification.
 pub const SPEC_PACKAGE_NAME: &str = "@tiangong-lca/tidas-spec";
 /// Candidate package version this repository is pinned to.
-pub const SPEC_VERSION: &str = "0.2.0";
+pub const SPEC_VERSION: &str = "0.2.2";
 /// Canonical repository of the public specification package.
 ///
 /// This is provenance, not an enforceable claim: the specification repository
@@ -32,7 +32,7 @@ pub const SPEC_VERSION: &str = "0.2.0";
 /// were qualified at, and it is recorded so an upgrade is an explicit event.
 pub const SPEC_REPOSITORY: &str = "https://github.com/tiangong-lca/tidas-spec";
 /// Reviewed specification-repository revision the qualified archive came from.
-pub const SPEC_REVISION: &str = "58dc72f5cb2d203a00388fec71d31091911f7dde";
+pub const SPEC_REVISION: &str = "8a9470a7dd4c074ae246bb9967b3bfae3e371e32";
 /// Tools repository the candidate extracted its public assets from.
 ///
 /// Unlike the specification-repository revision, this one travels inside the
@@ -43,9 +43,9 @@ pub const SPEC_IMPORTED_SOURCE_REPOSITORY: &str = "https://github.com/tiangong-l
 pub const SPEC_IMPORTED_SOURCE_COMMIT: &str = "9c0d8b1c8ceb1841074f5bc6de5fbb7fcc9318f5";
 /// Owner of the assets the candidate imports from the tools repository.
 ///
-/// The candidate keeps two origins strictly apart: 34 public assets retain the
-/// `tidas-toolkit` origin they were extracted from, while seven authored assets
-/// and five package-metadata files carry [`SPEC_PACKAGE_METADATA_ORIGIN`]. Five
+/// The candidate keeps two origins strictly apart: 33 public assets retain the
+/// `tidas-toolkit` origin they were extracted from, while eight authored assets
+/// and five package-metadata files carry [`SPEC_PACKAGE_METADATA_ORIGIN`]. Six
 /// authored assets belong to the 39-file public runtime subset; the other two
 /// and all package metadata are evidence/bookkeeping and are not copied into
 /// the runtime asset tree.
@@ -53,17 +53,17 @@ pub const SPEC_IMPORTED_ORIGIN: &str = "tidas-toolkit";
 /// Owner of the candidate's own package metadata.
 pub const SPEC_PACKAGE_METADATA_ORIGIN: &str = "tidas-spec";
 /// Canonical archive file name.
-pub const SPEC_ARCHIVE_FILE: &str = "tiangong-lca-tidas-spec-0.2.0.tgz";
+pub const SPEC_ARCHIVE_FILE: &str = "tiangong-lca-tidas-spec-0.2.2.tgz";
 /// SHA-256 of the qualified candidate archive.
 pub const SPEC_ARCHIVE_SHA256: &str =
-    "45da9de790ffcdadd1984ffc3544c67a1503c0947470a629e8252aed19100228";
+    "208f5e0e557f605a8e7c48e3036ab8c1f659852c4a34ade64bfae914207bbf3e";
 /// SHA-256 of the candidate's own `spec-manifest.json`.
 pub const SPEC_MANIFEST_SHA256: &str =
-    "4677b9cf864326be9d430bf9760c754c4c0c1905d90e62c161655a159fd758c7";
+    "620e2e389d91af7a774e92e1d7c67e282ccb910e0c2e9f9391926cbe1c5e5f09";
 /// Public specification assets imported into this repository.
-pub const SPEC_IMPORTED_FILE_COUNT: usize = 34;
+pub const SPEC_IMPORTED_FILE_COUNT: usize = 33;
 /// Public assets authored or derived in the specification repository.
-pub const SPEC_AUTHORED_FILE_COUNT: usize = 7;
+pub const SPEC_AUTHORED_FILE_COUNT: usize = 8;
 /// Complete public runtime subset copied into this repository.
 pub const SPEC_PUBLIC_FILE_COUNT: usize = 39;
 /// Candidate files that belong to the specification repository itself.
@@ -1242,9 +1242,9 @@ pub struct SpecProvenance {
     pub imported_file_count: usize,
     /// Canonical digest of the complete 39-file public runtime subset.
     ///
-    /// This includes the five public assets authored or derived by the
+    /// This includes the six public assets authored or derived by the
     /// specification repository, so it intentionally differs from the
-    /// reviewed baseline digest over the 34 historical toolkit imports.
+    /// reviewed baseline digest over the 33 historical toolkit imports.
     pub public_assets_sha256: String,
 }
 

@@ -553,6 +553,9 @@ mod tests {
                     .unwrap()
                     .clone();
                 review["$id"] = Value::String(format!("{SCHEMA_BASE_URI}{filename}"));
+                if let Some(definitions) = catalog.schemas[filename].get("$defs") {
+                    review["$defs"] = definitions.clone();
+                }
                 let resources = catalog.schemas.iter().map(|(name, schema)| {
                     (
                         format!("{SCHEMA_BASE_URI}{name}"),

@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: "2026-09-20"
-lastReviewedCommit: "41e0e05c765c5546c7f7c9b262424ff94b075603"
-lastReviewedNote: "Reviewed for Toolkit #213: version 0.3.2 changes the reported binary/package version only; ruleset catalog content, report contracts, exit classes, and completion remain unchanged."
+lastReviewedAt: "2026-09-21"
+lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
+lastReviewedNote: "Reviewed for Toolkit #215: repeated Process review support changes bundled schema and conversion-domain behavior only; commands, reports, exit classes, and completion remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

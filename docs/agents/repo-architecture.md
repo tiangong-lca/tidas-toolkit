@@ -27,9 +27,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-20"
-lastReviewedCommit: "41e0e05c765c5546c7f7c9b262424ff94b075603"
-lastReviewedNote: "Reviewed for Toolkit #213: 0.3.2 is a coordinated crate-version release of the already merged mixed-input retirement; runtime composition and package topology are unchanged."
+lastReviewedAt: "2026-09-21"
+lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
+lastReviewedNote: "Reviewed for Toolkit #215: the 0.2.2 public candidate changes Process review cardinality while leaving crate topology and runtime ownership unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -130,8 +130,8 @@ both.
 
 The public subset of that tree — 36 schemas, the two shared methodology
 documents, and the paired `schema.lock.json` — is a generated copy of the
-reviewed 0.2.0 specification candidate published by `tiangong-lca/tidas-spec`. It
-contains 34 assets imported from the historical toolkit source and five public
+reviewed 0.2.2 specification candidate published by `tiangong-lca/tidas-spec`. It
+contains 33 assets imported from the historical toolkit source and six public
 assets authored or derived in the specification repository. Its
 identity is Rust source in `crates/tidas-assets/src/spec_pin.rs`: package
 version, archive SHA-256, manifest SHA-256, specification revision, and the
