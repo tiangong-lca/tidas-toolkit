@@ -30,7 +30,7 @@ checkPaths:
   - scripts/**
 lastReviewedAt: "2026-09-21"
 lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
-lastReviewedNote: "Reviewed for Toolkit #215: public-spec qualification now includes singleton and repeated Process reviews, ordered XML round-trip, and an indexed second-item failure."
+lastReviewedNote: "Reviewed for Toolkit #215: public-spec qualification now downloads the exact 0.2.2 archive and includes singleton/repeated Process reviews, ordered XML round-trip, and an indexed second-item failure."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

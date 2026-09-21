@@ -33,7 +33,7 @@ checkPaths:
   - .githooks/pre-push
 lastReviewedAt: "2026-09-21"
 lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
-lastReviewedNote: "Reviewed for Toolkit #215: qualify the exact TIDAS 0.2.2 candidate and preserve repeated Process review elements through conversion and indexed validation; ownership and release controls are unchanged."
+lastReviewedNote: "Reviewed for Toolkit #215: qualify the exact TIDAS 0.2.2 candidate, including the rust-ci archive tuple, and preserve repeated Process review elements through conversion and indexed validation; ownership and release controls are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

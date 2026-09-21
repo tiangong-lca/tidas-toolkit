@@ -29,7 +29,7 @@ checkPaths:
   - scripts/**
 lastReviewedAt: "2026-09-21"
 lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
-lastReviewedNote: "Reviewed for Toolkit #215: the 0.2.2 public candidate changes Process review cardinality while leaving crate topology and runtime ownership unchanged."
+lastReviewedNote: "Reviewed for Toolkit #215: the 0.2.2 public candidate and matching rust-ci archive tuple change Process review cardinality while leaving crate topology and runtime ownership unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

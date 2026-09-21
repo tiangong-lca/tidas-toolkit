@@ -29,7 +29,7 @@ checkPaths:
   - README_CN.md
 lastReviewedAt: "2026-09-21"
 lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
-lastReviewedNote: "Reviewed for Toolkit #215: repeated Process review support changes bundled schema and conversion-domain behavior only; commands, reports, exit classes, and completion remain unchanged."
+lastReviewedNote: "Reviewed for Toolkit #215: repeated Process review support and its exact rust-ci 0.2.2 archive identity change bundled schema/automation and conversion behavior only; commands, reports, exit classes, and completion remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
