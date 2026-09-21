@@ -1,5 +1,318 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$defs": {
+    "ProcessReview": {
+      "type": "object",
+      "description": "已针对独立性和审核流程类型进行的审核类型。",
+      "properties": {
+        "@type": {
+          "type": "string",
+          "enum": [
+            "Dependent internal review",
+            "Independent internal review",
+            "Independent external review",
+            "Accredited third party review",
+            "Independent review panel",
+            "Not reviewed"
+          ]
+        },
+        "common:scope": {
+          "description": "审查范围，涉及审查或验证数据集的哪些方面和组成部分。如果是聚合的，例如LCI 结果以及进行审查/验证的详细程度（例如仅 LCI 结果，包括单元流程……）。",
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "@name": {
+                  "type": "string",
+                  "enum": [
+                    "Raw data",
+                    "Unit process(es), single operation",
+                    "Unit process(es), black box",
+                    "LCI results or Partly terminated system",
+                    "LCIA results",
+                    "Documentation",
+                    "Life cycle inventory methods",
+                    "LCIA results calculation",
+                    "Goal and scope definition"
+                  ]
+                },
+                "common:method": {
+                  "description": "相应“审查范围”中使用的验证方法。",
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "@name": {
+                          "type": "string",
+                          "enum": [
+                            "Validation of data sources",
+                            "Sample tests on calculations",
+                            "Energy balance",
+                            "Element balance",
+                            "Cross-check with other source",
+                            "Cross-check with other data set",
+                            "Expert judgement",
+                            "Mass balance",
+                            "Compliance with legal limits",
+                            "Compliance with ISO 14040 to 14044",
+                            "Documentation",
+                            "Evidence collection by means of plant visits and/or interviews"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "@name"
+                      ]
+                    },
+                    {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "@name": {
+                            "type": "string",
+                            "enum": [
+                              "Validation of data sources",
+                              "Sample tests on calculations",
+                              "Energy balance",
+                              "Element balance",
+                              "Cross-check with other source",
+                              "Cross-check with other data set",
+                              "Expert judgement",
+                              "Mass balance",
+                              "Compliance with legal limits",
+                              "Compliance with ISO 14040 to 14044",
+                              "Documentation",
+                              "Evidence collection by means of plant visits and/or interviews"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "@name"
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "@name",
+                "common:method"
+              ]
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "@name": {
+                    "type": "string",
+                    "enum": [
+                      "Raw data",
+                      "Unit process(es), single operation",
+                      "Unit process(es), black box",
+                      "LCI results or Partly terminated system",
+                      "LCIA results",
+                      "Documentation",
+                      "Life cycle inventory methods",
+                      "LCIA results calculation",
+                      "Goal and scope definition"
+                    ]
+                  },
+                  "common:method": {
+                    "description": "相应“审查范围”中使用的验证方法。",
+                    "anyOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "@name": {
+                            "type": "string",
+                            "enum": [
+                              "Validation of data sources",
+                              "Sample tests on calculations",
+                              "Energy balance",
+                              "Element balance",
+                              "Cross-check with other source",
+                              "Cross-check with other data set",
+                              "Expert judgement",
+                              "Mass balance",
+                              "Compliance with legal limits",
+                              "Compliance with ISO 14040 to 14044",
+                              "Documentation",
+                              "Evidence collection by means of plant visits and/or interviews"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "@name"
+                        ]
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "@name": {
+                              "type": "string",
+                              "enum": [
+                                "Validation of data sources",
+                                "Sample tests on calculations",
+                                "Energy balance",
+                                "Element balance",
+                                "Cross-check with other source",
+                                "Cross-check with other data set",
+                                "Expert judgement",
+                                "Mass balance",
+                                "Compliance with legal limits",
+                                "Compliance with ISO 14040 to 14044",
+                                "Documentation",
+                                "Evidence collection by means of plant visits and/or interviews"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "@name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "@name",
+                  "common:method"
+                ]
+              }
+            }
+          ]
+        },
+        "common:dataQualityIndicators": {
+          "type": "object",
+          "description": "数据质量指标用于以定义的、计算机可读（因此可搜索）的形式提供数据集上经过审查的关键信息。这有助于支持 LCA 从业者识别/选择最高质量和最合适的数据集。",
+          "properties": {
+            "common:dataQualityIndicator": {
+              "description": "数据质量指标用于以定义的、计算机可读（因此可搜索）的形式提供数据集上经过审查的关键信息。这有助于支持 LCA 从业者识别/选择最高质量和最合适的数据集。",
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "@name": {
+                      "type": "string",
+                      "enum": [
+                        "Technological representativeness",
+                        "Time representativeness",
+                        "Geographical representativeness",
+                        "Completeness",
+                        "Precision",
+                        "Methodological appropriateness and consistency",
+                        "Overall quality"
+                      ]
+                    },
+                    "@value": {
+                      "type": "string",
+                      "enum": [
+                        "Very good",
+                        "Good",
+                        "Fair",
+                        "Poor",
+                        "Very poor",
+                        "Not evaluated / unknown",
+                        "Not applicable"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "@name",
+                    "@value"
+                  ]
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "@name": {
+                        "type": "string",
+                        "enum": [
+                          "Technological representativeness",
+                          "Time representativeness",
+                          "Geographical representativeness",
+                          "Completeness",
+                          "Precision",
+                          "Methodological appropriateness and consistency",
+                          "Overall quality"
+                        ]
+                      },
+                      "@value": {
+                        "type": "string",
+                        "enum": [
+                          "Very good",
+                          "Good",
+                          "Fair",
+                          "Poor",
+                          "Very poor",
+                          "Not evaluated / unknown",
+                          "Not applicable"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "@name",
+                      "@value"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "required": [
+            "common:dataQualityIndicator"
+          ]
+        },
+        "common:reviewDetails": {
+          "$ref": "tidas_data_types.json#/$defs/FTMultiLang",
+          "description": "审查摘要。应明确解决以下所有事项：在其记录的地点、技术和时间中，过程的输入和输出的代表性、完整性和精确性，即该特定商品、服务或过程的技术模型（产品、废物和基本流程）的完整性以及相关问题领域（环境、人类健康、资源使用）覆盖的完整性。数据的合理性。数据集文档的正确性和适当性。系统边界、截止规则、LCI 建模选择的适当性，例如分配、所包含流程和 LCI 方法的一致性。如果数据集包含预先计算的 LCIA 结果，则审核者应解决输入和输出基本流（包括其地理有效性）与所应用的 LCIA 方法的对应关系。此处可能包含数据集的总体质量声明。"
+        },
+        "common:referenceToNameOfReviewerAndInstitution": {
+          "$ref": "tidas_data_types.json#/$defs/GlobalReferenceType",
+          "description": "审稿人的“联系数据集”。该联系数据集中应提供审稿人和机构的全名以及联系地址和/或电子邮件。"
+        },
+        "common:otherReviewDetails": {
+          "$ref": "tidas_data_types.json#/$defs/FTMultiLang",
+          "description": "来自审核过程的更多信息，特别是数据集发布后从第三方收到的评论或来自其他外部审核的其他审核者评论。"
+        },
+        "common:referenceToCompleteReviewReport": {
+          "$ref": "tidas_data_types.json#/$defs/GlobalReferenceType",
+          "description": "完整审查报告的“源数据集”。"
+        },
+        "common:other": {
+          "$ref": "tidas_data_types.json#/$defs/CommonOther"
+        }
+      },
+      "required": [
+        "@type"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "@type": {
+                "const": "Not reviewed"
+              }
+            }
+          },
+          "then": {},
+          "else": {
+            "required": [
+              "common:scope",
+              "common:reviewDetails",
+              "common:referenceToNameOfReviewerAndInstitution"
+            ]
+          }
+        }
+      ]
+    }
+  },
   "type": "object",
   "properties": {
     "processDataSet": {
@@ -719,311 +1032,15 @@
               "properties": {
                 "review": {
                   "description": "已针对独立性和审核流程类型进行的审核类型。",
-                  "type": "object",
-                  "properties": {
-                    "@type": {
-                      "type": "string",
-                      "enum": [
-                        "Dependent internal review",
-                        "Independent internal review",
-                        "Independent external review",
-                        "Accredited third party review",
-                        "Independent review panel",
-                        "Not reviewed"
-                      ]
-                    },
-                    "common:scope": {
-                      "description": "审查范围，涉及审查或验证数据集的哪些方面和组成部分。如果是聚合的，例如LCI 结果以及进行审查/验证的详细程度（例如仅 LCI 结果，包括单元流程……）。",
-                      "anyOf": [
-                        {
-                          "type": "object",
-                          "properties": {
-                            "@name": {
-                              "type": "string",
-                              "enum": [
-                                "Raw data",
-                                "Unit process(es), single operation",
-                                "Unit process(es), black box",
-                                "LCI results or Partly terminated system",
-                                "LCIA results",
-                                "Documentation",
-                                "Life cycle inventory methods",
-                                "LCIA results calculation",
-                                "Goal and scope definition"
-                              ]
-                            },
-                            "common:method": {
-                              "description": "相应“审查范围”中使用的验证方法。",
-                              "anyOf": [
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "@name": {
-                                      "type": "string",
-                                      "enum": [
-                                        "Validation of data sources",
-                                        "Sample tests on calculations",
-                                        "Energy balance",
-                                        "Element balance",
-                                        "Cross-check with other source",
-                                        "Cross-check with other data set",
-                                        "Expert judgement",
-                                        "Mass balance",
-                                        "Compliance with legal limits",
-                                        "Compliance with ISO 14040 to 14044",
-                                        "Documentation",
-                                        "Evidence collection by means of plant visits and/or interviews"
-                                      ]
-                                    }
-                                  },
-                                  "required": [
-                                    "@name"
-                                  ]
-                                },
-                                {
-                                  "type": "array",
-                                  "items": {
-                                    "type": "object",
-                                    "properties": {
-                                      "@name": {
-                                        "type": "string",
-                                        "enum": [
-                                          "Validation of data sources",
-                                          "Sample tests on calculations",
-                                          "Energy balance",
-                                          "Element balance",
-                                          "Cross-check with other source",
-                                          "Cross-check with other data set",
-                                          "Expert judgement",
-                                          "Mass balance",
-                                          "Compliance with legal limits",
-                                          "Compliance with ISO 14040 to 14044",
-                                          "Documentation",
-                                          "Evidence collection by means of plant visits and/or interviews"
-                                        ]
-                                      }
-                                    },
-                                    "required": [
-                                      "@name"
-                                    ]
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          "required": [
-                            "@name",
-                            "common:method"
-                          ]
-                        },
-                        {
-                          "type": "array",
-                          "items": {
-                            "type": "object",
-                            "properties": {
-                              "@name": {
-                                "type": "string",
-                                "enum": [
-                                  "Raw data",
-                                  "Unit process(es), single operation",
-                                  "Unit process(es), black box",
-                                  "LCI results or Partly terminated system",
-                                  "LCIA results",
-                                  "Documentation",
-                                  "Life cycle inventory methods",
-                                  "LCIA results calculation",
-                                  "Goal and scope definition"
-                                ]
-                              },
-                              "common:method": {
-                                "description": "相应“审查范围”中使用的验证方法。",
-                                "anyOf": [
-                                  {
-                                    "type": "object",
-                                    "properties": {
-                                      "@name": {
-                                        "type": "string",
-                                        "enum": [
-                                          "Validation of data sources",
-                                          "Sample tests on calculations",
-                                          "Energy balance",
-                                          "Element balance",
-                                          "Cross-check with other source",
-                                          "Cross-check with other data set",
-                                          "Expert judgement",
-                                          "Mass balance",
-                                          "Compliance with legal limits",
-                                          "Compliance with ISO 14040 to 14044",
-                                          "Documentation",
-                                          "Evidence collection by means of plant visits and/or interviews"
-                                        ]
-                                      }
-                                    },
-                                    "required": [
-                                      "@name"
-                                    ]
-                                  },
-                                  {
-                                    "type": "array",
-                                    "items": {
-                                      "type": "object",
-                                      "properties": {
-                                        "@name": {
-                                          "type": "string",
-                                          "enum": [
-                                            "Validation of data sources",
-                                            "Sample tests on calculations",
-                                            "Energy balance",
-                                            "Element balance",
-                                            "Cross-check with other source",
-                                            "Cross-check with other data set",
-                                            "Expert judgement",
-                                            "Mass balance",
-                                            "Compliance with legal limits",
-                                            "Compliance with ISO 14040 to 14044",
-                                            "Documentation",
-                                            "Evidence collection by means of plant visits and/or interviews"
-                                          ]
-                                        }
-                                      },
-                                      "required": [
-                                        "@name"
-                                      ]
-                                    }
-                                  }
-                                ]
-                              }
-                            },
-                            "required": [
-                              "@name",
-                              "common:method"
-                            ]
-                          }
-                        }
-                      ]
-                    },
-                    "common:dataQualityIndicators": {
-                      "type": "object",
-                      "description": "数据质量指标用于以定义的、计算机可读（因此可搜索）的形式提供数据集上经过审查的关键信息。这有助于支持 LCA 从业者识别/选择最高质量和最合适的数据集。",
-                      "properties": {
-                        "common:dataQualityIndicator": {
-                          "description": "数据质量指标用于以定义的、计算机可读（因此可搜索）的形式提供数据集上经过审查的关键信息。这有助于支持 LCA 从业者识别/选择最高质量和最合适的数据集。",
-                          "anyOf": [
-                            {
-                              "type": "object",
-                              "properties": {
-                                "@name": {
-                                  "type": "string",
-                                  "enum": [
-                                    "Technological representativeness",
-                                    "Time representativeness",
-                                    "Geographical representativeness",
-                                    "Completeness",
-                                    "Precision",
-                                    "Methodological appropriateness and consistency",
-                                    "Overall quality"
-                                  ]
-                                },
-                                "@value": {
-                                  "type": "string",
-                                  "enum": [
-                                    "Very good",
-                                    "Good",
-                                    "Fair",
-                                    "Poor",
-                                    "Very poor",
-                                    "Not evaluated / unknown",
-                                    "Not applicable"
-                                  ]
-                                }
-                              },
-                              "required": [
-                                "@name",
-                                "@value"
-                              ]
-                            },
-                            {
-                              "type": "array",
-                              "items": {
-                                "type": "object",
-                                "properties": {
-                                  "@name": {
-                                    "type": "string",
-                                    "enum": [
-                                      "Technological representativeness",
-                                      "Time representativeness",
-                                      "Geographical representativeness",
-                                      "Completeness",
-                                      "Precision",
-                                      "Methodological appropriateness and consistency",
-                                      "Overall quality"
-                                    ]
-                                  },
-                                  "@value": {
-                                    "type": "string",
-                                    "enum": [
-                                      "Very good",
-                                      "Good",
-                                      "Fair",
-                                      "Poor",
-                                      "Very poor",
-                                      "Not evaluated / unknown",
-                                      "Not applicable"
-                                    ]
-                                  }
-                                },
-                                "required": [
-                                  "@name",
-                                  "@value"
-                                ]
-                              }
-                            }
-                          ]
-                        }
-                      },
-                      "required": [
-                        "common:dataQualityIndicator"
-                      ]
-                    },
-                    "common:reviewDetails": {
-                      "$ref": "tidas_data_types.json#/$defs/FTMultiLang",
-                      "description": "审查摘要。应明确解决以下所有事项：在其记录的地点、技术和时间中，过程的输入和输出的代表性、完整性和精确性，即该特定商品、服务或过程的技术模型（产品、废物和基本流程）的完整性以及相关问题领域（环境、人类健康、资源使用）覆盖的完整性。数据的合理性。数据集文档的正确性和适当性。系统边界、截止规则、LCI 建模选择的适当性，例如分配、所包含流程和 LCI 方法的一致性。如果数据集包含预先计算的 LCIA 结果，则审核者应解决输入和输出基本流（包括其地理有效性）与所应用的 LCIA 方法的对应关系。此处可能包含数据集的总体质量声明。"
-                    },
-                    "common:referenceToNameOfReviewerAndInstitution": {
-                      "$ref": "tidas_data_types.json#/$defs/GlobalReferenceType",
-                      "description": "审稿人的“联系数据集”。该联系数据集中应提供审稿人和机构的全名以及联系地址和/或电子邮件。"
-                    },
-                    "common:otherReviewDetails": {
-                      "$ref": "tidas_data_types.json#/$defs/FTMultiLang",
-                      "description": "来自审核过程的更多信息，特别是数据集发布后从第三方收到的评论或来自其他外部审核的其他审核者评论。"
-                    },
-                    "common:referenceToCompleteReviewReport": {
-                      "$ref": "tidas_data_types.json#/$defs/GlobalReferenceType",
-                      "description": "完整审查报告的“源数据集”。"
-                    },
-                    "common:other": {
-                      "$ref": "tidas_data_types.json#/$defs/CommonOther"
-                    }
-                  },
-                  "required": [
-                    "@type"
-                  ],
-                  "allOf": [
+                  "anyOf": [
                     {
-                      "if": {
-                        "properties": {
-                          "@type": {
-                            "const": "Not reviewed"
-                          }
-                        }
-                      },
-                      "then": {},
-                      "else": {
-                        "required": [
-                          "common:scope",
-                          "common:reviewDetails",
-                          "common:referenceToNameOfReviewerAndInstitution"
-                        ]
+                      "$ref": "#/$defs/ProcessReview"
+                    },
+                    {
+                      "type": "array",
+                      "minItems": 1,
+                      "items": {
+                        "$ref": "#/$defs/ProcessReview"
                       }
                     }
                   ]

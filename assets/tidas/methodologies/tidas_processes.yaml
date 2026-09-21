@@ -439,16 +439,17 @@ processDataSet:
         <rules>:
           - language: "all"
             definition: |
-              Dataset version identifier using the ILCD three-tier numbering scheme.
-            format: "NN.NN.NNN (three numeric groups separated by dots)"
+              Dataset version identifier using two fixed-width numeric groups and an optional three-digit development component, as allowed by the TIDAS Version schema.
+            format: "NN.NN or NN.NN.NNN"
             content_requirements:
-              - "Use leading zeros to keep fixed-width groups (e.g., 01.00.000)."
+              - "Use leading zeros to keep fixed-width groups (e.g., 01.00 or 01.00.000)."
               - "Increment the version whenever content changes; document major versus minor revisions."
               - "Keep the version in sync with release notes or repository tags."
             validation:
-              - "Reject values that do not match the numeric three-group pattern."
+              - "Reject values that do not match the two-group pattern with an optional three-digit third group."
               - "Ensure each new dataset version number is greater than the previous published version."
             examples:
+              - "01.00"
               - "01.00.000"
               - "01.01.000"
               - "02.00.000"

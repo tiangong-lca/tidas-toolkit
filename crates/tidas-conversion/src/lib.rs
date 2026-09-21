@@ -891,8 +891,11 @@ pub enum ConversionError {
 mod tests {
     use std::collections::BTreeMap;
 
+    use jsonschema::error::ValidationErrorKind;
+    use jsonschema::{Resource, ValidationError};
     use serde_json::{Value, json};
     use tempfile::tempdir;
+    use tidas_assets::{AssetKind, bundled_assets};
     use tidas_validation::{ValidationRequest, validate_ilcd_package};
 
     use super::*;
@@ -956,6 +959,55 @@ mod tests {
         documents
     }
 
+    fn process_review_validator() -> jsonschema::Validator {
+        const SCHEMA_PREFIX: &str = "assets/tidas/schemas/";
+        const SCHEMA_BASE_URI: &str = "https://tiangong.earth/assets/tidas/schemas/";
+
+        let schemas = bundled_assets()
+            .into_iter()
+            .filter(|asset| asset.kind == AssetKind::JsonSchema)
+            .map(|asset| {
+                let filename = asset.path.strip_prefix(SCHEMA_PREFIX).unwrap().to_owned();
+                let schema: Value = serde_json::from_slice(asset.bytes).unwrap();
+                (filename, schema)
+            })
+            .collect::<BTreeMap<_, _>>();
+        let process_schema = schemas.get("tidas_processes.json").unwrap();
+        let review_schema = process_schema
+            .pointer("/properties/processDataSet/properties/modellingAndValidation/properties/validation/properties/review")
+            .unwrap()
+            .clone();
+        let focused_schema = json!({
+            "$id": format!("{SCHEMA_BASE_URI}process-review-test.json"),
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "type": "object",
+            "properties": {"review": review_schema},
+            "required": ["review"],
+            "$defs": process_schema["$defs"].clone()
+        });
+        let resources = schemas.iter().map(|(filename, schema)| {
+            (
+                format!("{SCHEMA_BASE_URI}{filename}"),
+                Resource::from_contents(schema.clone()),
+            )
+        });
+        jsonschema::draft7::options()
+            .with_resources(resources)
+            .build(&focused_schema)
+            .unwrap()
+    }
+
+    fn collect_validation_locations(error: &ValidationError<'_>, locations: &mut Vec<String>) {
+        locations.push(error.instance_path().to_string());
+        if let ValidationErrorKind::AnyOf { context } = error.kind() {
+            for branch in context {
+                for nested in branch {
+                    collect_validation_locations(nested, locations);
+                }
+            }
+        }
+    }
+
     #[test]
     fn format_mapping_matches_the_frozen_python_oracle() {
         let cancellation = CancellationToken::default();
@@ -982,6 +1034,57 @@ mod tests {
             serde_json::from_slice(&format::xml_to_json(&roundtrip, &cancellation).unwrap())
                 .unwrap();
         assert_eq!(reparsed, value);
+    }
+
+    #[test]
+    fn repeated_process_reviews_preserve_order_roundtrip_and_indexed_validation() {
+        let cancellation = CancellationToken::default();
+        let source = include_bytes!("../tests/fixtures/repeated-review-process.xml");
+        let converted = format::xml_to_json(source, &cancellation).unwrap();
+        let document: Value = serde_json::from_slice(&converted).unwrap();
+        let review_path = "/processDataSet/modellingAndValidation/validation/review";
+        let reviews = document.pointer(review_path).unwrap().as_array().unwrap();
+
+        assert_eq!(reviews.len(), 2);
+        assert_eq!(
+            reviews[0].pointer("/common:reviewDetails/#text").unwrap(),
+            "First review record"
+        );
+        assert_eq!(
+            reviews[1].pointer("/common:reviewDetails/#text").unwrap(),
+            "Second review record"
+        );
+
+        let validator = process_review_validator();
+        validator
+            .validate(&json!({"review": reviews.clone()}))
+            .unwrap();
+        validator
+            .validate(&json!({"review": reviews[0].clone()}))
+            .unwrap();
+
+        let roundtrip_xml = format::json_to_xml(&converted, &cancellation).unwrap();
+        let roundtrip_text = String::from_utf8(roundtrip_xml.clone()).unwrap();
+        assert_eq!(roundtrip_text.matches("<review ").count(), 2);
+        let reparsed: Value =
+            serde_json::from_slice(&format::xml_to_json(&roundtrip_xml, &cancellation).unwrap())
+                .unwrap();
+        assert_eq!(reparsed.pointer(review_path), document.pointer(review_path));
+
+        let invalid = json!({
+            "review": [
+                reviews[0].clone(),
+                {"@type": "Dependent internal review"}
+            ]
+        });
+        let mut locations = Vec::new();
+        for error in validator.iter_errors(&invalid) {
+            collect_validation_locations(&error, &mut locations);
+        }
+        assert!(
+            locations.iter().any(|path| path.starts_with("/review/1")),
+            "expected an indexed error for the second review, got {locations:?}"
+        );
     }
 
     #[test]

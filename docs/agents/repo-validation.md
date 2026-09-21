@@ -28,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-20"
-lastReviewedCommit: "41e0e05c765c5546c7f7c9b262424ff94b075603"
-lastReviewedNote: "Reviewed for Toolkit #213: the 0.3.2 version bump requires full crate, native archive, release-request, and installed-artifact qualification; no test gate is waived."
+lastReviewedAt: "2026-09-21"
+lastReviewedCommit: "acdbf09ecd5e6baad6bae89054c57186cfbb7e69"
+lastReviewedNote: "Reviewed for Toolkit #215: public-spec qualification now downloads the exact 0.2.2 archive and includes singleton/repeated Process reviews, ordered XML round-trip, and an indexed second-item failure."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -95,7 +95,7 @@ to install a redistributable or copy a development-machine DLL.
 | release | closure/order/round-trip golden fixtures; missing/inexact reference failure; four deterministic ZIPs; native validation; cancellation/budget; atomic directory publication | run the local 237 MiB package twice, compare all four archives, and record wall time/RSS |
 | validation/batch/references | compile every bundled schema/XSD root offline; schema and semantic fixtures including internal keyrefs; complete TIDAS projection/XSD/recovery proof; explicit schema-only diagnostic behavior; oversized rejected-instance event below the 1 MiB frame ceiling; bounded issue spool; batch preflight/drift/final-event hash; extraction schema/roles | local large-package validation twice, recording native time, projection/XSD/recovery time, peak RSS, cancellation, and spool hash |
 | assets | baseline asset check; representative `git check-attr eol`; schema-local-reference and translation-parity tests | regenerate locks only after reviewing every changed path/hash; compare fingerprints twice |
-| public-specification pin | `tidas-asset-lock spec-check`; focused English/Chinese validation proving Process and LCIA Method may omit `common:referenceToCompleteReviewReport`, supplied references remain structurally valid, and Lifecycle Model behavior is unchanged; confirm the retained tools-owned methodologies, eILCD inputs, and validation indexes are byte-identical | `spec-import` against the qualified archive: imported/authored/metadata partition checks, negative, rollback (failure after staging, not only input parsing), no-write check mode, repeated-import idempotency, manual drift detection, and `.crate` parity of the 39-file public subset |
+| public-specification pin | `tidas-asset-lock spec-check`; focused English/Chinese validation proving Process review accepts a singleton or ordered non-empty array, reports an invalid second item at index `1`, and Process/LCIA Method may omit `common:referenceToCompleteReviewReport`; confirm Lifecycle Model behavior and retained tools-owned methodologies, eILCD inputs, and validation indexes are unchanged | `spec-import` against the qualified archive: imported/authored/metadata partition checks, negative, rollback (failure after staging, not only input parsing), no-write check mode, repeated-import idempotency, manual drift detection, XML-to-JSON-to-XML repeated-review preservation, and `.crate` parity of the 39-file public subset |
 | W8 public-rule/profile composition | `tidas-asset-lock public-rules-check`; focused `tidas-assets` and `tidas-rulesets` tests; `tidas ruleset` JSON probes | exact-checkout `public-rules-sync`; stale identity, tampered bytes, unknown/duplicate IDs, incomplete ordering, and invalid profile references; compare rule IDs/order and toolkit policy with the pre-W9 baseline |
 | SDK dispatch path contract | `bash scripts/ci/test-dispatch-impact.sh` | confirm only the tools-owned elementary taxonomy asset can emit `tidas_tools_changed`; public-rule definitions and toolkit profiles do not independently dispatch the SDK refresh |
 | XML/XSD/XSLT | focused `tidas-xml` and validation tests; resolver/security tests; four-platform CI | representative production schemas/stylesheets and static-release dependency inspection |
