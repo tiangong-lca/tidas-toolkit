@@ -6,6 +6,7 @@ mod ilcd;
 mod pipeline;
 mod schema;
 mod semantic;
+mod spool_destination;
 
 pub use batch::{
     BatchDocumentIdentityV1, BatchValidationIssueEventV1, BatchValidationOutput,
