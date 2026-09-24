@@ -11,7 +11,7 @@ use std::io::{BufReader, BufWriter, Read, Write};
 use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 use tempfile::{Builder, TempDir};
 use thiserror::Error;
@@ -269,11 +269,21 @@ fn write_process_entities(
                 output_reference = Some(reference);
             }
         }
-        let (reference, functional_unit) = declared_reference
-            .or(output_reference)
-            .or(first_reference)
-            .ok_or_else(|| PackageWriteError::ProcessNoExchanges(entity.internal_id.clone()))?;
-        let base = process::process_base(&entity, &reference, &functional_unit)?;
+        let quantitative_reference = if let Some(reference) = entity.raw.get("ilcdNonFlowReference")
+        {
+            reference.clone()
+        } else {
+            let (reference, functional_unit) = declared_reference
+                .or(output_reference)
+                .or(first_reference)
+                .ok_or_else(|| PackageWriteError::ProcessNoExchanges(entity.internal_id.clone()))?;
+            json!({
+                "@type": "Reference flow(s)",
+                "referenceToReferenceFlow": reference,
+                "functionalUnitOrOther": common::localized(&functional_unit),
+            })
+        };
+        let base = process::process_base(&entity, &quantitative_reference)?;
         write_process_dataset(root, &entity.internal_id, &base, request)?;
         *counts.entry("processes".to_owned()).or_default() += 1;
     }

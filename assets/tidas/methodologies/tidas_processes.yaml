@@ -11,9 +11,38 @@
 # ]
 
 metadata:
-  version: "1.0.0"
-  last_updated: "2024-01-15"
+  version: "1.1.0"
+  last_updated: "2026-09-22"
   applies_to: "ILCD/Tidas Process Dataset v1.1"
+  ef_baseline: EF Data Guide 2.0 (2020), EF 3.1 addendum (November 2022), and EF eILCD modelling 2.1 (June 2020);
+    source-bound additions, not universal TIDAS gates.
+  ef_sources:
+    ef-data-guide-2.0:
+      title: Guide for EF compliant data sets, Version 2.0
+      authors: Simone Fazio, Luca Zampori, An De Schryver, Oliver Kusche, Lionel Thellier, Edward Diaconu
+      publisher: European Commission, Joint Research Centre; Publications Office of the European Union
+      year: 2020
+      identifier: JRC120340; EUR 30175 EN; doi:10.2760/537292
+      url: https://eplca.jrc.ec.europa.eu/permalink/Guide_EF_DATA.pdf
+      license: CC BY 4.0; https://creativecommons.org/licenses/by/4.0/
+      attribution: Adapted and condensed into field-oriented guidance by TIDAS; wording, organization and examples
+        are changed. No endorsement by the original authors is implied.
+    ef-3.1-addendum-2022:
+      title: Updates on Guide for EF compliant data sets (Version 2.0) to reflect the changes in the Environmental
+        Footprint 3.1 reference package
+      authors: Antonio Valente, Oliver Kusche, Fulvio Ardente
+      date: 2022-11
+      url: https://eplca.jrc.ec.europa.eu/permalink/EF_Data_Guide_EF3.1_addendum.pdf
+      use: Source of factual compliance-system updates; source text and tables are not reproduced.
+    ef-eilcd-modelling-2.1:
+      title: Modelling requirements on LCI models under the Environmental footprint for interoperable data exchange
+        via the eILCD format
+      authors: Luca Zampori, Marc Andree Wolf, Katarzyna Cenian, Rutger Schurgers, Ingo Meinshausen, Sebastian
+        Schulz, Lucia Valsasina, Gregor Wernet, Oliver Kusche, Lionel Thellier
+      version: "2.1"
+      date: 2020-06
+      url: https://eplca.jrc.ec.europa.eu/permalink/InterfacePaper_Modelling_eILCD.pdf
+      use: Source of factual modelling constraints; source text and figures are not reproduced.
 
 # Global rules
 global_rules:
@@ -25,6 +54,140 @@ global_rules:
       - language: "zh"
         requirement: "中文版本建议提供，特别是中国地区的数据"
         purpose: "确保本地用户可理解性"
+  ef_scope:
+    <rules>:
+      - language: all
+        id: ef.scope
+        normative_level: informative
+        applicability: Readers and consumers applying the EF-specific methodology entries.
+        source_refs:
+          - source: ef-data-guide-2.0
+            section: Introduction; 5.1; 6
+          - source: ef-3.1-addendum-2022
+            section: Introduction
+          - source: ef-eilcd-modelling-2.1
+            section: "1"
+        requirement: Apply this source-bound EF guidance only when assessing the stated EF compliance scope; retain
+          ordinary TIDAS requirements outside that scope.
+        content_requirements:
+          - This baseline is the 2020 Data Guide plus its November 2022 EF 3.1 addendum and the June 2020
+            eILCD modelling paper. It is not a claim that these documents exhaust every current PEF/OEF or
+            sector requirement.
+          - ILCD entry-level requirements, the applicable PEF/OEF method and PEFCR/OEFSR remain additional
+            source dependencies. Record their versions and resolve a conflict against the applicable
+            authoritative source before claiming compliance.
+          - The 2022 addendum replaces Guide sections 2 and 5.2.15 and updates supporting-dataset
+            declarations. Its reference to section 5.4.1 describes supporting datasets, covered under section
+            5.4.2 in the Guide.
+          - The elementary-flow duplication permission in the Guide does not override the stricter eILCD
+            exchange requirement when that model-exchange scope applies.
+          - These are content requirements, not execution phases, severity, write permission, automatic repair
+            instructions, or a compliance certificate.
+  ef_reference_package:
+    <rules>:
+      - language: all
+        id: ef.reference-package
+        normative_level: shall
+        applicability: EF datasets and their supporting package, including level-1 subprocesses.
+        source_refs:
+          - source: ef-3.1-addendum-2022
+            section: 2; 5.2.15
+          - source: ef-data-guide-2.0
+            section: 4; 5.4.2
+        requirement: Use the EF reference package applicable to the declared method/category-rule generation, and keep
+          the central dataset and all its subprocesses compatible with that package.
+        content_requirements:
+          - The addendum identifies EF 3.1 for new transition-phase PEFCRs and their studies; older category
+            rules can require their corresponding older package. Record the exact package instead of silently
+            mixing releases.
+          - Deliver the referenced flows, flow properties, unit groups, sources, contacts and LCIA methods
+            needed by the ILCD/eILCD package, including compliance-system sources.
+          - Use the official reference nomenclature and characterization methods. A conversion does not
+            authorize changing the EF characterization factors.
+  ef_eilcd_connections:
+    <rules>:
+      - language: all
+        id: ef.eilcd-connections
+        normative_level: shall
+        applicability: EF eILCD lifecycle models and their linked processes.
+        source_refs:
+          - source: ef-eilcd-modelling-2.1
+            section: 2.3; Figure 1; footnote 7
+        requirement: Represent eILCD connections using the permitted Figure 1 option C; do not use one exchange for
+          multiple connections.
+        content_requirements:
+          - A connection between two newly created EF datasets uses the same product flow at both ends.
+          - For existing-to-new connections reuse the existing product flow in the new dataset; different-UUID
+            connections are limited to unavoidable existing-dataset cases. Intermediate/conversion processes
+            are an available remedy.
+          - Keep the reference exchange of the reference process unlinked as specified in footnote 7 to avoid
+            double linking.
+          - Do not create country-specific flows without checking the supply identities and connections. The
+            lifecycle-model file owns these connections; this Process methodology records the cross-file
+            requirement.
+  ef_eilcd_model:
+    <rules>:
+      - language: all
+        id: ef.eilcd-model
+        normative_level: shall
+        applicability: EF models exchanged in eILCD format.
+        source_refs:
+          - source: ef-eilcd-modelling-2.1
+            section: 2.2-2.4
+        requirement: Identify the reference process explicitly and scale the model to its reference-flow quantity and
+          unit.
+        content_requirements:
+          - Do not reuse a newly created dataset multiple times with different parameter values in an eILCD
+            PEF model; create an appropriate new dataset. The paper expressly exempts level-1 disaggregated
+            datasets from this provision.
+          - Life-cycle-stage declarations are optional; if present, use the cited default stages or the
+            applicable PEFCR/OEFSR convention, documenting any justified subdivisions/additions.
+          - Avoid unnecessarily complex multi-scenario parameter models as recommended by the paper. Model
+            declarations and scenario selection are lifecycle-model concerns, not new Process JSON fields.
+  ef_eilcd_documentation:
+    <rules>:
+      - language: all
+        id: ef.eilcd-documentation
+        normative_level: shall
+        applicability: EF models exchanged in eILCD format.
+        source_refs:
+          - source: ef-eilcd-modelling-2.1
+            section: "2.5"
+        requirement: Place whole-model metadata on the reference process and reference the aggregated result process.
+        content_requirements:
+          - Copy the aggregated-version metadata to the corresponding reference-process fields; include that
+            aggregated dataset in the processes directory.
+          - For complex representative-product models describe at least the represented product/process in the
+            reference-process metadata and explain detailed assumptions in the study report.
+          - Report all EF impact-category results on the reference process and ensure they match the
+            aggregated result dataset.
+          - referenceToReferenceProcess and referenceToResultingProcess belong to the lifecycle-model
+            representation; their absence from the Process schema is not permission to drop the requirement.
+  ef_provider_obligations:
+    <rules>:
+      - language: all
+        id: ef.provider-context
+        normative_level: informative
+        applicability: EF data providers and node/data-stock operators under the stated source baseline.
+        source_refs:
+          - source: ef-data-guide-2.0
+            section: 3.2-3.6; 7; 8.3
+        requirement: Preserve the source requirements for data-stock documentation, update communication and review
+          availability as provider obligations.
+        content_requirements:
+          - Maintain the applicable overall/core change logs and predecessor availability, with dates and
+            affected identities on the provider landing page.
+          - Section 3.4 describes user notification, temporary removal from download, restricted corrected
+            upload and EF-helpdesk coordination; these are transition-phase provider procedures, not actions a
+            content validator may execute.
+          - Section 7 requires stock names prefixed with the EF reference-package version and a consistent
+            flow list within each stock, even when EF and ILCD compliance levels coexist.
+          - Explain stock structure on the landing page, link the EULA, provide a contact address and obtain
+            the required EULA agreement. Create a source dataset with description and hyperlink for each new
+            node and stock; provider responsibility for quality/review remains.
+          - Confirm current node, registry and communication procedures before operational use.
+          - Make the EF review report available with the dataset and visible in the registry as required by
+            section 8.3. This methodology grants no authority to publish, notify users or change access.
 
 processDataSet:
   processInformation:
@@ -41,7 +204,8 @@ processDataSet:
               content_requirements:
                 - "Use technical terminology as applied in the supplying industry or towards customers."
                 - "Separate descriptors within the base name using commas and avoid semicolons or brackets."
-                - "Spell out terms before adding widely recognised abbreviations (e.g., \"Polypropylene, PP\")."
+                - "Spell out terms before adding widely recognised abbreviations (e.g., \"Polypropylene,
+                  PP\")."
                 - "Cover every reference flow explicitly when the dataset is multi-functional."
                 - "Keep the wording concise enough for interface display (target 200 characters or fewer)."
               examples:
@@ -86,7 +250,8 @@ processDataSet:
                 - "Reference applicable standards or grades (e.g., EN 10202 prime quality, GB/T 13296)."
                 - "Indicate product quality or performance attributes (e.g., UV-resistant, flame-retardant)."
                 - "Document intended use qualifiers when relevant (e.g., for wafer production, indoor use)."
-                - "Identify production routes or feedstock types (e.g., steam cracking route, secondary material)."
+                - "Identify production routes or feedstock types (e.g., steam cracking route, secondary
+                  material)."
               examples:
                 - "Chromium plated, EN 10202 prime quality, indoor use"
                 - "Sterilised, ISO 13485 compliant, medical device grade"
@@ -129,7 +294,8 @@ processDataSet:
                 - "Clarify production versus consumption mix status; omit if not applicable."
                 - "Specify the commercial or logistical location type (e.g., at wholesale, at point-of-sale)."
                 - "Add other relevant availability descriptors (e.g., to waste incineration plant)."
-                - "Avoid confusing location type with intended use; reserve use-related qualifiers for treatmentStandardsRoutes."
+                - "Avoid confusing location type with intended use; reserve use-related qualifiers for
+                  treatmentStandardsRoutes."
               examples:
                 - "Production mix, at plant"
                 - "Consumption mix, to consumer"
@@ -171,7 +337,8 @@ processDataSet:
                 - State the reference basis when it is not the default mass/mass relation.
               content_requirements:
                 - "Quantify key constituents or energy content (e.g., 24 % Fe, 9.6 MJ/kg net calorific value)."
-                - "Indicate the measurement basis explicitly when different from mass fraction (e.g., by volume, molar)."
+                - "Indicate the measurement basis explicitly when different from mass fraction (e.g., by
+                  volume, molar)."
                 - "Include multiple properties as separate comma-separated entries."
                 - "Avoid duplicating information stored in dedicated property fields (e.g., CAS numbers)."
               examples:
@@ -243,6 +410,56 @@ processDataSet:
                 该数据集代表现代超临界电厂的燃煤发电。系统边界包括煤炭处理、
                 燃烧和烟气处理。净效率假定为45%。数据质量高，基于2023年
                 实测电厂数据。
+          - language: all
+            id: ef.supporting-identification
+            normative_level: shall
+            applicability: Non-primary supporting sub-datasets used only within their corresponding EF level-1 model.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.4.2
+            requirement: Identify the central process by exact name and UUID and direct users there for full model
+              documentation.
+            content_requirements:
+              - Use the prescribed supporting-subprocess general-comment wording in section 5.4.2 item 4 with
+                the central process name and UUID substituted.
+              - Supporting processes must not be used independently or with another central dataset; they do
+                not require a separate DQR or review.
+              - Where no clear classification exists, the Guide recommends Services / Other services.
+      <rules>:
+        - language: all
+          id: ef.identity
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: "5.2"
+          requirement: Provide a UUID and the structured ILCD process name with its applicable technical, treatment,
+            mix/location-type and quantitative qualifiers.
+      referenceToExternalDocumentation:
+        <rules>:
+          - language: all
+            id: ef.study-report
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets. Applies when a
+              PEF study exists.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.1
+            requirement: Reference the PEF study report when a PEF study has been performed.
+      complementingProcesses:
+        <rules>:
+          - language: all
+            id: ef.level1-complementing-processes
+            normative_level: shall
+            applicability: EF level-1 central datasets; the prohibition on complementingProcesses applies to aggregated
+              datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.4.1; footnote 27
+            requirement: Reference all and only the central dataset subprocesses, with their UUIDs and exact names.
+            content_requirements:
+              - Leave complementingProcesses unfilled for aggregated datasets; it is not a general list of
+                related datasets.
 
     time:
       referenceYear:
@@ -254,8 +471,8 @@ processDataSet:
               - "Should represent the year of data validity"
               - "For future scenarios, clearly indicate in comments"
             examples:
-              valid: ["2023", "2020", "2025"]
-              invalid: ["23", "2020-2021", "2020s"]
+              valid: [ "2023", "2020", "2025" ]
+              invalid: [ "23", "2020-2021", "2020s" ]
 
       timeRepresentativenessDescription:
         <rules>:
@@ -279,6 +496,20 @@ processDataSet:
               - |
                 数据代表2023年平均技术水平。技术成熟，预计2030年前变化较小。
                 年效率可能提升0.5%。
+      common:referenceYear:
+        <rules>:
+          - language: all
+            id: ef.reference-year
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.4
+            requirement: State the validity start year, or the environmentally representative year for mixed-year data,
+              with the validity period and justification.
+            content_requirements:
+              - Do not advance the reference year merely because the EF reference package changed or an update
+                left the LCI content unchanged.
 
     geography:
       locationOfOperationSupplyOrProduction:
@@ -325,6 +556,20 @@ processDataSet:
               examples:
                 - |
                   适用于温带气候区。需要水路用于冷却。电网连接假定欧洲标准电压。
+        "@location":
+          <rules>:
+            - language: all
+              id: ef.geography
+              normative_level: shall
+              applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+              source_refs:
+                - source: ef-data-guide-2.0
+                  section: 5.2.3
+              requirement: Use the Guide designation EU+EFTA+UK for its complete-European coverage and the two-letter ISO
+                country code for individual countries.
+              content_requirements:
+                - The Guide also identifies PT-MA, ES-CA, BQ-SE and BQ-SB. Verify representability in the
+                  target location vocabulary; do not silently substitute a different geography.
 
     technology:
       technologyDescriptionAndIncludedProcesses:
@@ -362,6 +607,106 @@ processDataSet:
                 超超临界(USC)煤粉燃烧技术，600°C/620°C蒸汽条件。包括：磨煤、
                 燃烧、蒸汽发生、汽轮机运行、冷凝。辅助：脱硝(SCR)、脱硫(FGD)、
                 静电除尘器。不包括：煤炭开采、灰渣处理基础设施。
+      referenceToTechnologyFlowDiagrammOrPicture:
+        <rules>:
+          - language: all
+            id: ef.system-diagram
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2; 5.4.1
+            requirement: Reference a source containing the system-boundary diagram and relevant subprocesses.
+            content_requirements:
+              - For a level-1 central dataset, add a complete model graph showing all subprocesses, physical
+                connections, directions and included/excluded boundaries; retain the activity diagram as well.
+      referenceToIncludedProcesses:
+        <rules>:
+          - language: all
+            id: ef.aggregated-included-processes
+            normative_level: may
+            applicability: Aggregated EF LCI-result datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: "5.3"
+            requirement: An aggregated dataset may reference included subprocesses when these also exist as separate
+              datasets.
+      <rules>:
+        - language: all
+          id: ef.level1-structure
+          normative_level: shall
+          applicability: EF-compliant level-1 partly disaggregated central datasets.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: "4"
+          requirement: Preserve the minimum level-1 decomposition and one defined reference exchange.
+          content_requirements:
+            - Separate energy subprocesses per energy dataset, including fuel conversion and direct emissions
+              where relevant.
+            - Separate incoming transport per transported material/component and transport dataset; represent
+              transported mass and distance as separate central-process parameters.
+            - Represent avoided-product systems on the output side, retain the original datasets and use the
+              described sign-inverting modelling process where system expansion requires it.
+            - Separate main material inputs so virgin/recycled input and CFF R1 can be adapted; aggregate the
+              remaining background processes into an input subprocess.
+            - Provide a subprocess for foreground direct emissions and resource inputs; allow distinct
+              co-products while selecting one reference exchange.
+    quantitativeReference:
+      <rules>:
+        - language: all
+          id: ef.reference-flow
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: 4; 5.2; 6
+          requirement: Identify exactly one reference exchange for the EF process; it may be an input or an output and
+            must exist in the exchange list.
+          content_requirements:
+            - Use referenceToReferenceFlow to identify the exchange by its internal ID, not by the referenced
+              flow UUID.
+            - Document the functional unit when applicable. Multiple distinct co-products do not establish
+              multiple EF reference exchanges.
+          examples:
+            positive:
+              - One reference input in a treatment dataset; several co-products with one reference output.
+            negative:
+              - Two reference exchange IDs or a reference ID absent from the exchange list.
+    mathematicalRelations:
+      variableParameter:
+        comment:
+          <rules>:
+            - language: all
+              id: ef.parameter-defaults
+              normative_level: shall
+              applicability: EF-compliant process datasets other than non-primary supporting sub-datasets. Applies to
+                parameterized datasets.
+              source_refs:
+                - source: ef-data-guide-2.0
+                  section: 5.2.5
+              requirement: Document every parameter default in its comment, units and defaults information.
+        <rules>:
+          - language: all
+            id: ef.eilcd-parameters
+            normative_level: shall
+            applicability: Processes participating in EF models exchanged in eILCD format.
+            source_refs:
+              - source: ef-eilcd-modelling-2.1
+                section: "2.1"
+            requirement: Use process-local parameters with the eILCD name and formula restrictions.
+            content_requirements:
+              - A parameter name starts with a letter, is at most 15 characters, and otherwise uses only
+                letters, digits, underscores or hyphens.
+              - A formula is at most 255 characters. Permitted operators are +, -, *, /, ^, >, <, >=, <= and
+                =; permitted functions are IF, POW and AND/OR/NOT with parentheses.
+              - References may target other variables/formulas in this process but must not form cycles or
+                cause division by zero. References to parameters outside this process are prohibited;
+                lifecycle-model parameter settings are a separate model capability.
+            examples:
+              positive:
+                - yield_1 refers to an acyclic formula in the same process.
+              negative:
+                - A process formula reads a global parameter or participates in a circular dependency.
 
   modellingAndValidation:
     LCIMethodAndAllocation:
@@ -374,6 +719,21 @@ processDataSet:
               - "LCI result"
               - "Partly terminated system"
             description: "Defines the type and aggregation level of the process"
+          - language: all
+            id: ef.dataset-type
+            normative_level: shall
+            applicability: EF aggregated, partly disaggregated, supporting and avoided-product-system datasets, according
+              to their role.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 1; 5.2.2; 5.4.1; 5.4.2
+            requirement: Use LCI result for an aggregated EF dataset and Partly terminated system for a partly
+              disaggregated central dataset.
+            content_requirements:
+              - Use Unit process, single operation for a non-primary supporting sub-dataset. Identify an
+                avoided-product system as required for that modelling role.
+              - Preserve the source distinction if a required value cannot be represented by the current
+                target schema; report the representation gap rather than relabel it.
 
       LCIMethodPrinciple:
         <rules>:
@@ -395,6 +755,111 @@ processDataSet:
               - "efficiency: 0.45"
               - "capacity_factor: 0.85"
               - "lifetime_years: 30"
+          - language: all
+            id: ef.modelling-constants
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.11
+            requirement: Explain at least the treatment of biogenic carbon, emission offsets and capital goods.
+            content_requirements:
+              - "This documentation duty does not permit offsets: the EF modelling requirement prohibits their
+                inclusion."
+      <rules>:
+        - language: all
+          id: ef.method-and-allocation
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: 5.2; 5.2.8; 6
+          requirement: Document LCI method principles and approaches, their deviations, and foreground and background
+            allocation separately.
+          content_requirements:
+            - Resolve multifunctionality through subdivision or system expansion first, then an underlying
+              physical relationship, then another justified relationship.
+            - Apply the agricultural-specific rules where relevant; do not infer a method solely from a
+              dataset type or label.
+        - language: all
+          id: ef.electricity
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: "6"
+          requirement: Use the country consumption electricity mix, or construct a representative EU/regional
+            consumption mix where the country mix is unavailable.
+          content_requirements:
+            - Sector-specific green-electricity information requires the applicable PEF/OEF
+              contractual-instrument criteria, documented and confirmed by the reviewer; model remaining
+              electricity with the residual mix.
+        - language: all
+          id: ef.offsets-and-time
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: 6; 6.3
+          requirement: Exclude emission offsets and model emissions/removals at the start of the assessment period
+            without time discounting.
+        - language: all
+          id: ef.carbon-modelling
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: "6.3"
+          requirement: Distinguish fossil, biogenic and land-use/change carbon with the appropriate elementary flows
+            from the applicable EF reference package.
+          content_requirements:
+            - Under the Guide fossil-carbonation simplification, omit the corresponding uptake/emission pair
+              from the PEF profile; additional information may use the specified fossil uptake flow.
+            - Where biogenic exchanges are modelled, use biogenic flows, mass allocation and the factory-gate
+              reference-flow carbon property.
+            - For native forests include the connected emissions, products/residues and soil emissions under
+              land-use/change and exclude their CO2 uptake.
+            - Inventory uptake and emission separately; follow the cited PAS 2050/2050-1 provisions for
+              land-use change.
+            - Treat aboveground non-native residues as biogenic; exclude soil-carbon accumulation through
+              improved management from the model, although it may be reported as metadata.
+        - language: all
+          id: ef.agriculture-allocation
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets. Applies to
+            agricultural multifunctionality.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: "6.2"
+          requirement: Apply the cited LEAP agricultural multifunctionality guidance; document, justify and review
+            deviations.
+      deviationsFromLCIMethodApproaches:
+        <rules>:
+          - language: all
+            id: ef.cff
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.10; 6
+            requirement: Apply the CFF at least to the product materials, their waste treatments and the product
+              packaging, using the applicable PEF/OEF method.
+            content_requirements:
+              - Document where it applies, the substitution point, assumptions and nonzero parameter values in
+                the method-approach explanation.
+              - Omitted CFF parameters may mean zero only with the Guide-required general declaration on the
+                provider landing page. Absence alone is not evidence of zero.
+      referenceToLCAMethodDetails:
+        <rules>:
+          - language: all
+            id: ef.method-report
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.12
+            requirement: Reference the source dataset for the applicable current PEF method and, where relevant, the
+              applicable PEFCR.
 
     dataSourcesTreatmentAndRepresentativeness:
       dataCollectionPeriod:
@@ -406,6 +871,101 @@ processDataSet:
               - "2023"
               - "2023-01 to 2023-12"
               - "2022-06 to 2023-05"
+          - language: all
+            id: ef.agriculture-averaging
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets. Applies to
+              agricultural cultivation.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: "6.2"
+            requirement: Use cultivation periods that represent seasonal variation and crop development.
+            content_requirements:
+              - "Annual crops: at least three years; a justified unavailable-data/new-system exception may use
+                a shorter period, never below one year."
+              - "Perennials: three years at a representative steady state; justify corrections for
+                disproportionate development stages."
+              - "Crops harvested within a year: at least three recent consecutive production cycles. Account
+                for the Guide greenhouse and long-harvest-cycle distinctions."
+      dataCutOffAndCompletenessPrinciples:
+        <rules>:
+          - language: all
+            id: ef.boundary-and-cutoff
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2; 6
+            requirement: Include supply-chain processes, capital goods/infrastructure and their end of life unless
+              justified under the Guide cut-off rule.
+            content_requirements:
+              - The Guide permits up to 3.0% exclusion assessed against material, energy and environmental
+                significance; this is not an unconditional mass-only allowance.
+              - Document exclusions and deviations and obtain reviewer confirmation of their environmental
+                significance.
+              - Model included waste and other included activities through to elementary flows.
+      referenceToDataSource:
+        <rules>:
+          - language: all
+            id: ef.background-source-references
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.13
+            requirement: Reference each EF-compliant data stock and each gap-filling source through the corresponding
+              source dataset.
+      dataSelectionAndCombinationPrinciples:
+        <rules>:
+          - language: all
+            id: ef.background-selection
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: "6.1"
+            requirement: Use an available EF-compliant background dataset before an ILCD entry-level compliant
+              alternative.
+            content_requirements:
+              - Section 6.1 additionally specifies the designated Thinkstep-node aggregated datasets for
+                energy, transport, packaging and end-of-life under that baseline.
+              - The historical supplier/node requirement is source context, not a verified current endpoint or
+                permission to select an arbitrary replacement. Confirm the applicable supply requirement for
+                the declared EF generation; document unresolved availability.
+              - Commercial datasets are permitted subject to their access and license terms.
+          - language: all
+            id: ef.agriculture-specific-data
+            normative_level: should
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets. Applies to
+              agricultural cultivation.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: "6.2"
+            requirement: Prefer crop- and country/region/climate-specific yield, water/land use, land-use change,
+              fertilizer and pesticide data per hectare and year.
+      useAdviceForDataSet:
+        <rules>:
+          - language: all
+            id: ef.use-advice
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: "5.2"
+            requirement: State methodological use advice where needed, including recycling boundaries and any use-phase
+              behaviour the user must model.
+          - language: all
+            id: ef.supporting-use-advice
+            normative_level: shall
+            applicability: Non-primary supporting sub-datasets used only within their corresponding EF level-1 model.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.4.2 item 3
+            requirement: Include the source-prescribed notice restricting the supporting dataset to its corresponding
+              level-1 partly disaggregated dataset.
+            content_requirements:
+              - Use the exact notice in section 5.4.2 item 3, which points to the General comment for the
+                central dataset name and UUID.
 
     validation:
       review:
@@ -422,6 +982,140 @@ processDataSet:
                 - "Goal and scope definition"
                 - "LCIA methods"
               requirement: "At least one review recommended for published datasets"
+        common:dataQualityIndicators:
+          <rules>:
+            - language: all
+              id: ef.dqr
+              normative_level: shall
+              applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+              source_refs:
+                - source: ef-data-guide-2.0
+                  section: 5.2.17; Tables 2; Equation F.1
+              requirement: Calculate and document TeR, GR, TiR, P and overall DQR before aggregating subprocesses or
+                elementary flows.
+              content_requirements:
+                - For secondary datasets select the most relevant subprocesses/direct foreground elementary
+                  flows covering at least 80% of the weighted single score, then normalize contributions
+                  within that selected set.
+                - Assign each component rating using Table 2. For process contributions use activity-data
+                  TiR/P and secondary-dataset TeR/TiR/GR; average the two TiR ratings.
+                - Compute contribution-weighted criteria, then DQR = (TeR + GR + TiR + P) / 4. Each resulting
+                  criterion must not exceed 3.0, not merely the overall mean.
+                - Report text and one-decimal numeric values for the four criteria and overall DQR; set
+                  methodological appropriateness and completeness to Not applicable.
+                - The Guide notes pilot-phase tender exceptions with documented alternative approaches.
+                  Non-primary supporting sub-datasets do not require their own DQR.
+                - If numeric ratings cannot be represented by the current target indicator enum, retain them
+                  in review documentation and report the representation gap; do not replace them with a
+                  qualitative label and claim equivalent compliance.
+              examples:
+                positive:
+                  - Weighted criteria 2.0, 2.0, 2.0, 2.0 give DQR 2.0.
+                negative:
+                  - Criteria 4.0, 1.0, 1.0, 1.0 have mean 1.75 but fail the individual-criterion limit.
+        <rules>:
+          - language: all
+            id: ef.review-team
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 8.1-8.2; Tables 3-4
+            requirement: "Use an eligible independent review team: at least two independent reviewers including at least
+              one external reviewer."
+            content_requirements:
+              - The Guide permits type 1 (at least three independent reviewers, including one external) or
+                type 2 (two independent reviewers, including one external). A single external reviewer is not
+                sufficient.
+              - The team collectively needs more than two years of environmental audit/review practice, more
+                than two reviews, more than two years of LCA practice, participation in more than four LCI
+                works, and more than two years of relevant sector experience.
+              - Verify independence/conflicts and identify reviewers and institutions, scope and method.
+                Supporting sub-datasets are exempt from separate review under section 5.4.2.
+        common:referenceToCompleteReviewReport:
+          <rules>:
+            - language: all
+              id: ef.review-report
+              normative_level: shall
+              applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+              source_refs:
+                - source: ef-data-guide-2.0
+                  section: 8.3; Table 5
+              requirement: Attach one agreed and signed EF review report and one agreed dataset DQR for the assessed
+                dataset, using the source review template.
+              content_requirements:
+                - Document dataset identity/locator, commissioner, reviewers, method/scope/date, compliance
+                  system and EF package version.
+                - Assess method/category requirements, allocation, CFF, LCIA consistency, nomenclature,
+                  documentation, ILCD validation, DQR and cut-off; resolve non-compliance before declaring EF
+                  compliance.
+                - Reference documents used in the review and include the reviewers compliance declaration.
+                  Review affected parts again after core-content changes.
+                - "One EF report does not mean exactly one TIDAS review object: multiple review records may
+                  reference the same agreed report. General TIDAS optional-report semantics remain unchanged."
+              examples:
+                positive:
+                  - Several TIDAS review records reference one team-approved EF report.
+                negative:
+                  - A missing report is treated as proof of EF review solely because the general TIDAS schema
+                    accepts its absence.
+    completeness:
+      referenceToSupportedImpactAssessmentMethods:
+        <rules>:
+          - language: all
+            id: ef.supported-methods
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.14
+            requirement: Individually reference only the applied EF impact-category methods in the supported-methods
+              field.
+    complianceDeclarations:
+      <rules>:
+        - language: all
+          id: ef.compliance-declarations
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+          source_refs:
+            - source: ef-3.1-addendum-2022
+              section: 5.2.15 (replacement Table 1)
+          requirement: Declare the five required compliance systems, plus the applicable PEFCR when present, using the
+            source datasets and aspect values specified in the addendum.
+          content_requirements:
+            - "Select one applicable 2021/2279 method source: Annex I PEF
+              779fb9ea-de54-4707-b7fc-6154661552b5; Annex II PEFCR 909ae358-42e0-4365-8767-22b92c3229f4; Annex
+              III OEF cbeab91f-74a4-4b5a-84dc-69915a22dc71; Annex IV OEFSR
+              cec792b1-58ce-4310-bc09-6612256633b8. Set all aspects Fully compliant only when substantiated."
+            - Where a PEFCR applies, reference its dedicated source and the required fully compliant aspects.
+            - "ILCD entry-level d92a1a12-2545-49e2-a585-55c259997756: quality Not defined; other aspects Fully
+              compliant."
+            - "ISO 14040 1ea48531-e397-4ca7-ac08-056e4fa11826: nomenclature, documentation and quality Not
+              defined; other aspects Fully compliant."
+            - "ISO 14044 1adb438d-4a8b-4919-885e-0a66da3c0f2a: nomenclature, review and quality Not defined;
+              other aspects Fully compliant."
+            - "Reference-package declaration: nomenclature Fully compliant and all other aspects Not defined.
+              EF 3.1 source UUID is 0eb2b770-2cb1-43cf-9fbc-215df36fe9f0; use the matching source for another
+              applicable package."
+            - Do not add unrelated compliance systems in this EF declaration set. Include the referenced
+              source datasets in the delivered package. A package nomenclature declaration alone is not
+              overall EF compliance.
+        - language: all
+          id: ef.supporting-compliance
+          normative_level: shall
+          applicability: Non-primary supporting sub-datasets used only within their corresponding EF level-1 model.
+          source_refs:
+            - source: ef-3.1-addendum-2022
+              section: Update to supporting-sub-dataset compliance table (page 5)
+          requirement: Use the special supporting-dataset declaration and the same EF reference-package declaration as
+            the central dataset.
+          content_requirements:
+            - "Supporting source 2f8a3ebd-befc-4ea9-a6de-34bb6d426d2f: quality Not defined; all other aspects
+              Fully compliant."
+            - "Reference-package source: nomenclature Fully compliant; all other aspects Not defined. For EF
+              3.1 use 0eb2b770-2cb1-43cf-9fbc-215df36fe9f0."
+            - Do not require the full five/six-system declaration set or an independent review/DQR for this
+              special supporting role.
 
   administrativeInformation:
     dataEntryBy:
@@ -446,13 +1140,31 @@ processDataSet:
               - "Increment the version whenever content changes; document major versus minor revisions."
               - "Keep the version in sync with release notes or repository tags."
             validation:
-              - "Reject values that do not match the two-group pattern with an optional three-digit third group."
+              - "Reject values that do not match the two-group pattern with an optional three-digit third
+                group."
               - "Ensure each new dataset version number is greater than the previous published version."
             examples:
               - "01.00"
               - "01.00.000"
               - "01.01.000"
               - "02.00.000"
+          - language: all
+            id: ef.version
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: "5.2"
+            requirement: For this EF baseline use the three-part version NN.NN.NNN, separating major, minor/correction and
+              internal development increments.
+            content_requirements:
+              - This scoped EF convention does not remove the ordinary TIDAS allowance for NN.NN.
+            examples:
+              positive:
+                - 01.02.003 meets the EF representation convention.
+              negative:
+                - 01.02 is valid under the general TIDAS Version schema but does not satisfy this EF
+                  convention.
 
       permanentDataSetURI:
         <rules>:
@@ -462,6 +1174,72 @@ processDataSet:
             examples:
               - "https://example.org/ilcd/processes/550e8400-e29b-41d4"
               - "https://data.ecoinvent.org/process/abc-123-def"
+      <rules>:
+        - language: all
+          id: ef.publication-metadata
+          normative_level: shall
+          applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: "5.2"
+          requirement: Declare the workflow/publication status and license type, and fill other administrative fields at
+            the ILCD-recommended level.
+          content_requirements:
+            - Use evidence of the actual dataset status; a formatting or conversion operation does not
+              establish publication or review completion.
+        - language: all
+          id: ef.update-lineage
+          normative_level: shall
+          applicability: Updates of EF-compliant datasets/data stocks covered by Guide section 3.
+          source_refs:
+            - source: ef-data-guide-2.0
+              section: 3.1-3.3; 3.5-3.6
+          requirement: Classify an update before assigning its identity and retain the original published dataset/version.
+          content_requirements:
+            - "A1: provider changes to LCI, DQR, LCIA, process name or other core semantics require a new
+              UUID, updated review and a predecessor reference with UUID/version/URI; the Guide specifies an
+              Updated+year name prefix and normally the same data stock."
+            - "A2: non-core provider corrections retain UUID, increment version and keep the original stock. A
+              dataset used correctly in a PEFCR/OEFSR but uploaded incorrectly follows A2."
+            - "B: adaptation to a new EF reference package retains UUID/name, increments version, links the
+              predecessor, updates compliance and uses a new, package-consistent stock."
+            - Additional provider changes during package migration or a tender require their own A1/A2
+              classification; do not hide them in case B. These are published-EF update procedures, not
+              instructions to renumber ordinary working drafts.
+      common:dateOfLastRevision:
+        <rules>:
+          - language: all
+            id: ef.revision-date
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: "5.2"
+            requirement: Record and update the last revision using an ISO 8601 date-time with its time-zone information
+              when dataset content changes.
+    common:commissionerAndGoal:
+      common:intendedApplications:
+        <rules>:
+          - language: all
+            id: ef.intended-applications
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: "5.2"
+            requirement: Document the intended applications of the dataset.
+    <rules>:
+      - language: all
+        id: ef.supporting-administration
+        normative_level: shall
+        applicability: Non-primary supporting sub-datasets used only within their corresponding EF level-1 model.
+        source_refs:
+          - source: ef-data-guide-2.0
+            section: 5.4.2 items 1 and 6
+        requirement: Copy owner, commissioner, license type and access/use restrictions exactly from the central dataset.
+        content_requirements:
+          - For delivered supporting datasets the Guide specifies Data set finalised; entirely published as
+            the workflow/publication status. This requirement does not authorize publishing a working draft.
 
   exchanges:
     exchange:
@@ -473,6 +1251,18 @@ processDataSet:
               product_flows: "Follow process name rules"
               waste_flows: "Prefix with 'waste' or '废物'"
             validation: "Must reference existing flow dataset UUID"
+          - language: all
+            id: ef.reference-flow-content
+            normative_level: shall
+            applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.9; 6.3
+            requirement: Store nonzero factory-gate water and biogenic-carbon content as properties of the reference
+              product/waste flow, in the property reference units.
+            content_requirements:
+              - These quantities characterize the product, not the process. Retain native-forest origin
+                information and the required land-use-change carbon treatment.
 
       meanAmount:
         <rules>:
@@ -490,10 +1280,160 @@ processDataSet:
               - "Calculated"
               - "Unknown"
             requirement: "Required for all exchanges"
-            
+
       location:
         <rules>:
           - language: "all"
             consistency_rule: |
               Should align with process location unless specifically different
               (e.g., imported materials, exported products)
+          - language: all
+            id: ef.regionalized-elementary-flows
+            normative_level: shall
+            applicability: EF elementary-flow modelling under the stated baseline.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 5.2.6; Annex 1
+            requirement: Use regionalized elementary flows within the source-defined locations and substances.
+            content_requirements:
+              - Land Use and Water Use permit all locations in the Guide; other categories are restricted to
+                the substances/countries in Annex 1.
+              - Resolve the authorized flow and location from the applicable reference package. The source
+                annex is a dependency, not a license to create arbitrary localized elementary-flow identities.
+      generalComment:
+        <rules>:
+          - language: all
+            id: ef.elementary-duplicates
+            normative_level: may
+            applicability: EF process datasets assessed under the Data Guide, outside the stricter eILCD model-exchange
+              requirement.
+            source_refs:
+              - source: ef-data-guide-2.0
+                section: 4; 5.2.7; 6
+            requirement: Duplicate elementary input/output flows are permitted by the Data Guide when each occurrence
+              documents its source in the exchange comment.
+            content_requirements:
+              - The Guide describes merging only matching UUID and location pairs, retaining source
+                comments/amount provenance; differing locations must not be silently merged.
+              - This permission does not apply to the stricter EF eILCD model-exchange scope.
+            examples:
+              positive:
+                - Documented elementary-flow occurrences from two sources in a Data-Guide dataset.
+              negative:
+                - Treating this permission as permission to repeat a product flow or as an exception to eILCD
+                  uniqueness.
+      <rules>:
+        - language: all
+          id: ef.eilcd-defined-amount
+          normative_level: shall
+          applicability: Processes participating in EF models exchanged in eILCD format.
+          source_refs:
+            - source: ef-eilcd-modelling-2.1
+              section: "2.3"
+          requirement: Provide a defined amount for every flow independently of accumulation, storage or time.
+    <rules>:
+      - language: all
+        id: ef.product-waste-uniqueness
+        normative_level: shall
+        applicability: EF process exchanges, including level-1 models.
+        source_refs:
+          - source: ef-data-guide-2.0
+            section: 4; 6
+        requirement: Do not repeat the same product or waste flow on the same input or output side; do not model using
+          the other-flows type.
+        content_requirements:
+          - Resolve flow identity from the referenced UUID, not the displayed name. Compare input and output
+            sides separately.
+          - Different amounts, locations, suppliers or reference versions do not alone establish a different
+            flow identity. Do not invent a new UUID or merge distinct supplies solely to silence a finding.
+        examples:
+          positive:
+            - One occurrence of flow A on input and one on output is not a duplicate on either side.
+          negative:
+            - Two input exchanges reference product flow A with amounts 0.3 and 0.7, even if their locations
+              differ.
+      - language: all
+        id: ef.eilcd-flow-uniqueness
+        normative_level: shall
+        applicability: Processes participating in EF models exchanged in eILCD format.
+        source_refs:
+          - source: ef-eilcd-modelling-2.1
+            section: "2.3"
+        requirement: In an EF eILCD process, each flow may occur only once on the input side and only once on the
+          output side.
+        content_requirements:
+          - This applies to elementary flows as well as product/waste flows. A location or supplier difference
+            alone does not satisfy it when the referenced flow identity is unchanged.
+          - Enforce identity per side, not uniqueness of whole exchange objects. Distinct exchange IDs or
+            amounts do not remove duplicate flow references.
+          - This rule does not imply that every country always needs a new flow; a remedy must preserve the
+            source meaning and compatible upstream/downstream connections.
+        examples:
+          positive:
+            - Distinct flow identities on the input side with consistent supplier output references.
+          negative:
+            - Two input occurrences of the same elementary flow, even though a non-eILCD EF dataset could
+              document them.
+      - language: all
+        id: ef.water-balance
+        normative_level: shall
+        applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+        source_refs:
+          - source: ef-data-guide-2.0
+            section: "6"
+        requirement: Distinguish water withdrawal, release and evaporation at foreground and background level and use
+          consistent regionalization for matching inputs and outputs.
+        content_requirements:
+          - Use country-level water flows; use an unspecified location where the country is not covered by the
+            reference package.
+          - For continental datasets use constituent-country shares; unspecified location is allowed for large
+            macro-regions such as RoW.
+          - Analyse balances per country and explain negative balances in the metadata; do not silently
+            discard or alter the exchanges.
+      - language: all
+        id: ef.agriculture-emissions
+        normative_level: shall
+        applicability: EF-compliant process datasets other than non-primary supporting sub-datasets. Applies to
+          agricultural modelling; later applicable method/category-rule provisions require separate source
+          verification.
+        source_refs:
+          - source: ef-data-guide-2.0
+            section: "6.2"
+        requirement: Model agricultural inputs and their emissions explicitly under the source-specific assumptions.
+        content_requirements:
+          - Model pesticides by active ingredient with the Guide default distribution 90% agricultural soil,
+            9% air, 1% water; more specific data need documentation and review.
+          - Differentiate fertilizer/manure types; cover NH3, direct/indirect N2O and lime/urea CO2 to air,
+            nitrate to water, and phosphate/phosphorus losses to water. Do not model nitrogen emissions to
+            soil.
+          - For nitrogen fertilizers the Guide recommends IPCC 2006 Tier 1 factors as specified in the
+            applicable PEF/OEF method; record the selected model.
+          - Represent heavy metals to soil/water with oxidation state for water flows and document the
+            selected crop-uptake treatment.
+          - Include rice methane per the cited IPCC calculation and drained-peat CO2 through
+            drainage/oxidation modelling.
+          - Include applicable seed, peat, lime, machinery and residue inputs/emissions unless within
+            justified cut-off. Include drying/storage, and field operations unless manual operation is
+            documented.
+  LCIAResults:
+    <rules>:
+      - language: all
+        id: ef.lcia-results
+        normative_level: shall
+        applicability: EF-compliant process datasets other than non-primary supporting sub-datasets.
+        source_refs:
+          - source: ef-data-guide-2.0
+            section: 5.2.16; 6; 8.3 Table 5
+          - source: ef-3.1-addendum-2022
+            section: Introduction
+        requirement: Supply characterized results for all 16 default EF impact categories using the applicable
+          official reference package.
+        content_requirements:
+          - Place results in the dedicated LCIA results section and serialize them in scientific notation in
+            ILCD XML; this is not a requirement to change the TIDAS numeric schema.
+          - The Guide requires Look@LCI calculation/verification with the official package; its review
+            template treats discrepancies above 1% as non-compliant.
+          - The section 6 footnote permits a different arrangement only when decided at the kick-off meeting;
+            retain that evidence rather than assume an exception.
+          - The EF 3.1 addendum changes factors and expected results but explicitly leaves section 5.2.16 in
+            force. Recompute results for the declared package; do not modify its factors.

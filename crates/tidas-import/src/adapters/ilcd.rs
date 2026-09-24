@@ -384,6 +384,34 @@ fn process_raw(dataset: &Map<String, Value>) -> Map<String, Value> {
         ),
         ("exchanges".to_owned(), Value::Array(exchanges)),
     ]);
+    if let Some(reference) = value_at(dataset, &["processInformation", "quantitativeReference"])
+        .and_then(Value::as_object)
+        && let Some(reference_type) = reference.get("@type").and_then(scalar_text)
+        && reference_type != "Reference flow(s)"
+    {
+        let mut preserved =
+            Map::from_iter([("@type".to_owned(), Value::String(reference_type.to_owned()))]);
+        if let Some(value) = reference.get("functionalUnitOrOther") {
+            preserved.insert("functionalUnitOrOther".to_owned(), value.clone());
+        }
+        if let Some(value) = reference.get("common:other") {
+            preserved.insert("common:other".to_owned(), value.clone());
+        }
+        raw.insert("ilcdNonFlowReference".to_owned(), Value::Object(preserved));
+        raw.insert(
+            "ilcdProcessType".to_owned(),
+            value_at(
+                dataset,
+                &[
+                    "modellingAndValidation",
+                    "LCIMethodAndAllocation",
+                    "typeOfDataSet",
+                ],
+            )
+            .and_then(scalar_text)
+            .map_or(Value::Null, |value| Value::String(value.to_owned())),
+        );
+    }
     if let Some(location) = value_at(
         dataset,
         &[
@@ -654,6 +682,62 @@ mod tests {
             validation.summary,
             std::fs::read_to_string(issues).unwrap()
         );
+    }
+
+    #[test]
+    fn non_flow_ilcd_reference_does_not_become_first_pollutant_output() {
+        for reference_type in ["Other parameter", "Functional unit", "Production period"] {
+            let directory = tempdir().unwrap();
+            let xml = format!(
+                r#"<processDataSet xmlns:common="http://lca.jrc.it/ILCD/Common"><processInformation><dataSetInformation><common:UUID>55555555-5555-4555-8555-555555555555</common:UUID><name><baseName xml:lang="en">Synthetic water coefficient</baseName></name></dataSetInformation><quantitativeReference type="{reference_type}"><functionalUnitOrOther xml:lang="en">1 tonne unwashed raw coal</functionalUnitOrOther><functionalUnitOrOther xml:lang="zh">1 吨未经洗选的原煤</functionalUnitOrOther></quantitativeReference></processInformation><modellingAndValidation><LCIMethodAndAllocation/></modellingAndValidation><exchanges><exchange dataSetInternalID="4"><referenceToFlowDataSet refObjectId="fe0acd60-3ddc-11dd-a8ca-0050c2490048"><common:shortDescription xml:lang="en">Mercury</common:shortDescription></referenceToFlowDataSet><exchangeDirection>Output</exchangeDirection><meanAmount>0.000001</meanAmount></exchange></exchanges></processDataSet>"#
+            );
+            let cancellation = CancellationToken::default();
+            let converted =
+                tidas_conversion::convert_xml_to_json(xml.as_bytes(), &cancellation).unwrap();
+            let document: Value = serde_json::from_slice(&converted).unwrap();
+            let mut entity = entity_from_document(&document, "synthetic.xml").unwrap();
+            let process_id = entity.internal_id.clone();
+            let exchanges = entity.raw.remove("exchanges").unwrap();
+            let mut store = CanonicalStore::create(Some(directory.path())).unwrap();
+            store.begin_process_exchanges(&process_id).unwrap();
+            for exchange in exchanges.as_array().unwrap() {
+                store
+                    .add_process_exchange(&process_id, exchange.as_object().unwrap())
+                    .unwrap();
+            }
+            store.add(&entity).unwrap();
+            let output = directory.path().join("tidas");
+            let memory_budget = MemoryBudget::new(16 * 1024 * 1024);
+            write_tidas_package(&TidasWriteRequest {
+                store: &store,
+                output_dir: &output,
+                cancellation: &cancellation,
+                memory_budget: &memory_budget,
+            })
+            .unwrap();
+            let written: Value = serde_json::from_slice(
+                &std::fs::read(output.join("processes").join(format!("{process_id}.json")))
+                    .unwrap(),
+            )
+            .unwrap();
+            let process = &written["processDataSet"];
+            let reference = &process["processInformation"]["quantitativeReference"];
+            assert_eq!(reference["@type"], reference_type);
+            assert!(reference.get("referenceToReferenceFlow").is_none());
+            assert_eq!(
+                reference["functionalUnitOrOther"].as_array().unwrap().len(),
+                2
+            );
+            assert!(
+                process["modellingAndValidation"]["LCIMethodAndAllocation"]
+                    .get("typeOfDataSet")
+                    .is_none()
+            );
+            assert_eq!(
+                process["exchanges"]["exchange"][0]["referenceToFlowDataSet"]["@refObjectId"],
+                "fe0acd60-3ddc-11dd-a8ca-0050c2490048"
+            );
+        }
     }
 
     #[test]

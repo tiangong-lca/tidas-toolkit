@@ -28,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
-lastReviewedNote: "Reviewed for Toolkit #217: public-spec qualification loads its candidate identity from the canonical Rust pin, with a regression test rejecting workflow-local pin definitions."
+lastReviewedAt: "2026-09-24"
+lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
+lastReviewedNote: "Reviewed for Toolkit #219: focused importer and eILCD projection regressions plus exact 0.2.3 spec-pin and bilingual real-command round trip validate non-flow reference preservation."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -93,7 +93,7 @@ to install a redistributable or copy a development-machine DLL.
 | --- | --- | --- |
 | CLI, contracts, or shared runtime | baseline; root and affected command help; deterministic JSON/version/completion; report/stdout separation; usage and exit-class tests | configuration precedence, cancellation, bounded queues, memory accounting, spool determinism, and all affected JSON Schema contracts |
 | conversion | focused conversion + CLI tests; both directions; representative category round-trips; schema-order/XSD proof with scrambled JSON members; envelope and projection-recovery sidecars; source-semantic hash proof; tree hash; symlink, invalid XML, cancellation, budget, rollback | run the local package twice, validate every projected XML document, recover every adapted TIDAS fragment, compare tree hashes, and record wall time/RSS |
-| import | all supported format fixtures; native target validation; deterministic package/mapping/bundle hashes; malformed/unsupported input, cancellation, budget, atomic publication | large exchange/issue-spool fixture with wall time/RSS and cross-root determinism |
+| import | all supported format fixtures; native target validation; ILCD non-flow quantitative-reference regression with an elementary pollutant first and absent process type; eILCD projection retains that Process reference while stripping only the exchange flag; deterministic package/mapping/bundle hashes; malformed/unsupported input, cancellation, budget, atomic publication | large exchange/issue-spool fixture with wall time/RSS and cross-root determinism |
 | export | focused crate/CLI tests; report schema; secret redaction; unsafe paths; cancellation/budget; version suffixes; deterministic ZIP; atomic replacement | disposable local PostgreSQL and S3-compatible fixtures twice, comparing archive bytes and membership |
 | release | closure/order/round-trip golden fixtures; missing/inexact reference failure; four deterministic ZIPs; native validation; cancellation/budget; atomic directory publication | run the local 237 MiB package twice, compare all four archives, and record wall time/RSS |
 | validation/batch/references | compile every bundled schema/XSD root offline; schema and semantic fixtures including internal keyrefs; complete TIDAS projection/XSD/recovery proof; explicit schema-only diagnostic behavior; oversized rejected-instance event below the 1 MiB frame ceiling; bounded issue spool; batch preflight/drift/final-event hash; extraction schema/roles | local large-package validation twice, recording native time, projection/XSD/recovery time, peak RSS, cancellation, and spool hash |

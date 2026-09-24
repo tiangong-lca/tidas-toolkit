@@ -314,8 +314,16 @@ fn adapt_process_object(
             object.insert("common:timeRepresentativenessDescription".to_owned(), value);
         }
     }
+    if is_process_exchange_object(path) {
+        remove_key(
+            object,
+            path,
+            "quantitativeReference",
+            "omit-tidas-process-extension",
+            recovery,
+        );
+    }
     for key in [
-        "quantitativeReference",
         "LCIAResult",
         "generatedFromLifecycleModel",
         "flowProperties",
@@ -363,6 +371,14 @@ fn adapt_process_object(
             recovery,
         );
     }
+}
+
+fn is_process_exchange_object(path: &str) -> bool {
+    const EXCHANGE_PATH: &str = "/processDataSet/exchanges/exchange";
+    path == EXCHANGE_PATH
+        || path
+            .strip_prefix("/processDataSet/exchanges/exchange/")
+            .is_some_and(|index| index.parse::<usize>().is_ok())
 }
 
 fn adapt_flow_object(object: &mut Map<String, Value>, path: &str, recovery: &mut RecoveryBuilder) {
@@ -812,6 +828,39 @@ mod tests {
             }
         });
         let projection = project_tidas_to_eilcd(&source, "processes").unwrap();
+        assert!(
+            projection
+                .document
+                .pointer("/processDataSet/exchanges/exchange/quantitativeReference")
+                .is_none()
+        );
+        let mut restored = projection.document;
+        restore_tidas_projection(&mut restored, projection.recovery.as_ref().unwrap()).unwrap();
+        assert_eq!(restored, source);
+    }
+
+    #[test]
+    fn process_accounting_reference_survives_eilcd_projection() {
+        let reference = json!({
+            "@type": "Other parameter",
+            "functionalUnitOrOther": [
+                {"@xml:lang": "en", "#text": "1 tonne unwashed raw coal"},
+                {"@xml:lang": "zh", "#text": "1 吨未经洗选的原煤"}
+            ]
+        });
+        let source = json!({
+            "processDataSet": {
+                "processInformation": {"quantitativeReference": reference},
+                "exchanges": {"exchange": {"quantitativeReference": true}}
+            }
+        });
+        let projection = project_tidas_to_eilcd(&source, "processes").unwrap();
+        assert_eq!(
+            projection
+                .document
+                .pointer("/processDataSet/processInformation/quantitativeReference"),
+            source.pointer("/processDataSet/processInformation/quantitativeReference"),
+        );
         assert!(
             projection
                 .document
