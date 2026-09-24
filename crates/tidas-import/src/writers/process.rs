@@ -5,7 +5,7 @@ use crate::model::CanonicalEntity;
 
 use super::common::{
     CONTACT_NAME, administrative_for_entity, compliance_declarations, contact_id, dataset_ref,
-    format_source_id, import_trace, localized, name_parts,
+    format_source_id, import_trace, localized, localized_from_source, name_parts,
 };
 use super::unit_flow::exchange_metadata;
 
@@ -60,6 +60,14 @@ fn json_process(
     entity: &CanonicalEntity,
     parts: &ProcessParts<'_>,
 ) -> Result<Value, ProcessWriteError> {
+    let mut process_name = name_parts(parts.name, parts.location);
+    if let Some(base_name) = entity.raw.get("ilcdBaseName") {
+        process_name["baseName"] = localized_from_source(base_name);
+    }
+    let general_comment = entity
+        .raw
+        .get("ilcdGeneralComment")
+        .map_or_else(|| localized(parts.description), localized_from_source);
     let mut document = json!({
         "processDataSet": {
             "@xmlns": "http://lca.jrc.it/ILCD/Process",
@@ -71,7 +79,7 @@ fn json_process(
             "processInformation": {
                 "dataSetInformation": {
                     "common:UUID": entity.internal_id,
-                    "name": name_parts(parts.name, parts.location),
+                    "name": process_name,
                     "classificationInformation": {
                         "common:classification": {
                             "@name": "ISIC rev.4",
@@ -83,7 +91,7 @@ fn json_process(
                             ]
                         }
                     },
-                    "common:generalComment": localized(parts.description)
+                    "common:generalComment": general_comment
                 },
                 "quantitativeReference": parts.quantitative_reference,
                 "time": {"common:referenceYear": parts.reference_year},
@@ -162,7 +170,32 @@ fn apply_rich_process_information(entity: &CanonicalEntity, document: &mut Value
             localized(description),
         );
     }
-    if let Some(description) = clean_text(entity.raw.get("technologyDescription")) {
+    if let Some(source_technology) = entity.raw.get("ilcdTechnology").and_then(Value::as_object) {
+        let mut technology = Map::new();
+        for field in [
+            "technologyDescriptionAndIncludedProcesses",
+            "technologicalApplicability",
+        ] {
+            if let Some(value) = source_technology.get(field) {
+                technology.insert(field.to_owned(), localized_from_source(value));
+            }
+        }
+        if !technology.is_empty() {
+            technology
+                .entry("technologyDescriptionAndIncludedProcesses".to_owned())
+                .or_insert_with(|| {
+                    localized(
+                        "Source ILCD specifies applicability without a technology description.",
+                    )
+                });
+            insert_at(
+                document,
+                "/processDataSet/processInformation",
+                "technology",
+                Value::Object(technology),
+            );
+        }
+    } else if let Some(description) = clean_text(entity.raw.get("technologyDescription")) {
         insert_at(
             document,
             "/processDataSet/processInformation",
@@ -265,13 +298,23 @@ fn data_sources(entity: &CanonicalEntity, format_id: &str) -> Value {
     }
     section.insert(
         "referenceToDataSource".to_owned(),
-        dataset_ref(
-            "source data set",
-            format_id,
-            "External LCA source metadata",
-            "sources",
-        ),
+        raw.get("ilcdCanonicalSourceReferences")
+            .cloned()
+            .unwrap_or_else(|| {
+                dataset_ref(
+                    "source data set",
+                    format_id,
+                    "External LCA source metadata",
+                    "sources",
+                )
+            }),
     );
+    if let Some(original) = raw.get("ilcdReferenceToDataSource") {
+        section.insert(
+            "common:other".to_owned(),
+            import_trace(&json!({"originalIlcdReferences": original})),
+        );
+    }
     section.insert(
         "annualSupplyOrProductionVolume".to_owned(),
         localized(production_volume(entity)),
@@ -285,6 +328,12 @@ fn data_sources(entity: &CanonicalEntity, format_id: &str) -> Value {
         if let Some(value) = clean_text(raw.get(field)) {
             section.insert(field.to_owned(), localized(value));
         }
+    }
+    if let Some(advice) = raw.get("ilcdUseAdviceForDataSet") {
+        section.insert(
+            "useAdviceForDataSet".to_owned(),
+            localized_from_source(advice),
+        );
     }
     Value::Object(section)
 }
@@ -380,15 +429,16 @@ pub fn exchange_item(
     } else {
         "Output"
     };
+    let mut reference = dataset_ref("flow data set", flow_id, flow_name, "flows");
+    if let Some(description) = exchange.get("ilcdFlowShortDescription") {
+        reference["common:shortDescription"] = localized_from_source(description);
+    }
     let mut item = Map::from_iter([
         (
             "@dataSetInternalID".to_owned(),
             Value::String(internal_id.to_owned()),
         ),
-        (
-            "referenceToFlowDataSet".to_owned(),
-            dataset_ref("flow data set", flow_id, flow_name, "flows"),
-        ),
+        ("referenceToFlowDataSet".to_owned(), reference),
         (
             "exchangeDirection".to_owned(),
             Value::String(direction.to_owned()),
@@ -402,7 +452,10 @@ pub fn exchange_item(
     apply_exchange_details(exchange, &mut item);
     item.insert(
         "generalComment".to_owned(),
-        localized(exchange_comment(exchange, internal_id)),
+        exchange.get("ilcdGeneralComment").map_or_else(
+            || localized(exchange_comment(exchange, internal_id)),
+            localized_from_source,
+        ),
     );
     item.insert("common:other".to_owned(), exchange_metadata(exchange));
     Ok(Value::Object(item))

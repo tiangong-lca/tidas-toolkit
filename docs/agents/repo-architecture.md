@@ -27,9 +27,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-24"
-lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
-lastReviewedNote: "Reviewed for Toolkit #219: import and projection preserve non-flow Process references; the exact 0.2.3 public schema/methodology candidate is pinned without changing repository ownership."
+lastReviewedAt: 2026-09-24
+lastReviewedCommit: 3b178fd
+lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: Process/Source evidence travels through the disk-backed importer and both generated formats; ambiguous references and source identity mismatches fail. The public spec pin and crate ownership are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -101,6 +101,19 @@ not invent a process type absent from that ILCD source. The public Process
 schema that admits this form is owned by tidas-spec and imported from its exact
 reviewed 0.2.3 candidate. eILCD projection keeps the Process information
 reference in XML while omitting only the TIDAS-specific exchange flag.
+The same importer carries bilingual Process/Source names, general and use
+advice, technology applicability, source citation and description, and
+exchange derivation comments in their native fields. It resolves an ILCD
+Process source reference to the imported Source UUID/version and canonical
+package URI while recording the original ILCD reference in source trace; a
+missing or version-mismatched referenced Source fails before publication.
+ILCD exchange internal IDs remain stable through TIDAS and eILCD so human
+review can bind a calculation to its original row.
+An untyped non-flow quantitative basis fails with an explicit import issue
+instead of promoting the first pollutant output to a reference Flow. A
+package-local Source URI must resolve to the imported Source record's file;
+external URIs remain in source trace while the canonical package link targets
+their declared Source UUID.
 
 Export reads one repeatable-read, read-only PostgreSQL snapshot, streams
 records through bounded workers, optionally retrieves S3-compatible object

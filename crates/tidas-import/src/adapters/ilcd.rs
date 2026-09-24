@@ -49,6 +49,16 @@ impl SourceAdapter for IlcdAdapter {
                     }
                 };
             let document: Value = serde_json::from_slice(&json_bytes)?;
+            if has_untyped_non_flow_reference(&document) {
+                issues.push(&ImportIssue {
+                    severity: IssueSeverity::Error,
+                    code: "ambiguous_ilcd_quantitative_reference".to_owned(),
+                    message: "ILCD Process has a quantitative reference without a type or reference Flow. Its textual basis could be a functional unit, other parameter, or production period; record the intended type before importing.".to_owned(),
+                    source_object: Some(entry.label.clone()),
+                    context: BTreeMap::new(),
+                })?;
+                return Ok::<(), AdapterError>(());
+            }
             let Some(mut entity) = entity_from_document(&document, &entry.stable_key) else {
                 return Ok::<(), AdapterError>(());
             };
@@ -90,6 +100,22 @@ impl SourceAdapter for IlcdAdapter {
         }
         Ok(())
     }
+}
+
+fn has_untyped_non_flow_reference(document: &Value) -> bool {
+    document
+        .pointer("/processDataSet/processInformation/quantitativeReference")
+        .and_then(Value::as_object)
+        .is_some_and(|reference| {
+            reference
+                .get("@type")
+                .and_then(Value::as_str)
+                .is_none_or(|value| value.trim().is_empty())
+                && reference
+                    .get("referenceToReferenceFlow")
+                    .and_then(Value::as_str)
+                    .is_none_or(|value| value.trim().is_empty())
+        })
 }
 
 fn entity_from_document(document: &Value, label: &str) -> Option<CanonicalEntity> {
@@ -384,6 +410,7 @@ fn process_raw(dataset: &Map<String, Value>) -> Map<String, Value> {
         ),
         ("exchanges".to_owned(), Value::Array(exchanges)),
     ]);
+    preserve_process_evidence(dataset, &mut raw);
     if let Some(reference) = value_at(dataset, &["processInformation", "quantitativeReference"])
         .and_then(Value::as_object)
         && let Some(reference_type) = reference.get("@type").and_then(scalar_text)
@@ -437,6 +464,35 @@ fn process_raw(dataset: &Map<String, Value>) -> Map<String, Value> {
     raw
 }
 
+fn preserve_process_evidence(dataset: &Map<String, Value>, raw: &mut Map<String, Value>) {
+    let information = value_at(dataset, &["processInformation", "dataSetInformation"]);
+    if let Some(base_name) =
+        information.and_then(|value| value_at_value(value, &["name", "baseName"]))
+    {
+        raw.insert("ilcdBaseName".to_owned(), base_name.clone());
+    }
+    if let Some(comment) = information.and_then(|value| value.get("common:generalComment")) {
+        raw.insert("ilcdGeneralComment".to_owned(), comment.clone());
+    }
+    if let Some(technology) = value_at(dataset, &["processInformation", "technology"]) {
+        raw.insert("ilcdTechnology".to_owned(), technology.clone());
+    }
+    if let Some(sources) = value_at(
+        dataset,
+        &[
+            "modellingAndValidation",
+            "dataSourcesTreatmentAndRepresentativeness",
+        ],
+    ) {
+        if let Some(reference) = sources.get("referenceToDataSource") {
+            raw.insert("ilcdReferenceToDataSource".to_owned(), reference.clone());
+        }
+        if let Some(advice) = sources.get("useAdviceForDataSet") {
+            raw.insert("ilcdUseAdviceForDataSet".to_owned(), advice.clone());
+        }
+    }
+}
+
 fn process_exchange(
     exchange: &Map<String, Value>,
     index: usize,
@@ -472,6 +528,20 @@ fn process_exchange(
             Value::Bool(reference_exchange == Some(internal_id.as_str())),
         ),
     ]);
+    if let Some(description) = reference.get("common:shortDescription") {
+        value.insert("ilcdFlowShortDescription".to_owned(), description.clone());
+    }
+    if let Some(comment) = exchange.get("generalComment") {
+        value.insert("ilcdGeneralComment".to_owned(), comment.clone());
+    }
+    value.insert(
+        "sourceTrace".to_owned(),
+        json!({
+            "format": "ilcd",
+            "sourceInternalId": internal_id,
+            "sourceFlowUri": reference.get("@uri"),
+        }),
+    );
     for field in [
         "location",
         "minimumAmount",
@@ -490,6 +560,12 @@ fn process_exchange(
 
 fn source_raw(information: &Value) -> Map<String, Value> {
     let mut raw = Map::new();
+    if let Some(short_name) = information.get("common:shortName") {
+        raw.insert("ilcdShortName".to_owned(), short_name.clone());
+    }
+    if let Some(description) = information.get("sourceDescriptionOrComment") {
+        raw.insert("ilcdDescription".to_owned(), description.clone());
+    }
     if let Some(short_name) = information.get("common:shortName").and_then(localized_text) {
         raw.insert("shortName".to_owned(), Value::String(short_name.to_owned()));
     }
@@ -685,6 +761,43 @@ mod tests {
     }
 
     #[test]
+    fn untyped_textual_reference_reports_an_explicit_import_issue() {
+        let directory = tempdir().unwrap();
+        let input = directory.path().join("process.xml");
+        std::fs::write(
+            &input,
+            r#"<processDataSet xmlns:common="http://lca.jrc.it/ILCD/Common"><processInformation><dataSetInformation><common:UUID>55555555-5555-4555-8555-555555555555</common:UUID><name><baseName xml:lang="en">Coefficient reference</baseName></name></dataSetInformation><quantitativeReference><functionalUnitOrOther xml:lang="en">1 tonne raw coal</functionalUnitOrOther></quantitativeReference></processInformation></processDataSet>"#,
+        )
+        .unwrap();
+        let cancellation = CancellationToken::default();
+        let memory_budget = MemoryBudget::new(16 * 1024 * 1024);
+        let mut store = CanonicalStore::create(Some(directory.path())).unwrap();
+        let mut issues = IssueSpool::new(Vec::new(), 64 * 1024);
+        IlcdAdapter
+            .read(
+                &AdapterContext {
+                    source: &input,
+                    cancellation: &cancellation,
+                    memory_budget: &memory_budget,
+                    max_entry_bytes: 1024 * 1024,
+                },
+                &mut store,
+                &mut issues,
+            )
+            .unwrap();
+        let (bytes, summary) = issues.finish().unwrap();
+        let findings: Vec<ImportIssue> = bytes
+            .split(|byte| *byte == b'\n')
+            .filter(|line| !line.is_empty())
+            .map(|line| serde_json::from_slice(line).unwrap())
+            .collect();
+        assert_eq!(summary.error_count, 2);
+        assert_eq!(findings[0].code, "ambiguous_ilcd_quantitative_reference");
+        assert!(findings[0].message.contains("record the intended type"));
+        assert_eq!(store.counts().get("processes"), None);
+    }
+
+    #[test]
     fn non_flow_ilcd_reference_does_not_become_first_pollutant_output() {
         for reference_type in ["Other parameter", "Functional unit", "Production period"] {
             let directory = tempdir().unwrap();
@@ -792,7 +905,7 @@ mod tests {
         std::fs::write(
             root.join("processes/x.xml"),
             format!(
-                r#"<processDataSet xmlns:common="http://lca.jrc.it/ILCD/Common"><processInformation><dataSetInformation><common:UUID>{process_id}</common:UUID><name><baseName xml:lang="en">Steel process</baseName></name></dataSetInformation><quantitativeReference><referenceToReferenceFlow>1</referenceToReferenceFlow></quantitativeReference><time><common:referenceYear>2022</common:referenceYear></time><geography><locationOfOperationSupplyOrProduction location="GLO"/></geography></processInformation><administrativeInformation><publicationAndOwnership><common:dataSetVersion>20.25.001</common:dataSetVersion></publicationAndOwnership></administrativeInformation><exchanges><exchange dataSetInternalID="1"><referenceToFlowDataSet refObjectId="{flow_id}"><common:shortDescription xml:lang="en">Steel</common:shortDescription></referenceToFlowDataSet><exchangeDirection>Output</exchangeDirection><meanAmount>1</meanAmount><relativeStandardDeviation95In>12.3</relativeStandardDeviation95In><dataDerivationTypeStatus>Calculated</dataDerivationTypeStatus><generalComment xml:lang="en">measured batch</generalComment></exchange></exchanges></processDataSet>"#
+                r#"<processDataSet xmlns:common="http://lca.jrc.it/ILCD/Common"><processInformation><dataSetInformation><common:UUID>{process_id}</common:UUID><name><baseName xml:lang="en">Steel process</baseName></name></dataSetInformation><quantitativeReference><referenceToReferenceFlow>0</referenceToReferenceFlow></quantitativeReference><time><common:referenceYear>2022</common:referenceYear></time><geography><locationOfOperationSupplyOrProduction location="GLO"/></geography></processInformation><administrativeInformation><publicationAndOwnership><common:dataSetVersion>20.25.001</common:dataSetVersion></publicationAndOwnership></administrativeInformation><exchanges><exchange dataSetInternalID="0"><referenceToFlowDataSet refObjectId="{flow_id}"><common:shortDescription xml:lang="en">Steel</common:shortDescription></referenceToFlowDataSet><exchangeDirection>Output</exchangeDirection><meanAmount>1</meanAmount><relativeStandardDeviation95In>12.3</relativeStandardDeviation95In><dataDerivationTypeStatus>Calculated</dataDerivationTypeStatus><generalComment xml:lang="en">measured batch</generalComment></exchange></exchanges></processDataSet>"#
             ),
         )
         .unwrap();
@@ -850,6 +963,18 @@ mod tests {
         assert_eq!(store.counts()["sources"], 1);
         let output = directory.path().join("tidas");
         assert_valid_package(&store, &output, cancellation, memory_budget);
+        let written_process: Value = serde_json::from_slice(
+            &std::fs::read(output.join("processes").join(format!("{process_id}.json"))).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(
+            written_process["processDataSet"]["processInformation"]["quantitativeReference"]["referenceToReferenceFlow"],
+            "0"
+        );
+        assert_eq!(
+            written_process["processDataSet"]["exchanges"]["exchange"][0]["@dataSetInternalID"],
+            "0"
+        );
         let written_flow: Value = serde_json::from_slice(
             &std::fs::read(output.join("flows").join(format!("{flow_id}.json"))).unwrap(),
         )

@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: "2026-09-24"
-lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
-lastReviewedNote: "Reviewed for Toolkit #219: ILCD import and eILCD projection preserve non-flow quantitative references and omitted process type against the exact pinned tidas-spec 0.2.3 candidate; command/report schemas are unchanged."
+lastReviewedAt: 2026-09-24
+lastReviewedCommit: 3b178fd
+lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: import retains bilingual context and exact source/exchange identity, refusing ambiguous or mismatched references; the independent reverse-conversion validity issue is tracked in #224."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -249,6 +249,21 @@ reference Flow or add `Unit process, single operation` when the source omits
 the process type. The exact pinned public Process schema admits these
 source-valid fields, and eILCD conversion retains the Process information
 reference while omitting a TIDAS-specific exchange-level flag.
+ILCD Process and Source names, comments, applicability, use advice, citation
+and source caveats retain their source languages in the generated package.
+Process `referenceToDataSource` points to the imported Source with its exact
+UUID and version; the original ILCD URI remains in trace evidence. Exchange
+IDs and derivation comments remain reviewable across both generated formats.
+If a referenced Source is absent or its explicit version differs from the
+imported Source, import fails without publishing a generic substitute.
+The same refusal applies when a package-local Source URI points to a different
+file than its `refObjectId`, or when a non-flow quantitative reference has no
+declared type. Import records the latter as
+`ambiguous_ilcd_quantitative_reference` instead of guessing from the first
+output. The importer regression checks review-critical fields through actual
+eILCD-to-TIDAS reverse conversion. Full independent validation of the reversed
+TIDAS package is separately tracked in Toolkit #224; normalized semantic
+round-trip success alone does not establish that stronger claim.
 
 ## Native export surface
 
