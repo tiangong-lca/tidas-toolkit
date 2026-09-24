@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 535c734
-lastReviewedNote: "Reviewed for Toolkit #223 at 535c734 on top of merged #222: validation issue and batch-event spools share Windows extended-path atomic persistence; the Windows regression checks parsed issue/final events. Ownership and release controls remain unchanged."
+lastReviewedCommit: eb46ce7a6ea681df6ac60f83ef0e323865358912
+lastReviewedNote: "Reviewed Toolkit #224 on merged #222/#223: reverse conversion restores both Process year types and the empty LCI method after semantic recovery, without type-only sidecar entries that could hide XML edits. Ownership, Windows spool behavior and release controls remain unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -149,6 +149,12 @@ For workspace-tracked delivery, also follow the root workspace
 - Issue count must not cause linear operation-report memory growth.
 - Successful output publication is atomic and deterministic for identical
   inputs; failures must not expose partial output.
+- eILCD reverse conversion must restore schema-sensitive Process JSON types,
+  including integer reference and optional valid-until years and a present
+  empty LCI method object. Recover these types after semantic recovery
+  verification; type-only sidecar entries can hide edits to projected XML.
+  A normalized semantic recovery hash is not proof that the reversed TIDAS
+  package passes native schema validation.
 - Traversal is path-sorted, rejects symlinks where required, and rejects unsafe
   archive paths.
 - Machine JSON is UTF-8, LF-terminated, versioned, and deterministic.

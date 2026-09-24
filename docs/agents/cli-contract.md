@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 535c734
-lastReviewedNote: "Reviewed for Toolkit #223 at 535c734 on merged #222: Windows issue/event spools handle deep task paths; parsed issue/final records preserve caller-facing paths and existing exit contracts."
+lastReviewedCommit: eb46ce7a6ea681df6ac60f83ef0e323865358912
+lastReviewedNote: "Reviewed Toolkit #224 on merged #222/#223: Process type restoration follows semantic recovery without type-only sidecar entries; commands and report schema remain unchanged, and native TIDAS validation remains a separate action."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -199,6 +199,15 @@ and merges it. `.tidas-recovery.json` preserves source fragments changed by the
 semantic eILCD projection; reverse conversion applies it and verifies the
 source semantic hash. The report next action gives the exact `tidas validate
 OUTPUT/data --input-format ...` command.
+
+Process reverse conversion restores numeric `common:referenceYear` and
+optional `common:dataSetValidUntil`, plus a present empty
+`LCIMethodAndAllocation` as an object. It applies these schema-defined types
+after any recovery-sidecar hash check, including for packages without a
+recovery sidecar; forward conversion does not create type-only restoration
+entries that could mask edits to those XML fields. The conversion report and
+semantic hash are distinct from native validation of the reversed TIDAS
+package; use the reported validation action.
 
 ## Native import surface
 
