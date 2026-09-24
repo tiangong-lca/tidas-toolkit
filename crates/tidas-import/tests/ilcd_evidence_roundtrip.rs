@@ -266,3 +266,23 @@ fn missing_ilcd_source_ref_fails_without_publishing_a_generic_substitute() {
     );
     assert!(!output.exists());
 }
+
+#[test]
+fn mismatched_ilcd_source_version_fails_before_publication() {
+    let directory = tempdir().unwrap();
+    let source = directory.path().join("source");
+    write_fixture(&source);
+    let process = source.join(format!("processes/{PROCESS_ID}.xml"));
+    let original = fs::read_to_string(&process).unwrap();
+    let reference = format!("refObjectId=\"{SOURCE_ID}\" uri=");
+    let revised = original.replace(
+        &reference,
+        &format!("refObjectId=\"{SOURCE_ID}\" version=\"02.00.000\" uri="),
+    );
+    assert_ne!(original, revised);
+    fs::write(process, revised).unwrap();
+    let output = directory.path().join("output");
+    let error = run_import(&request(&source, &output)).unwrap_err();
+    assert!(error.to_string().contains("imported version is 01.00.000"));
+    assert!(!output.exists());
+}

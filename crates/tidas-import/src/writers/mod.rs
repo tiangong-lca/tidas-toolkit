@@ -328,10 +328,20 @@ fn canonical_ilcd_source_references(
         let source = store
             .get("sources", id)?
             .ok_or_else(|| PackageWriteError::MissingIlcdSource(id.to_owned()))?;
-        let version = reference
-            .get("@version")
+        let version = source
+            .raw
+            .get("version")
             .and_then(Value::as_str)
-            .or_else(|| source.raw.get("version").and_then(Value::as_str));
+            .unwrap_or(common::DEFAULT_VERSION);
+        if let Some(referenced_version) = reference.get("@version").and_then(Value::as_str)
+            && referenced_version != version
+        {
+            return Err(PackageWriteError::IlcdSourceVersionMismatch {
+                id: id.to_owned(),
+                referenced: referenced_version.to_owned(),
+                imported: version.to_owned(),
+            });
+        }
         let description = reference
             .get("common:shortDescription")
             .map(common::localized_from_source)
@@ -350,7 +360,7 @@ fn canonical_ilcd_source_references(
             id,
             source.name.as_deref().unwrap_or("Source"),
             "sources",
-            version,
+            Some(version),
         );
         canonical["common:shortDescription"] = description;
         if let Some(sub_reference) = reference.get("common:subReference") {
@@ -563,6 +573,14 @@ pub enum PackageWriteError {
     InvalidIlcdSourceReference,
     #[error("ILCD Process references source {0}, which is absent from the imported package")]
     MissingIlcdSource(String),
+    #[error(
+        "ILCD Process references source {id} version {referenced}, but imported version is {imported}"
+    )]
+    IlcdSourceVersionMismatch {
+        id: String,
+        referenced: String,
+        imported: String,
+    },
     #[error("native process base dataset has an invalid shape")]
     ProcessBaseShape,
     #[error("output path escaped staging root: {0}")]
