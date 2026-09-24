@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 535c734
-lastReviewedNote: "Reviewed for Toolkit #223 at 535c734 on merged #222: native Windows deep-path persistence and parsed batch-event regression retain caller-facing paths without schema or cross-repo ownership changes."
+lastReviewedCommit: eb46ce7a6ea681df6ac60f83ef0e323865358912
+lastReviewedNote: "Reviewed Toolkit #224 on merged #222/#223: Process year and empty-method types are restored after semantic recovery; type-only sidecar entries are omitted so XML edits remain visible. Crate boundaries, Windows spool fix and release topology are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -89,6 +89,16 @@ representation differences without changing the TIDAS schemas: target-safe
 XML is paired with `.tidas-recovery.json` fragments, and reverse conversion
 must reproduce the source semantic hash. Release conversion reuses the same
 projection, ordering, XSD-validation, and recovery components.
+
+For Process datasets, the projected XML carries both
+`common:referenceYear` and optional `common:dataSetValidUntil` as text, and a
+present empty `LCIMethodAndAllocation` as an empty element. Forward projection
+does not add type-only recovery entries for these fields: an entry for an
+unchanged year or empty method could overwrite an XML edit before the semantic
+hash check. After any recovery-sidecar hash check, reverse conversion restores
+schema-defined integer years and the empty method object, also for packages
+without recovery sidecars. A matching normalized semantic hash alone does not
+establish native TIDAS schema validity.
 
 Import detects EcoSpold 1/2, SimaPro CSV, openLCA JSON-LD, openLCA process
 XLSX, and ILCD. Adapters stream into disk-backed canonical entities/exchanges;

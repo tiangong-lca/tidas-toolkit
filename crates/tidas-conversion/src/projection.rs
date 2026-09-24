@@ -77,6 +77,30 @@ pub fn restore_tidas_projection(
     Ok(())
 }
 
+/// XML has no JSON scalar/object type tags. Apply only the Process shapes that
+/// the TIDAS schema requires, with or without a recovery sidecar. Call this
+/// after verifying any sidecar hash so a type repair cannot hide an XML edit.
+pub(crate) fn restore_process_schema_types(document: &mut Value) {
+    if let Some(time) = document
+        .pointer_mut("/processDataSet/processInformation/time")
+        .and_then(Value::as_object_mut)
+    {
+        for field in ["common:referenceYear", "common:dataSetValidUntil"] {
+            if let Some(year) = time.get_mut(field) {
+                let parsed = year.as_str().and_then(|text| text.parse::<i64>().ok());
+                if let Some(parsed) = parsed {
+                    *year = Value::Number(parsed.into());
+                }
+            }
+        }
+    }
+    if let Some(method @ Value::Null) =
+        document.pointer_mut("/processDataSet/modellingAndValidation/LCIMethodAndAllocation")
+    {
+        *method = Value::Object(Map::new());
+    }
+}
+
 pub(crate) fn semantic_sha256(document: &Value) -> Result<String, ConversionError> {
     let normalized = normalize(document.clone(), None);
     let bytes = serde_json::to_vec(&normalized)?;
@@ -305,6 +329,10 @@ fn adapt_process_object(
     path: &str,
     recovery: &mut RecoveryBuilder,
 ) {
+    // XML text and empty elements do not retain JSON number/object types.
+    // Restore those types only after checking the projected XML against the
+    // source semantic hash. A type-only recovery entry here would overwrite
+    // an edited year or recreate a deleted method before that integrity check.
     if path.ends_with("/processInformation/time")
         && object.contains_key("timeRepresentativenessDescription")
     {

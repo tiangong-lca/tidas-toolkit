@@ -363,7 +363,13 @@ fn convert_file(
             (
                 merge_envelope(
                     source,
-                    merge_projection_recovery(source, converted, request, report)?,
+                    merge_projection_recovery(
+                        source,
+                        converted,
+                        dataset_category(source_root, source),
+                        request,
+                        report,
+                    )?,
                     request,
                     report,
                 )?,
@@ -666,31 +672,39 @@ fn serialize_projection_recovery(
 fn merge_projection_recovery(
     source: &Path,
     converted: Vec<u8>,
+    category: Option<&str>,
     request: &ConversionRequest,
     report: &mut ConversionReportV1,
 ) -> Result<Vec<u8>, ConversionError> {
     let sidecar_path = projection_recovery_sidecar_path(source);
-    if !sidecar_path.is_file() {
+    let has_recovery = sidecar_path.is_file();
+    if !has_recovery && category != Some("processes") {
         return Ok(converted);
     }
-    let sidecar_len = fs::metadata(&sidecar_path)?.len();
-    let estimated = sidecar_len
-        .checked_mul(FILE_MEMORY_MULTIPLIER)
-        .and_then(|value| value.checked_add(FILE_MEMORY_OVERHEAD))
-        .ok_or(ConversionError::SizeOverflow)?;
-    let _reservation = request.memory_budget.reserve(estimated)?;
-    let recovery: EilcdProjectionRecoveryV1 = serde_json::from_slice(&fs::read(&sidecar_path)?)?;
     let mut document: serde_json::Value = serde_json::from_slice(&converted)?;
-    restore_tidas_projection(&mut document, &recovery).map_err(|error| {
-        ConversionError::ProjectionRecoveryFailed {
-            path: sidecar_path.clone(),
-            message: error.to_string(),
-        }
-    })?;
+    if has_recovery {
+        let sidecar_len = fs::metadata(&sidecar_path)?.len();
+        let estimated = sidecar_len
+            .checked_mul(FILE_MEMORY_MULTIPLIER)
+            .and_then(|value| value.checked_add(FILE_MEMORY_OVERHEAD))
+            .ok_or(ConversionError::SizeOverflow)?;
+        let _reservation = request.memory_budget.reserve(estimated)?;
+        let recovery: EilcdProjectionRecoveryV1 =
+            serde_json::from_slice(&fs::read(&sidecar_path)?)?;
+        restore_tidas_projection(&mut document, &recovery).map_err(|error| {
+            ConversionError::ProjectionRecoveryFailed {
+                path: sidecar_path.clone(),
+                message: error.to_string(),
+            }
+        })?;
+        checked_add(&mut report.input_bytes, sidecar_len)?;
+        checked_increment(&mut report.envelope_sidecar_count)?;
+    }
+    if category == Some("processes") {
+        projection::restore_process_schema_types(&mut document);
+    }
     let mut restored = serde_json::to_vec_pretty(&document)?;
     restored.push(b'\n');
-    checked_add(&mut report.input_bytes, sidecar_len)?;
-    checked_increment(&mut report.envelope_sidecar_count)?;
     Ok(restored)
 }
 
