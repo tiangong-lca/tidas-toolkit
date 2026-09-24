@@ -37,6 +37,73 @@ fn validation(input: &Path, issues: &Path) -> ValidationRequest {
     }
 }
 
+fn assert_restored_process(restored: &Path, expected: &Value, issues: &Path) {
+    let restored_process: Value =
+        serde_json::from_slice(&fs::read(restored.join("data").join(PROCESS_PATH)).unwrap())
+            .unwrap();
+    assert_eq!(restored_process.pointer(YEAR_PATH), Some(&json!(2019)));
+    assert_eq!(restored_process.pointer(METHOD_PATH), Some(&json!({})));
+    assert_eq!(
+        restored_process.pointer("/processDataSet/processInformation/quantitativeReference/@type"),
+        Some(&json!("Other parameter"))
+    );
+    assert!(
+        restored_process
+            .pointer(
+                "/processDataSet/processInformation/quantitativeReference/referenceToReferenceFlow"
+            )
+            .is_none()
+    );
+    assert!(
+        restored_process
+            .pointer("/processDataSet/modellingAndValidation/LCIMethodAndAllocation/typeOfDataSet")
+            .is_none()
+    );
+    assert_eq!(&restored_process, expected);
+
+    let result = validate_tidas_package(&validation(&restored.join("data"), issues)).unwrap();
+    assert!(
+        result.summary.ok,
+        "reversed TIDAS must pass native schema validation: {}",
+        fs::read_to_string(issues).unwrap()
+    );
+}
+
+fn assert_legacy_reverse(
+    ilcd: &Path,
+    directory: &Path,
+    recovery: &EilcdProjectionRecoveryV1,
+    expected: &Value,
+) {
+    // A previously generated sidecar has no entries for these two JSON shapes.
+    // Reverse conversion must still restore the schema-required types from XML.
+    let mut legacy_recovery = recovery.clone();
+    legacy_recovery
+        .restorations
+        .retain(|item| item.path != YEAR_PATH && item.path != METHOD_PATH);
+    legacy_recovery
+        .adaptations
+        .remove("preserve-process-reference-year-type");
+    legacy_recovery
+        .adaptations
+        .remove("preserve-empty-process-lci-method");
+    let mut legacy_bytes = serde_json::to_vec_pretty(&legacy_recovery).unwrap();
+    legacy_bytes.push(b'\n');
+    fs::write(
+        ilcd.join("data/processes/synthetic.tidas-recovery.json"),
+        legacy_bytes,
+    )
+    .unwrap();
+    let restored = directory.join("legacy-restored");
+    convert_directory(&conversion(
+        &ilcd.join("data"),
+        &restored,
+        ConversionDirection::IlcdToTidas,
+    ))
+    .unwrap();
+    assert_restored_process(&restored, expected, &directory.join("legacy-issues.jsonl"));
+}
+
 #[test]
 fn projected_process_recovers_integer_year_and_present_empty_method() {
     let directory = tempdir().unwrap();
@@ -114,35 +181,10 @@ fn projected_process_recovers_integer_year_and_present_empty_method() {
     );
     assert!(reverse.peak_accounted_memory_bytes <= 32 * 1024 * 1024);
 
-    let restored_process: Value =
-        serde_json::from_slice(&fs::read(restored.join("data").join(PROCESS_PATH)).unwrap())
-            .unwrap();
-    assert_eq!(restored_process.pointer(YEAR_PATH), Some(&json!(2019)));
-    assert_eq!(restored_process.pointer(METHOD_PATH), Some(&json!({})));
-    assert_eq!(
-        restored_process.pointer("/processDataSet/processInformation/quantitativeReference/@type"),
-        Some(&json!("Other parameter"))
+    assert_restored_process(
+        &restored,
+        &expected,
+        &directory.path().join("restored-issues.jsonl"),
     );
-    assert!(
-        restored_process
-            .pointer(
-                "/processDataSet/processInformation/quantitativeReference/referenceToReferenceFlow"
-            )
-            .is_none()
-    );
-    assert!(
-        restored_process
-            .pointer("/processDataSet/modellingAndValidation/LCIMethodAndAllocation/typeOfDataSet")
-            .is_none()
-    );
-    assert_eq!(restored_process, expected);
-
-    let restored_issues = directory.path().join("restored-issues.jsonl");
-    let restored_validation =
-        validate_tidas_package(&validation(&restored.join("data"), &restored_issues)).unwrap();
-    assert!(
-        restored_validation.summary.ok,
-        "reversed TIDAS must pass native schema validation: {}",
-        fs::read_to_string(&restored_issues).unwrap()
-    );
+    assert_legacy_reverse(&ilcd, directory.path(), &recovery, &expected);
 }

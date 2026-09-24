@@ -77,6 +77,25 @@ pub fn restore_tidas_projection(
     Ok(())
 }
 
+/// XML has no JSON scalar/object type tags. Apply only the Process shapes that
+/// the TIDAS schema requires, including for eILCD packages produced before
+/// those types were recorded in projection-recovery sidecars.
+pub(crate) fn restore_process_schema_types(document: &mut Value) {
+    if let Some(year) =
+        document.pointer_mut("/processDataSet/processInformation/time/common:referenceYear")
+    {
+        let parsed = year.as_str().and_then(|text| text.parse::<i64>().ok());
+        if let Some(parsed) = parsed {
+            *year = Value::Number(parsed.into());
+        }
+    }
+    if let Some(method @ Value::Null) =
+        document.pointer_mut("/processDataSet/modellingAndValidation/LCIMethodAndAllocation")
+    {
+        *method = Value::Object(Map::new());
+    }
+}
+
 pub(crate) fn semantic_sha256(document: &Value) -> Result<String, ConversionError> {
     let normalized = normalize(document.clone(), None);
     let bytes = serde_json::to_vec(&normalized)?;
