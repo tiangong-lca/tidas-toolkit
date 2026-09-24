@@ -15,6 +15,7 @@ use crate::contracts::{SeverityV1, ValidationIssueV1};
 use crate::pipeline::{PROGRESS_DOCUMENT_INTERVAL, ValidationError, ValidationRequest};
 use crate::schema::{SchemaCatalog, TidasCategory, TidasValidator};
 use crate::semantic::SemanticCatalog;
+use crate::spool_destination::SpoolDestination;
 
 pub const DOCUMENT_VALIDATION_BATCH_PROTOCOL: &str = "document-validation-batch.v1";
 pub const DOCUMENT_VALIDATION_PROFILE: &str = "tidas-document-conformance.v1";
@@ -629,29 +630,24 @@ fn digest_hex(digest: &[u8]) -> String {
 }
 
 struct EventSpool {
-    target: Option<PathBuf>,
+    target: Option<SpoolDestination>,
     spool: Option<JsonlSpool<NamedTempFile>>,
 }
 
 impl EventSpool {
     fn new(target: Option<&Path>) -> Result<Self, ValidationError> {
-        let spool = match target {
+        let (target, spool) = match target {
             Some(target) => {
-                let parent = target.parent().unwrap_or_else(|| Path::new("."));
-                if !parent.is_dir() {
-                    return Err(ValidationError::SpoolParentMissing(parent.to_path_buf()));
-                }
-                Some(JsonlSpool::new(
-                    NamedTempFile::new_in(parent)?,
-                    MAX_EVENT_BYTES,
-                ))
+                let destination = SpoolDestination::new(target)?;
+                let temporary = destination.temporary()?;
+                (
+                    Some(destination),
+                    Some(JsonlSpool::new(temporary, MAX_EVENT_BYTES)),
+                )
             }
-            None => None,
+            None => (None, None),
         };
-        Ok(Self {
-            target: target.map(Path::to_path_buf),
-            spool,
-        })
+        Ok(Self { target, spool })
     }
 
     fn push(&mut self, event: &serde_json::Value) -> Result<(), ValidationError> {
@@ -669,13 +665,7 @@ impl EventSpool {
             .target
             .expect("a configured event spool always has a target");
         let (temporary, summary) = spool.finish()?;
-        temporary
-            .persist(&target)
-            .map_err(|error| ValidationError::PersistSpool {
-                path: target.clone(),
-                source: error.error,
-            })?;
-        Ok((Some(target), Some(summary)))
+        Ok((Some(target.persist(temporary)?), Some(summary)))
     }
 }
 

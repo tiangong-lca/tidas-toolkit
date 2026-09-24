@@ -12,6 +12,7 @@ use crate::contracts::{
 };
 use crate::schema::{SUPPORTED_TIDAS_CATEGORIES, SchemaCatalog, SchemaError, TidasCategory};
 use crate::semantic::{SemanticCatalog, SemanticError};
+use crate::spool_destination::SpoolDestination;
 
 const PATH_ACCOUNTING_OVERHEAD: u64 = 128;
 const JSON_MEMORY_MULTIPLIER: u64 = 8;
@@ -294,28 +295,26 @@ fn normalized_relative_path(root: &Path, path: &Path) -> Result<String, Validati
 }
 
 pub(crate) struct IssueSink {
-    target: Option<PathBuf>,
+    target: Option<SpoolDestination>,
     spool: Option<JsonlSpool<NamedTempFile>>,
     next_ordinal: u64,
 }
 
 impl IssueSink {
     pub(crate) fn new(target: Option<&Path>) -> Result<Self, ValidationError> {
-        let spool = match target {
+        let (target, spool) = match target {
             Some(target) => {
-                let parent = target.parent().unwrap_or_else(|| Path::new("."));
-                if !parent.is_dir() {
-                    return Err(ValidationError::SpoolParentMissing(parent.to_path_buf()));
-                }
-                Some(JsonlSpool::new(
-                    NamedTempFile::new_in(parent)?,
-                    MAX_ISSUE_EVENT_BYTES,
-                ))
+                let destination = SpoolDestination::new(target)?;
+                let temporary = destination.temporary()?;
+                (
+                    Some(destination),
+                    Some(JsonlSpool::new(temporary, MAX_ISSUE_EVENT_BYTES)),
+                )
             }
-            None => None,
+            None => (None, None),
         };
         Ok(Self {
-            target: target.map(Path::to_path_buf),
+            target,
             spool,
             next_ordinal: 0,
         })
@@ -342,13 +341,7 @@ impl IssueSink {
             .target
             .expect("a configured spool always has a target path");
         let (temporary, summary) = spool.finish()?;
-        temporary
-            .persist(&target)
-            .map_err(|error| ValidationError::PersistSpool {
-                path: target.clone(),
-                source: error.error,
-            })?;
-        Ok((Some(target), Some(summary)))
+        Ok((Some(target.persist(temporary)?), Some(summary)))
     }
 }
 

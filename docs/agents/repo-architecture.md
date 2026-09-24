@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 3b178fd
-lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: Process/Source evidence travels through the disk-backed importer and both generated formats; ambiguous references and source identity mismatches fail. The public spec pin and crate ownership are unchanged."
+lastReviewedCommit: 535c734
+lastReviewedNote: "Reviewed for Toolkit #223 at 535c734 on merged #222: native Windows deep-path persistence and parsed batch-event regression retain caller-facing paths without schema or cross-repo ownership changes."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -130,6 +130,11 @@ discarded; batch evidence preflights content hashes and publishes a final
 logical stream hash only after drift-free completion. Schema diagnostics
 describe rejected instances through bounded summaries and content hashes
 rather than embedding arbitrarily large instance values in JSONL events.
+Both issue and batch-event spools use one atomic destination helper. On
+Windows, it creates and persists the temporary file through the same
+extended-length parent path when a task workspace is deeply nested, while
+the report retains the path supplied by the caller. Other platforms retain
+their existing path behavior.
 
 Release consumes finalized UUID/version decisions. It resolves exact
 standalone/full closure, derives schema-ordered ILCD, runs native validation and

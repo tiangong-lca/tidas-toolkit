@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 3b178fd
-lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: import retains bilingual context and exact source/exchange identity, refusing ambiguous or mismatched references; the independent reverse-conversion validity issue is tracked in #224."
+lastReviewedCommit: 535c734
+lastReviewedNote: "Reviewed for Toolkit #223 at 535c734 on merged #222: Windows issue/event spools handle deep task paths; parsed issue/final records preserve caller-facing paths and existing exit contracts."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -379,6 +379,11 @@ reported as diagnostic evidence, not as complete validity. `--issues` is optiona
 in deterministic order to an atomically persisted
 `tidas.validation-issue-event.v1` JSONL artifact. Without it, issues are
 counted and discarded after validation so report memory remains bounded.
+The same atomic persistence applies to document-batch `--events`. On Windows,
+normal deep task paths containing spaces or Unicode must produce the same
+issue/event bytes and exit class as a short path; the report names the
+caller-supplied path. A failed persist remains an I/O failure and never
+becomes a data finding or a success.
 
 The complete TIDAS operation report contains `validation`,
 `eilcd_projection`, `eilcd_projection_validation`, and `semantic_roundtrip`
