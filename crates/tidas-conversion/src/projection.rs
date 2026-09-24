@@ -78,8 +78,8 @@ pub fn restore_tidas_projection(
 }
 
 /// XML has no JSON scalar/object type tags. Apply only the Process shapes that
-/// the TIDAS schema requires, including for eILCD packages produced before
-/// those types were recorded in projection-recovery sidecars.
+/// the TIDAS schema requires, with or without a recovery sidecar. Call this
+/// after verifying any sidecar hash so a type repair cannot hide an XML edit.
 pub(crate) fn restore_process_schema_types(document: &mut Value) {
     if let Some(time) = document
         .pointer_mut("/processDataSet/processInformation/time")
