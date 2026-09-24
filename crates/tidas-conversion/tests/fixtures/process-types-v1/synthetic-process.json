@@ -1,0 +1,188 @@
+{
+  "processDataSet": {
+    "@xmlns": "http://lca.jrc.it/ILCD/Process",
+    "@xmlns:common": "http://lca.jrc.it/ILCD/Common",
+    "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "@version": "1.1",
+    "@locations": "../ILCDLocations.xml",
+    "@xsi:schemaLocation": "http://lca.jrc.it/ILCD/Process ../../schemas/ILCD_ProcessDataSet.xsd",
+    "processInformation": {
+      "dataSetInformation": {
+        "common:UUID": "55555555-5555-4555-8555-555555555555",
+        "name": {
+          "baseName": {
+            "@xml:lang": "en",
+            "#text": "Synthetic coefficient process"
+          },
+          "treatmentStandardsRoutes": {
+            "@xml:lang": "en",
+            "#text": "Synthetic route"
+          },
+          "mixAndLocationTypes": {
+            "@xml:lang": "en",
+            "#text": "Global"
+          }
+        },
+        "classificationInformation": {
+          "common:classification": {
+            "@name": "ISIC rev.4",
+            "common:class": [
+              {
+                "@level": "0",
+                "@classId": "T",
+                "#text": "Other service activities"
+              },
+              {
+                "@level": "1",
+                "@classId": "94",
+                "#text": "Activities of membership organizations"
+              }
+            ]
+          }
+        },
+        "common:generalComment": {
+          "@xml:lang": "en",
+          "#text": "Synthetic fixture for Process type recovery."
+        }
+      },
+      "quantitativeReference": {
+        "@type": "Other parameter",
+        "functionalUnitOrOther": {
+          "@xml:lang": "en",
+          "#text": "One synthetic activity unit"
+        }
+      },
+      "time": {
+        "common:referenceYear": 2019
+      },
+      "geography": {
+        "locationOfOperationSupplyOrProduction": {
+          "@location": "GLO"
+        }
+      }
+    },
+    "modellingAndValidation": {
+      "LCIMethodAndAllocation": {},
+      "validation": {
+        "review": {
+          "@type": "Not reviewed"
+        }
+      },
+      "complianceDeclarations": {
+        "compliance": {
+          "common:referenceToComplianceSystem": {
+            "@type": "source data set",
+            "@refObjectId": "77777777-7777-4777-8777-777777777777",
+            "@version": "01.00.000",
+            "@uri": "../sources/77777777-7777-4777-8777-777777777777.json",
+            "common:shortDescription": {
+              "@xml:lang": "en",
+              "#text": "Synthetic source"
+            }
+          },
+          "common:approvalOfOverallCompliance": "Not defined",
+          "common:nomenclatureCompliance": "Not defined",
+          "common:methodologicalCompliance": "Not defined",
+          "common:reviewCompliance": "Not defined",
+          "common:documentationCompliance": "Not defined",
+          "common:qualityCompliance": "Not defined"
+        }
+      }
+    },
+    "administrativeInformation": {
+      "common:commissionerAndGoal": {
+        "common:referenceToCommissioner": {
+          "@type": "contact data set",
+          "@refObjectId": "66666666-6666-4666-8666-666666666666",
+          "@version": "01.00.000",
+          "@uri": "../contacts/66666666-6666-4666-8666-666666666666.json",
+          "common:shortDescription": {
+            "@xml:lang": "en",
+            "#text": "Synthetic contact"
+          }
+        },
+        "common:intendedApplications": {
+          "@xml:lang": "en",
+          "#text": "Synthetic round trip"
+        }
+      },
+      "dataEntryBy": {
+        "common:timeStamp": "1900-01-01T00:00:00Z",
+        "common:referenceToDataSetFormat": {
+          "@type": "source data set",
+          "@refObjectId": "77777777-7777-4777-8777-777777777777",
+          "@version": "01.00.000",
+          "@uri": "../sources/77777777-7777-4777-8777-777777777777.json",
+          "common:shortDescription": {
+            "@xml:lang": "en",
+            "#text": "Synthetic source"
+          }
+        },
+        "common:referenceToPersonOrEntityEnteringTheData": {
+          "@type": "contact data set",
+          "@refObjectId": "66666666-6666-4666-8666-666666666666",
+          "@version": "01.00.000",
+          "@uri": "../contacts/66666666-6666-4666-8666-666666666666.json",
+          "common:shortDescription": {
+            "@xml:lang": "en",
+            "#text": "Synthetic contact"
+          }
+        }
+      },
+      "publicationAndOwnership": {
+        "common:dataSetVersion": "01.00.000",
+        "common:referenceToOwnershipOfDataSet": {
+          "@type": "contact data set",
+          "@refObjectId": "66666666-6666-4666-8666-666666666666",
+          "@version": "01.00.000",
+          "@uri": "../contacts/66666666-6666-4666-8666-666666666666.json",
+          "common:shortDescription": {
+            "@xml:lang": "en",
+            "#text": "Synthetic contact"
+          }
+        },
+        "common:copyright": "false",
+        "common:licenseType": "Free of charge for all users and uses",
+        "common:permanentDataSetURI": "https://example.invalid/synthetic-process"
+      }
+    },
+    "exchanges": {
+      "exchange": [
+        {
+          "@dataSetInternalID": "0",
+          "referenceToFlowDataSet": {
+            "@type": "flow data set",
+            "@refObjectId": "44444444-4444-4444-8444-444444444444",
+            "@version": "01.00.000",
+            "@uri": "../flows/44444444-4444-4444-8444-444444444444.json",
+            "common:shortDescription": {
+              "@xml:lang": "en",
+              "#text": "Synthetic emission"
+            }
+          },
+          "exchangeDirection": "Output",
+          "meanAmount": "1",
+          "resultingAmount": "1",
+          "dataDerivationTypeStatus": "Calculated"
+        },
+        {
+          "@dataSetInternalID": "1",
+          "referenceToFlowDataSet": {
+            "@type": "flow data set",
+            "@refObjectId": "88888888-8888-4888-8888-888888888888",
+            "@version": "01.00.000",
+            "@uri": "../flows/88888888-8888-4888-8888-888888888888.json",
+            "common:shortDescription": {
+              "@xml:lang": "en",
+              "#text": "Second synthetic emission"
+            }
+          },
+          "exchangeDirection": "Output",
+          "meanAmount": "1",
+          "resultingAmount": "1",
+          "dataDerivationTypeStatus": "Calculated"
+        }
+      ]
+    }
+  }
+}

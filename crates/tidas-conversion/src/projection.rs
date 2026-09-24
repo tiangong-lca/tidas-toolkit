@@ -305,6 +305,28 @@ fn adapt_process_object(
     path: &str,
     recovery: &mut RecoveryBuilder,
 ) {
+    // XML text and empty elements do not retain JSON number/object types. The
+    // semantic hash treats those representations as equivalent, so preserve
+    // these schema-sensitive Process fields explicitly in the recovery sidecar.
+    if path == "/processDataSet/processInformation/time"
+        && let Some(year @ Value::Number(_)) = object.get("common:referenceYear")
+    {
+        recovery.record(
+            &join_pointer(path, "common:referenceYear"),
+            year,
+            "preserve-process-reference-year-type",
+        );
+    }
+    if path == "/processDataSet/modellingAndValidation"
+        && let Some(method @ Value::Object(fields)) = object.get("LCIMethodAndAllocation")
+        && fields.is_empty()
+    {
+        recovery.record(
+            &join_pointer(path, "LCIMethodAndAllocation"),
+            method,
+            "preserve-empty-process-lci-method",
+        );
+    }
     if path.ends_with("/processInformation/time")
         && object.contains_key("timeRepresentativenessDescription")
     {
