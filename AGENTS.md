@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 3b178fd
-lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: native ILCD import preserves Process/Source evidence and refuses ambiguous references or source mismatches. Ownership, platform and release boundaries are unchanged."
+lastReviewedCommit: 535c734
+lastReviewedNote: "Reviewed for Toolkit #223 at 535c734 on top of merged #222: validation issue and batch-event spools share Windows extended-path atomic persistence; the Windows regression checks parsed issue/final events. Ownership and release controls remain unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -143,6 +143,9 @@ For workspace-tracked delivery, also follow the root workspace
   A generic import placeholder must not replace a meaningful source field while
   a successful report claims that the process is valid. It must not infer an
   untyped non-flow basis or bind one Source UUID to another local source file.
+- Validation issue and batch-event spools must persist atomically under normal
+  task-contained Windows paths beyond 260 characters. Reports retain the
+  caller's path and distinguish data findings from I/O failure.
 - Issue count must not cause linear operation-report memory growth.
 - Successful output publication is atomic and deterministic for identical
   inputs; failures must not expose partial output.
