@@ -29,6 +29,17 @@ pub fn localized(text: impl Into<String>) -> Value {
     json!({"@xml:lang": "en", "#text": text.into()})
 }
 
+/// Keep the language tags and text of an ILCD field instead of flattening it to
+/// the first language. XML scalar text has no language tag, so it receives the
+/// same English default used by the other native import writers.
+pub fn localized_from_source(value: &Value) -> Value {
+    match value {
+        Value::String(text) => localized(text),
+        Value::Array(items) => Value::Array(items.iter().map(localized_from_source).collect()),
+        _ => value.clone(),
+    }
+}
+
 pub fn dataset_ref(ref_type: &str, id: &str, description: &str, category: &str) -> Value {
     dataset_ref_version(ref_type, id, description, category, None)
 }

@@ -236,7 +236,19 @@ fn write_process_entities(
 ) -> Result<(), PackageWriteError> {
     for entity in request.store.iter_type("processes")? {
         request.cancellation.check()?;
-        let entity = entity?;
+        let mut entity = entity?;
+        if let Some(original_references) = entity.raw.get("ilcdReferenceToDataSource") {
+            let canonical = canonical_ilcd_source_references(request.store, original_references)?;
+            entity
+                .raw
+                .insert("ilcdCanonicalSourceReferences".to_owned(), canonical);
+        }
+        let preserve_ilcd_ids = entity
+            .raw
+            .get("sourceTrace")
+            .and_then(|trace| trace.get("format"))
+            .and_then(Value::as_str)
+            == Some("ilcd");
         let mut declared_reference = None;
         let mut output_reference = None;
         let mut first_reference = None;
@@ -248,7 +260,7 @@ fn write_process_entities(
             request.cancellation.check()?;
             let exchange = exchange?;
             let reference = (
-                index.saturating_add(1).to_string(),
+                process_exchange_id(&exchange, index, preserve_ilcd_ids),
                 process::functional_unit(&exchange),
             );
             first_reference.get_or_insert_with(|| reference.clone());
@@ -284,10 +296,73 @@ fn write_process_entities(
             })
         };
         let base = process::process_base(&entity, &quantitative_reference)?;
-        write_process_dataset(root, &entity.internal_id, &base, request)?;
+        write_process_dataset(root, &entity.internal_id, &base, request, preserve_ilcd_ids)?;
         *counts.entry("processes".to_owned()).or_default() += 1;
     }
     Ok(())
+}
+
+fn process_exchange_id(
+    exchange: &serde_json::Map<String, Value>,
+    index: usize,
+    preserve_ilcd_ids: bool,
+) -> String {
+    if preserve_ilcd_ids && let Some(id) = exchange.get("internalId").and_then(Value::as_str) {
+        return id.to_owned();
+    }
+    index.saturating_add(1).to_string()
+}
+
+fn canonical_ilcd_source_references(
+    store: &CanonicalStore,
+    original: &Value,
+) -> Result<Value, PackageWriteError> {
+    let mut references = Vec::new();
+    let originals = original
+        .as_array()
+        .map_or_else(|| vec![original], |items| items.iter().collect());
+    for reference in originals {
+        let Some(id) = reference.get("@refObjectId").and_then(Value::as_str) else {
+            return Err(PackageWriteError::InvalidIlcdSourceReference);
+        };
+        let source = store
+            .get("sources", id)?
+            .ok_or_else(|| PackageWriteError::MissingIlcdSource(id.to_owned()))?;
+        let version = reference
+            .get("@version")
+            .and_then(Value::as_str)
+            .or_else(|| source.raw.get("version").and_then(Value::as_str));
+        let description = reference
+            .get("common:shortDescription")
+            .map(common::localized_from_source)
+            .or_else(|| {
+                source
+                    .raw
+                    .get("ilcdShortName")
+                    .map(common::localized_from_source)
+            })
+            .unwrap_or_else(|| common::localized(source.name.as_deref().unwrap_or("Source")));
+        let mut canonical = common::dataset_ref_version(
+            reference
+                .get("@type")
+                .and_then(Value::as_str)
+                .unwrap_or("source data set"),
+            id,
+            source.name.as_deref().unwrap_or("Source"),
+            "sources",
+            version,
+        );
+        canonical["common:shortDescription"] = description;
+        if let Some(sub_reference) = reference.get("common:subReference") {
+            canonical["common:subReference"] = sub_reference.clone();
+        }
+        references.push(canonical);
+    }
+    Ok(if references.len() == 1 {
+        references.remove(0)
+    } else {
+        Value::Array(references)
+    })
 }
 
 fn write_process_dataset(
@@ -295,6 +370,7 @@ fn write_process_dataset(
     process_id: &str,
     base: &Value,
     request: &TidasWriteRequest<'_>,
+    preserve_ilcd_ids: bool,
 ) -> Result<(), PackageWriteError> {
     let dataset = base
         .get("processDataSet")
@@ -319,7 +395,8 @@ fn write_process_dataset(
     {
         request.cancellation.check()?;
         let exchange = exchange?;
-        let item = process::exchange_item(&exchange, &index.saturating_add(1).to_string())?;
+        let internal_id = process_exchange_id(&exchange, index, preserve_ilcd_ids);
+        let item = process::exchange_item(&exchange, &internal_id)?;
         let bytes = serde_json::to_vec(&item)?;
         let accounted = u64::try_from(bytes.len()).map_err(|_| PackageWriteError::SizeOverflow)?;
         let _reservation = request.memory_budget.reserve(accounted)?;
@@ -482,6 +559,10 @@ pub enum PackageWriteError {
     ReservedIdentifier { category: &'static str, id: String },
     #[error("process {0} has no canonical exchanges")]
     ProcessNoExchanges(String),
+    #[error("ILCD Process has a source reference without a data set UUID")]
+    InvalidIlcdSourceReference,
+    #[error("ILCD Process references source {0}, which is absent from the imported package")]
+    MissingIlcdSource(String),
     #[error("native process base dataset has an invalid shape")]
     ProcessBaseShape,
     #[error("output path escaped staging root: {0}")]

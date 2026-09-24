@@ -5,7 +5,7 @@ use crate::model::CanonicalEntity;
 use super::common::{COMPLIANCE_SOURCE_NAME, compliance_source_id};
 use super::common::{
     CONTACT_NAME, FORMAT_SOURCE_NAME, administrative, administrative_for_entity, contact_id,
-    format_source_id, import_trace, localized,
+    format_source_id, import_trace, localized, localized_from_source,
 };
 
 pub fn contact() -> (String, Value) {
@@ -145,12 +145,16 @@ pub fn canonical_contact(entity: &CanonicalEntity) -> Value {
 
 pub fn canonical_source(entity: &CanonicalEntity) -> Value {
     let name = entity.name.as_deref().unwrap_or("Imported source");
+    let short_name = entity
+        .raw
+        .get("ilcdShortName")
+        .map_or_else(|| localized(name), localized_from_source);
     let mut information = serde_json::Map::from_iter([
         (
             "common:UUID".to_owned(),
             Value::String(entity.internal_id.clone()),
         ),
-        ("common:shortName".to_owned(), localized(name)),
+        ("common:shortName".to_owned(), short_name),
         (
             "classificationInformation".to_owned(),
             json!({
@@ -182,25 +186,7 @@ pub fn canonical_source(entity: &CanonicalEntity) -> Value {
             Value::String(publication_type.to_owned()),
         );
     }
-    let mut description = entity
-        .raw
-        .get("description")
-        .and_then(Value::as_str)
-        .map(ToOwned::to_owned)
-        .unwrap_or_default();
-    if let Some(url) = entity.raw.get("url").and_then(Value::as_str) {
-        if !description.is_empty() {
-            description.push(' ');
-        }
-        description.push_str("External source URL: ");
-        description.push_str(url);
-    }
-    if !description.is_empty() {
-        information.insert(
-            "sourceDescriptionOrComment".to_owned(),
-            localized(description),
-        );
-    }
+    insert_source_description(entity, &mut information);
     if let Some(files) = entity.raw.get("referenceToDigitalFile") {
         let references = match files {
             Value::Array(files) => files
@@ -236,6 +222,35 @@ pub fn canonical_source(entity: &CanonicalEntity) -> Value {
             "administrativeInformation": administrative_for_entity("sources", entity, false)
         }
     })
+}
+
+fn insert_source_description(entity: &CanonicalEntity, information: &mut Map<String, Value>) {
+    if let Some(description) = entity.raw.get("ilcdDescription") {
+        information.insert(
+            "sourceDescriptionOrComment".to_owned(),
+            localized_from_source(description),
+        );
+        return;
+    }
+    let mut description = entity
+        .raw
+        .get("description")
+        .and_then(Value::as_str)
+        .map(ToOwned::to_owned)
+        .unwrap_or_default();
+    if let Some(url) = entity.raw.get("url").and_then(Value::as_str) {
+        if !description.is_empty() {
+            description.push(' ');
+        }
+        description.push_str("External source URL: ");
+        description.push_str(url);
+    }
+    if !description.is_empty() {
+        information.insert(
+            "sourceDescriptionOrComment".to_owned(),
+            localized(description),
+        );
+    }
 }
 
 fn digital_file_uri(uri: &str) -> String {
