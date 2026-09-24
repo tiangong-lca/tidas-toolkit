@@ -81,12 +81,17 @@ pub fn restore_tidas_projection(
 /// the TIDAS schema requires, including for eILCD packages produced before
 /// those types were recorded in projection-recovery sidecars.
 pub(crate) fn restore_process_schema_types(document: &mut Value) {
-    if let Some(year) =
-        document.pointer_mut("/processDataSet/processInformation/time/common:referenceYear")
+    if let Some(time) = document
+        .pointer_mut("/processDataSet/processInformation/time")
+        .and_then(Value::as_object_mut)
     {
-        let parsed = year.as_str().and_then(|text| text.parse::<i64>().ok());
-        if let Some(parsed) = parsed {
-            *year = Value::Number(parsed.into());
+        for field in ["common:referenceYear", "common:dataSetValidUntil"] {
+            if let Some(year) = time.get_mut(field) {
+                let parsed = year.as_str().and_then(|text| text.parse::<i64>().ok());
+                if let Some(parsed) = parsed {
+                    *year = Value::Number(parsed.into());
+                }
+            }
         }
     }
     if let Some(method @ Value::Null) =
@@ -324,28 +329,10 @@ fn adapt_process_object(
     path: &str,
     recovery: &mut RecoveryBuilder,
 ) {
-    // XML text and empty elements do not retain JSON number/object types. The
-    // semantic hash treats those representations as equivalent, so preserve
-    // these schema-sensitive Process fields explicitly in the recovery sidecar.
-    if path == "/processDataSet/processInformation/time"
-        && let Some(year @ Value::Number(_)) = object.get("common:referenceYear")
-    {
-        recovery.record(
-            &join_pointer(path, "common:referenceYear"),
-            year,
-            "preserve-process-reference-year-type",
-        );
-    }
-    if path == "/processDataSet/modellingAndValidation"
-        && let Some(method @ Value::Object(fields)) = object.get("LCIMethodAndAllocation")
-        && fields.is_empty()
-    {
-        recovery.record(
-            &join_pointer(path, "LCIMethodAndAllocation"),
-            method,
-            "preserve-empty-process-lci-method",
-        );
-    }
+    // XML text and empty elements do not retain JSON number/object types.
+    // Restore those types only after checking the projected XML against the
+    // source semantic hash. A type-only recovery entry here would overwrite
+    // an edited year or recreate a deleted method before that integrity check.
     if path.ends_with("/processInformation/time")
         && object.contains_key("timeRepresentativenessDescription")
     {

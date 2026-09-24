@@ -53,7 +53,8 @@
         }
       },
       "time": {
-        "common:referenceYear": 2019
+        "common:referenceYear": 2019,
+        "common:dataSetValidUntil": 2025
       },
       "geography": {
         "locationOfOperationSupplyOrProduction": {
