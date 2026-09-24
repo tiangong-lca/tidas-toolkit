@@ -4,12 +4,14 @@ use std::path::Path;
 
 use serde_json::Value;
 use tempfile::tempdir;
+use tidas_conversion::{ConversionDirection, ConversionRequest, convert_directory};
 use tidas_import::{ImportRequest, ImportTarget, SourceFormat, run_import};
 use tidas_runtime::{CancellationToken, MemoryBudget};
 
 const UNIT_ID: &str = "22222222-2222-4222-8222-222222222222";
 const PROPERTY_ID: &str = "33333333-3333-4333-8333-333333333333";
 const SOURCE_ID: &str = "77777777-7777-4777-8777-777777777777";
+const OTHER_SOURCE_ID: &str = "66666666-6666-4666-8666-666666666666";
 const PROCESS_ID: &str = "55555555-5555-4555-8555-555555555555";
 const FLOW_IDS: [&str; 3] = [
     "44444444-4444-4444-8444-444444444444",
@@ -210,6 +212,41 @@ fn assert_source_projection(first: &Path) {
     assert!(projected_source.contains("矿井水系数档案"));
 }
 
+fn assert_review_evidence_survives_reverse_conversion(first: &Path, recovered: &Path) {
+    let original_process: Value = serde_json::from_slice(
+        &fs::read(first.join(format!("tidas/processes/{PROCESS_ID}.json"))).unwrap(),
+    )
+    .unwrap();
+    let reversed_process: Value = serde_json::from_slice(
+        &fs::read(recovered.join(format!("data/data/processes/{PROCESS_ID}.json"))).unwrap(),
+    )
+    .unwrap();
+    for pointer in [
+        "/processDataSet/processInformation/dataSetInformation/name/baseName",
+        "/processDataSet/processInformation/dataSetInformation/common:generalComment",
+        "/processDataSet/processInformation/quantitativeReference",
+        "/processDataSet/processInformation/technology",
+        "/processDataSet/modellingAndValidation/dataSourcesTreatmentAndRepresentativeness/referenceToDataSource",
+        "/processDataSet/modellingAndValidation/dataSourcesTreatmentAndRepresentativeness/useAdviceForDataSet",
+        "/processDataSet/exchanges/exchange",
+    ] {
+        assert_eq!(
+            original_process.pointer(pointer),
+            reversed_process.pointer(pointer),
+            "{pointer}"
+        );
+    }
+    let original_source: Value = serde_json::from_slice(
+        &fs::read(first.join(format!("tidas/sources/{SOURCE_ID}.json"))).unwrap(),
+    )
+    .unwrap();
+    let reversed_source: Value = serde_json::from_slice(
+        &fs::read(recovered.join(format!("data/data/sources/{SOURCE_ID}.json"))).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(original_source, reversed_source);
+}
+
 #[test]
 fn bilingual_ilcd_evidence_survives_import_projection_and_round_trip() {
     let directory = tempdir().unwrap();
@@ -226,6 +263,22 @@ fn bilingual_ilcd_evidence_survives_import_projection_and_round_trip() {
 
     assert_process_evidence(&first);
     assert_source_projection(&first);
+
+    // This is the actual eILCD -> TIDAS conversion path. The separately
+    // tracked conversion defect (#224) still prevents claiming that every
+    // reversed Process field passes independent TIDAS schema validation.
+    let recovered = directory.path().join("recovered");
+    convert_directory(&ConversionRequest {
+        input_dir: first.join("ilcd"),
+        output_dir: recovered.clone(),
+        direction: ConversionDirection::IlcdToTidas,
+        cancellation: CancellationToken::default(),
+        memory_budget: MemoryBudget::new(32 * 1024 * 1024),
+        queue_capacity: 2,
+        progress: None,
+    })
+    .unwrap();
+    assert_review_evidence_survives_reverse_conversion(&first, &recovered);
 
     let second = directory.path().join("second");
     let repeated = import_both(&source, &second);
@@ -285,4 +338,63 @@ fn mismatched_ilcd_source_version_fails_before_publication() {
     let error = run_import(&request(&source, &output)).unwrap_err();
     assert!(error.to_string().contains("imported version is 01.00.000"));
     assert!(!output.exists());
+}
+
+#[test]
+fn untyped_textual_ilcd_reference_never_promotes_first_pollutant() {
+    let directory = tempdir().unwrap();
+    let source = directory.path().join("source");
+    write_fixture(&source);
+    let process = source.join(format!("processes/{PROCESS_ID}.xml"));
+    let original = fs::read_to_string(&process).unwrap();
+    let revised = original.replace(
+        "quantitativeReference type=\"Other parameter\"",
+        "quantitativeReference",
+    );
+    assert_ne!(original, revised);
+    fs::write(process, revised).unwrap();
+    let output = directory.path().join("output");
+    let error = run_import(&request(&source, &output)).unwrap_err();
+    assert!(error.to_string().contains("error issue"));
+    assert!(!output.exists());
+}
+
+#[test]
+fn local_source_uri_must_point_to_the_referenced_source_uuid() {
+    let directory = tempdir().unwrap();
+    let source = directory.path().join("source");
+    write_fixture(&source);
+    let first_source = source.join(format!("sources/{SOURCE_ID}.xml"));
+    fs::write(
+        source.join(format!("sources/{OTHER_SOURCE_ID}.xml")),
+        fs::read_to_string(first_source)
+            .unwrap()
+            .replace(SOURCE_ID, OTHER_SOURCE_ID),
+    )
+    .unwrap();
+    let process = source.join(format!("processes/{PROCESS_ID}.xml"));
+    let original = fs::read_to_string(&process).unwrap();
+    let local_uri = format!("uri=\"../sources/{SOURCE_ID}.xml\"");
+    let wrong_uri = format!("uri=\"../sources/{OTHER_SOURCE_ID}.xml\"");
+    let mismatched = original.replace(&local_uri, &wrong_uri);
+    assert_ne!(original, mismatched);
+    fs::write(&process, mismatched).unwrap();
+    let output = directory.path().join("rejected");
+    let error = run_import(&request(&source, &output)).unwrap_err();
+    assert!(
+        error
+            .to_string()
+            .contains("local URI pointing to a different file")
+    );
+    assert!(!output.exists());
+
+    fs::write(
+        process,
+        original.replace(&local_uri, "uri=\"https://example.org/archive\""),
+    )
+    .unwrap();
+    let external = directory.path().join("external-uri");
+    let report = import_both(&source, &external);
+    assert_eq!(report.tidas_validation_issue_count, 0);
+    assert_eq!(report.ilcd_validation_issue_count, Some(0));
 }

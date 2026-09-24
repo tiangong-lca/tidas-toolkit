@@ -49,6 +49,16 @@ impl SourceAdapter for IlcdAdapter {
                     }
                 };
             let document: Value = serde_json::from_slice(&json_bytes)?;
+            if has_untyped_non_flow_reference(&document) {
+                issues.push(&ImportIssue {
+                    severity: IssueSeverity::Error,
+                    code: "ambiguous_ilcd_quantitative_reference".to_owned(),
+                    message: "ILCD Process has a quantitative reference without a type or reference Flow. Its textual basis could be a functional unit, other parameter, or production period; record the intended type before importing.".to_owned(),
+                    source_object: Some(entry.label.clone()),
+                    context: BTreeMap::new(),
+                })?;
+                return Ok::<(), AdapterError>(());
+            }
             let Some(mut entity) = entity_from_document(&document, &entry.stable_key) else {
                 return Ok::<(), AdapterError>(());
             };
@@ -90,6 +100,22 @@ impl SourceAdapter for IlcdAdapter {
         }
         Ok(())
     }
+}
+
+fn has_untyped_non_flow_reference(document: &Value) -> bool {
+    document
+        .pointer("/processDataSet/processInformation/quantitativeReference")
+        .and_then(Value::as_object)
+        .is_some_and(|reference| {
+            reference
+                .get("@type")
+                .and_then(Value::as_str)
+                .is_none_or(|value| value.trim().is_empty())
+                && reference
+                    .get("referenceToReferenceFlow")
+                    .and_then(Value::as_str)
+                    .is_none_or(|value| value.trim().is_empty())
+        })
 }
 
 fn entity_from_document(document: &Value, label: &str) -> Option<CanonicalEntity> {
@@ -732,6 +758,43 @@ mod tests {
             validation.summary,
             std::fs::read_to_string(issues).unwrap()
         );
+    }
+
+    #[test]
+    fn untyped_textual_reference_reports_an_explicit_import_issue() {
+        let directory = tempdir().unwrap();
+        let input = directory.path().join("process.xml");
+        std::fs::write(
+            &input,
+            r#"<processDataSet xmlns:common="http://lca.jrc.it/ILCD/Common"><processInformation><dataSetInformation><common:UUID>55555555-5555-4555-8555-555555555555</common:UUID><name><baseName xml:lang="en">Coefficient reference</baseName></name></dataSetInformation><quantitativeReference><functionalUnitOrOther xml:lang="en">1 tonne raw coal</functionalUnitOrOther></quantitativeReference></processInformation></processDataSet>"#,
+        )
+        .unwrap();
+        let cancellation = CancellationToken::default();
+        let memory_budget = MemoryBudget::new(16 * 1024 * 1024);
+        let mut store = CanonicalStore::create(Some(directory.path())).unwrap();
+        let mut issues = IssueSpool::new(Vec::new(), 64 * 1024);
+        IlcdAdapter
+            .read(
+                &AdapterContext {
+                    source: &input,
+                    cancellation: &cancellation,
+                    memory_budget: &memory_budget,
+                    max_entry_bytes: 1024 * 1024,
+                },
+                &mut store,
+                &mut issues,
+            )
+            .unwrap();
+        let (bytes, summary) = issues.finish().unwrap();
+        let findings: Vec<ImportIssue> = bytes
+            .split(|byte| *byte == b'\n')
+            .filter(|line| !line.is_empty())
+            .map(|line| serde_json::from_slice(line).unwrap())
+            .collect();
+        assert_eq!(summary.error_count, 2);
+        assert_eq!(findings[0].code, "ambiguous_ilcd_quantitative_reference");
+        assert!(findings[0].message.contains("record the intended type"));
+        assert_eq!(store.counts().get("processes"), None);
     }
 
     #[test]

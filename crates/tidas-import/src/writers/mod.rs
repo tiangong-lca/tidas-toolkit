@@ -238,7 +238,14 @@ fn write_process_entities(
         request.cancellation.check()?;
         let mut entity = entity?;
         if let Some(original_references) = entity.raw.get("ilcdReferenceToDataSource") {
-            let canonical = canonical_ilcd_source_references(request.store, original_references)?;
+            let process_file = entity
+                .raw
+                .get("sourceTrace")
+                .and_then(|trace| trace.get("file"))
+                .and_then(Value::as_str)
+                .ok_or(PackageWriteError::InvalidIlcdSourceReference)?;
+            let canonical =
+                canonical_ilcd_source_references(request.store, original_references, process_file)?;
             entity
                 .raw
                 .insert("ilcdCanonicalSourceReferences".to_owned(), canonical);
@@ -316,6 +323,7 @@ fn process_exchange_id(
 fn canonical_ilcd_source_references(
     store: &CanonicalStore,
     original: &Value,
+    process_file: &str,
 ) -> Result<Value, PackageWriteError> {
     let mut references = Vec::new();
     let originals = original
@@ -328,6 +336,19 @@ fn canonical_ilcd_source_references(
         let source = store
             .get("sources", id)?
             .ok_or_else(|| PackageWriteError::MissingIlcdSource(id.to_owned()))?;
+        if let Some(uri) = reference.get("@uri").and_then(Value::as_str)
+            && let Some(resolved) = package_local_source_path(process_file, uri)?
+        {
+            let source_file = source
+                .raw
+                .get("sourceTrace")
+                .and_then(|trace| trace.get("file"))
+                .and_then(Value::as_str)
+                .ok_or(PackageWriteError::InvalidIlcdSourceReference)?;
+            if resolved != source_file.replace('\\', "/") {
+                return Err(PackageWriteError::IlcdSourceUriMismatch(id.to_owned()));
+            }
+        }
         let version = source
             .raw
             .get("version")
@@ -373,6 +394,46 @@ fn canonical_ilcd_source_references(
     } else {
         Value::Array(references)
     })
+}
+
+fn package_local_source_path(
+    process_file: &str,
+    uri: &str,
+) -> Result<Option<String>, PackageWriteError> {
+    let normalized_uri = uri.replace('\\', "/");
+    let has_scheme = normalized_uri.split_once(':').is_some_and(|(scheme, _)| {
+        !scheme.is_empty()
+            && scheme.bytes().enumerate().all(|(index, byte)| {
+                byte.is_ascii_alphabetic()
+                    || (index > 0 && (byte.is_ascii_digit() || matches!(byte, b'+' | b'-' | b'.')))
+            })
+    });
+    if has_scheme || normalized_uri.starts_with("//") {
+        return Ok(None);
+    }
+    let path = normalized_uri.split(['?', '#']).next().unwrap_or_default();
+    if path.is_empty() || path.starts_with('/') {
+        return Err(PackageWriteError::InvalidIlcdLocalSourceUri);
+    }
+    let mut parts = process_file
+        .split('/')
+        .map(ToOwned::to_owned)
+        .collect::<Vec<_>>();
+    if parts.pop().is_none() {
+        return Err(PackageWriteError::InvalidIlcdSourceReference);
+    }
+    for segment in path.split('/') {
+        match segment {
+            "" | "." => {}
+            ".." => {
+                if parts.pop().is_none() {
+                    return Err(PackageWriteError::InvalidIlcdLocalSourceUri);
+                }
+            }
+            _ => parts.push(segment.to_owned()),
+        }
+    }
+    Ok(Some(parts.join("/")))
 }
 
 fn write_process_dataset(
@@ -571,6 +632,10 @@ pub enum PackageWriteError {
     ProcessNoExchanges(String),
     #[error("ILCD Process has a source reference without a data set UUID")]
     InvalidIlcdSourceReference,
+    #[error("ILCD Process source reference has a package-local URI that cannot be resolved")]
+    InvalidIlcdLocalSourceUri,
+    #[error("ILCD Process source reference {0} has a local URI pointing to a different file")]
+    IlcdSourceUriMismatch(String),
     #[error("ILCD Process references source {0}, which is absent from the imported package")]
     MissingIlcdSource(String),
     #[error(
