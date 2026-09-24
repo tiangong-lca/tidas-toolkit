@@ -27,9 +27,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
-lastReviewedNote: "Reviewed for Toolkit #217: the internal asset tool exports the canonical public-specification pin for CI, removing the workflow's independently maintained archive tuple without changing crate topology or runtime ownership."
+lastReviewedAt: "2026-09-24"
+lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
+lastReviewedNote: "Reviewed for Toolkit #219: ILCD import must preserve non-flow quantitative-reference meaning and optional process type; the public schema source remains tidas-spec-owned. Crate boundaries are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -94,6 +94,11 @@ Import detects EcoSpold 1/2, SimaPro CSV, openLCA JSON-LD, openLCA process
 XLSX, and ILCD. Adapters stream into disk-backed canonical entities/exchanges;
 typed normalization and preflight run before TIDAS and optional ILCD writers.
 Requested outputs are validated before one atomic commit.
+For ILCD Process imports, a non-flow quantitative reference is carried through
+the disk-backed entity and writer as a textual accounting basis. The writer
+does not choose the first elementary output as a reference Flow, and it does
+not invent a process type absent from that ILCD source. The public Process
+schema that admits this form is owned and pinned separately from the importer.
 
 Export reads one repeatable-read, read-only PostgreSQL snapshot, streams
 records through bounded workers, optionally retrieves S3-compatible object

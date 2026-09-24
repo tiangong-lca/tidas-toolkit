@@ -1,9 +1,9 @@
 version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
-lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
-lastReviewedNote: "Reviewed for Toolkit #217: canonical pin export and rust-ci consumption remain under the existing public-specification, automation, and asset-runtime routes."
+lastReviewedAt: "2026-09-24"
+lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
+lastReviewedNote: "Reviewed for Toolkit #219: ILCD import semantics remain under the existing Rust-product route; public schema adoption stays in the generated specification-pin route. No routing or coverage rule changes."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
 # and ownership/routing/validation governance is otherwise unchanged.

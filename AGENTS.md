@@ -31,9 +31,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
-lastReviewedNote: "Reviewed for Toolkit #217: Rust CI now consumes the qualified public-specification candidate identity from the canonical Rust pin instead of maintaining a second archive tuple; ownership and release controls are unchanged."
+lastReviewedAt: "2026-09-24"
+lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
+lastReviewedNote: "Reviewed for Toolkit #219: the ILCD adapter and process writer preserve non-flow quantitative references without inventing a pollutant reference; public schema assets remain spec-owned and require exact downstream pin adoption. Ownership and release controls are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

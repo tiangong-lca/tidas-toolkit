@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: "2026-09-21"
-lastReviewedCommit: "5098687600ab482ac8a57d571a0bb7dfb1110012"
-lastReviewedNote: "Reviewed for Toolkit #217: the internal asset tool's spec-pin environment export changes CI maintenance only; public commands, reports, exit classes, and completion remain unchanged."
+lastReviewedAt: "2026-09-24"
+lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
+lastReviewedNote: "Reviewed for Toolkit #219: ILCD import preserves non-flow quantitative references and omitted process type without silently choosing an emission output; public command and report schemas are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -242,6 +242,12 @@ Adapters write to a disk-backed canonical store; exchanges and issues stream
 to bounded spools. Requested TIDAS/ILCD outputs, process bundles, mapping CSV,
 and reports are assembled in a sibling staging directory and become visible
 only through one atomic commit.
+An ILCD Process using `Other parameter`, `Functional unit`, or
+`Production period` as its quantitative reference keeps that type and its multilingual
+`functionalUnitOrOther` text. Import must not choose a pollutant output as a
+reference Flow or add `Unit process, single operation` when the source omits
+the process type. Publication still depends on the exact pinned public Process
+schema admitting these source-valid fields.
 
 ## Native export surface
 
