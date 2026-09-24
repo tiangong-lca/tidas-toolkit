@@ -22,7 +22,7 @@ use crate::{AssetError, sha256_hex};
 /// npm package name of the public specification.
 pub const SPEC_PACKAGE_NAME: &str = "@tiangong-lca/tidas-spec";
 /// Candidate package version this repository is pinned to.
-pub const SPEC_VERSION: &str = "0.2.2";
+pub const SPEC_VERSION: &str = "0.2.3";
 /// Canonical repository of the public specification package.
 ///
 /// This is provenance, not an enforceable claim: the specification repository
@@ -32,7 +32,7 @@ pub const SPEC_VERSION: &str = "0.2.2";
 /// were qualified at, and it is recorded so an upgrade is an explicit event.
 pub const SPEC_REPOSITORY: &str = "https://github.com/tiangong-lca/tidas-spec";
 /// Reviewed specification-repository revision the qualified archive came from.
-pub const SPEC_REVISION: &str = "8a9470a7dd4c074ae246bb9967b3bfae3e371e32";
+pub const SPEC_REVISION: &str = "f118660dbcbfbf736be74837cce0bf26cd177245";
 /// Tools repository the candidate extracted its public assets from.
 ///
 /// Unlike the specification-repository revision, this one travels inside the
@@ -53,13 +53,13 @@ pub const SPEC_IMPORTED_ORIGIN: &str = "tidas-toolkit";
 /// Owner of the candidate's own package metadata.
 pub const SPEC_PACKAGE_METADATA_ORIGIN: &str = "tidas-spec";
 /// Canonical archive file name.
-pub const SPEC_ARCHIVE_FILE: &str = "tiangong-lca-tidas-spec-0.2.2.tgz";
+pub const SPEC_ARCHIVE_FILE: &str = "tiangong-lca-tidas-spec-0.2.3.tgz";
 /// SHA-256 of the qualified candidate archive.
 pub const SPEC_ARCHIVE_SHA256: &str =
-    "208f5e0e557f605a8e7c48e3036ab8c1f659852c4a34ade64bfae914207bbf3e";
+    "e28018d2bf6eb4b67ca437225adfc25fe3795cf69f9dcd95698a5214aaea2a29";
 /// SHA-256 of the candidate's own `spec-manifest.json`.
 pub const SPEC_MANIFEST_SHA256: &str =
-    "620e2e389d91af7a774e92e1d7c67e282ccb910e0c2e9f9391926cbe1c5e5f09";
+    "5b69ab859e26a253dc51c6aeee68c971d727b1f8db44128143795113fe3eee6a";
 /// Public specification assets imported into this repository.
 pub const SPEC_IMPORTED_FILE_COUNT: usize = 33;
 /// Public assets authored or derived in the specification repository.

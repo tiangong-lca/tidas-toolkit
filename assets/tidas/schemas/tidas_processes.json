@@ -628,8 +628,47 @@
                 }
               },
               "required": [
-                "@type",
-                "referenceToReferenceFlow"
+                "@type"
+              ],
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "@type": {
+                        "const": "Reference flow(s)"
+                      }
+                    },
+                    "required": [
+                      "@type"
+                    ]
+                  },
+                  "then": {
+                    "required": [
+                      "referenceToReferenceFlow"
+                    ]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "@type": {
+                        "enum": [
+                          "Functional unit",
+                          "Other parameter",
+                          "Production period"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "@type"
+                    ]
+                  },
+                  "then": {
+                    "required": [
+                      "functionalUnitOrOther"
+                    ]
+                  }
+                }
               ]
             },
             "time": {
@@ -888,10 +927,7 @@
                 "common:other": {
                   "$ref": "tidas_data_types.json#/$defs/CommonOther"
                 }
-              },
-              "required": [
-                "typeOfDataSet"
-              ]
+              }
             },
             "dataSourcesTreatmentAndRepresentativeness": {
               "type": "object",
