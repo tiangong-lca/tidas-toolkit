@@ -124,7 +124,15 @@ fn native_validation_keeps_issue_and_batch_spools_under_deep_unicode_task_paths(
         bytes,
         fs::read(native_deep.join("batch-events.jsonl")).unwrap()
     );
-    assert_eq!(bytes.iter().filter(|byte| **byte == b'\n').count(), 2);
+    let events = bytes
+        .split(|byte| *byte == b'\n')
+        .filter(|line| !line.is_empty())
+        .map(|line| serde_json::from_slice::<Value>(line).unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(events.len(), 2);
+    assert_eq!(events[0]["type"], "issue");
+    assert_eq!(events[1]["type"], "final");
+    assert_eq!(events[1]["completed"], true);
     assert_eq!(
         deep_report["artifacts"][0]["path"].as_str(),
         deep_events.to_str()
