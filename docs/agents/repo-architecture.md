@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: eb46ce7a6ea681df6ac60f83ef0e323865358912
-lastReviewedNote: "Reviewed Toolkit #224 on merged #222/#223: Process year and empty-method types are restored after semantic recovery; type-only sidecar entries are omitted so XML edits remain visible. Crate boundaries, Windows spool fix and release topology are unchanged."
+lastReviewedCommit: ca8f45b25a1347ce81270c606579e49d6fe15f7a
+lastReviewedNote: "Reviewed for Toolkit #229: all 12 public crates share version 0.3.3, tidas-dist remains internal, and the exact-target tag workflow still owns publication."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

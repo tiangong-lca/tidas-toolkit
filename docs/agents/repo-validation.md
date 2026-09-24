@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: eb46ce7a6ea681df6ac60f83ef0e323865358912
-lastReviewedNote: "Reviewed Toolkit #224 on merged #222/#223: synthetic Process proof covers both integer years, empty method, sidecar-free reverse, native schemas and rejection of projected XML edits; broader conversion proof remains required."
+lastReviewedCommit: ca8f45b25a1347ce81270c606579e49d6fe15f7a
+lastReviewedNote: "Reviewed for Toolkit #229: unchanged Rust 1.98.1, package dry-run, candidate spec, Docpact and four-platform qualification gates apply to the version-only source PR."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
