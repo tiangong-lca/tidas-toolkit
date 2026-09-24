@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 4c6cf70ed5f0b36bc976272317400d5761d93f2f
-lastReviewedNote: "Reviewed for Toolkit #220: the append-only v0.3.3 request binds qualified source 4f1be37 and leaves exact tag creation, crates publication and four-platform native assets to the canonical tag workflow; product and integration rules are unchanged."
+lastReviewedCommit: c9bbb7a3c7da1ad9b2b12a884326a2d166f1ea49
+lastReviewedNote: "Reviewed for Toolkit #232: a separate read-only Windows archive verifier tests the immutable public v0.3.3 binary with synthetic high-volume Process issues and a real I/O failure; product/release authority and supported platform contract remain unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
