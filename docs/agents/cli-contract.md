@@ -29,7 +29,7 @@ checkPaths:
   - README_CN.md
 lastReviewedAt: "2026-09-24"
 lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
-lastReviewedNote: "Reviewed for Toolkit #219: ILCD import preserves non-flow quantitative references and omitted process type without silently choosing an emission output; public command and report schemas are unchanged."
+lastReviewedNote: "Reviewed for Toolkit #219: ILCD import and eILCD projection preserve non-flow quantitative references and omitted process type against the exact pinned tidas-spec 0.2.3 candidate; command/report schemas are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -246,8 +246,9 @@ An ILCD Process using `Other parameter`, `Functional unit`, or
 `Production period` as its quantitative reference keeps that type and its multilingual
 `functionalUnitOrOther` text. Import must not choose a pollutant output as a
 reference Flow or add `Unit process, single operation` when the source omits
-the process type. Publication still depends on the exact pinned public Process
-schema admitting these source-valid fields.
+the process type. The exact pinned public Process schema admits these
+source-valid fields, and eILCD conversion retains the Process information
+reference while omitting a TIDAS-specific exchange-level flag.
 
 ## Native export surface
 

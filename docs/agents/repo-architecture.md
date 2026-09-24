@@ -29,7 +29,7 @@ checkPaths:
   - scripts/**
 lastReviewedAt: "2026-09-24"
 lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
-lastReviewedNote: "Reviewed for Toolkit #219: ILCD import must preserve non-flow quantitative-reference meaning and optional process type; the public schema source remains tidas-spec-owned. Crate boundaries are unchanged."
+lastReviewedNote: "Reviewed for Toolkit #219: import and projection preserve non-flow Process references; the exact 0.2.3 public schema/methodology candidate is pinned without changing repository ownership."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -98,7 +98,9 @@ For ILCD Process imports, a non-flow quantitative reference is carried through
 the disk-backed entity and writer as a textual accounting basis. The writer
 does not choose the first elementary output as a reference Flow, and it does
 not invent a process type absent from that ILCD source. The public Process
-schema that admits this form is owned and pinned separately from the importer.
+schema that admits this form is owned by tidas-spec and imported from its exact
+reviewed 0.2.3 candidate. eILCD projection keeps the Process information
+reference in XML while omitting only the TIDAS-specific exchange flag.
 
 Export reads one repeatable-read, read-only PostgreSQL snapshot, streams
 records through bounded workers, optionally retrieves S3-compatible object
@@ -135,7 +137,7 @@ both.
 
 The public subset of that tree — 36 schemas, the two shared methodology
 documents, and the paired `schema.lock.json` — is a generated copy of the
-reviewed 0.2.2 specification candidate published by `tiangong-lca/tidas-spec`. It
+qualified 0.2.3 specification candidate from `tiangong-lca/tidas-spec`. It
 contains 33 assets imported from the historical toolkit source and six public
 assets authored or derived in the specification repository. Its
 identity is Rust source in `crates/tidas-assets/src/spec_pin.rs`: package

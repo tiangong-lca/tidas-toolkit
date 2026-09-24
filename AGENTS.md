@@ -33,7 +33,7 @@ checkPaths:
   - .githooks/pre-push
 lastReviewedAt: "2026-09-24"
 lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
-lastReviewedNote: "Reviewed for Toolkit #219: the ILCD adapter and process writer preserve non-flow quantitative references without inventing a pollutant reference; public schema assets remain spec-owned and require exact downstream pin adoption. Ownership and release controls are unchanged."
+lastReviewedNote: "Reviewed for Toolkit #219: ILCD import and eILCD projection preserve non-flow quantitative references; the exact reviewed tidas-spec 0.2.3 candidate is pinned through the generated subset. Ownership and release controls are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -83,8 +83,8 @@ complete executable-asset byte set. Both locks are generated and checked by
 `tidas-asset-lock`.
 
 The 36 public schemas, the two shared methodology documents, and the paired
-`schema.lock.json` are a generated copy of the reviewed 0.2.2 specification candidate
-published by `tiangong-lca/tidas-spec`. The pin — package version, archive
+`schema.lock.json` are a generated copy of the qualified 0.2.3 specification candidate
+from `tiangong-lca/tidas-spec`. The pin — package version, archive
 SHA-256, manifest SHA-256, specification revision, and the tools commit from
 which the imported subset was extracted —
 is Rust source in `crates/tidas-assets/src/spec_pin.rs`; the candidate's own
