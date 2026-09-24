@@ -217,3 +217,4 @@ $proof = [ordered]@{
 $proofPath = Join-Path $output "proof.json"
 Write-Utf8 $proofPath ((ConvertTo-Json -InputObject $proof -Depth 20) + [Environment]::NewLine)
 Write-Output "Verified published Windows archive $archiveName at $archiveSha; $expectedIssueCount indexed rows, short/deep spool bytes equal, real I/O exit 74 preserved."
+exit 0
