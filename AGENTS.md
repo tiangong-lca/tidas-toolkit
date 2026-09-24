@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: ca8f45b25a1347ce81270c606579e49d6fe15f7a
-lastReviewedNote: "Reviewed for Toolkit #229 at the #224 merged baseline: the 0.3.3 projection changes only workspace/crate versions, exact internal pins and lock entries; native ownership, four-platform policy and append-only release request remain unchanged."
+lastReviewedCommit: 4c6cf70ed5f0b36bc976272317400d5761d93f2f
+lastReviewedNote: "Reviewed for Toolkit #220: the append-only v0.3.3 request binds qualified source 4f1be37 and leaves exact tag creation, crates publication and four-platform native assets to the canonical tag workflow; product and integration rules are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

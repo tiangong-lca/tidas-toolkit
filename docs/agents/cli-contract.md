@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: ca8f45b25a1347ce81270c606579e49d6fe15f7a
-lastReviewedNote: "Reviewed for Toolkit #229: the 0.3.3 projection preserves all seven commands, report and exit-class contracts; no CLI invocation or runtime behavior changes."
+lastReviewedCommit: 4c6cf70ed5f0b36bc976272317400d5761d93f2f
+lastReviewedNote: "Reviewed for Toolkit #220: exact-target v0.3.3 release request changes no CLI command or report contract; the published tidas binary and cargo install channel remain qualified separately by the canonical tag workflow."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

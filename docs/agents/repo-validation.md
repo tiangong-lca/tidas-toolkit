@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: ca8f45b25a1347ce81270c606579e49d6fe15f7a
-lastReviewedNote: "Reviewed for Toolkit #229: unchanged Rust 1.98.1, package dry-run, candidate spec, Docpact and four-platform qualification gates apply to the version-only source PR."
+lastReviewedCommit: 4c6cf70ed5f0b36bc976272317400d5761d93f2f
+lastReviewedNote: "Reviewed for Toolkit #220: request schema/tamper and ancestry checks, Rust/package/Docpact gates and four-platform PR qualification precede the canonical tag workflow and independent publication readback."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
