@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: eb46ce7a6ea681df6ac60f83ef0e323865358912
-lastReviewedNote: "Reviewed Toolkit #224 on merged #222/#223: reverse conversion restores both Process year types and the empty LCI method after semantic recovery, without type-only sidecar entries that could hide XML edits. Ownership, Windows spool behavior and release controls remain unchanged."
+lastReviewedCommit: ca8f45b25a1347ce81270c606579e49d6fe15f7a
+lastReviewedNote: "Reviewed for Toolkit #229 at the #224 merged baseline: the 0.3.3 projection changes only workspace/crate versions, exact internal pins and lock entries; native ownership, four-platform policy and append-only release request remain unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

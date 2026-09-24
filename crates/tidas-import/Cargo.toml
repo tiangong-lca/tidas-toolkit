@@ -22,10 +22,10 @@ serde_json = { workspace = true, features = ["arbitrary_precision", "preserve_or
 sha2.workspace = true
 tempfile.workspace = true
 thiserror.workspace = true
-tidas-assets = { version = "=0.3.2", path = "../.." }
-tidas-conversion = { version = "=0.3.2", path = "../tidas-conversion" }
-tidas-runtime = { version = "=0.3.2", path = "../tidas-runtime" }
-tidas-validation = { version = "=0.3.2", path = "../tidas-validation" }
+tidas-assets = { version = "=0.3.3", path = "../.." }
+tidas-conversion = { version = "=0.3.3", path = "../tidas-conversion" }
+tidas-runtime = { version = "=0.3.3", path = "../tidas-runtime" }
+tidas-validation = { version = "=0.3.3", path = "../tidas-validation" }
 uuid.workspace = true
 walkdir.workspace = true
 zip.workspace = true

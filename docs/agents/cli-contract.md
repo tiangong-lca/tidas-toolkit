@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: eb46ce7a6ea681df6ac60f83ef0e323865358912
-lastReviewedNote: "Reviewed Toolkit #224 on merged #222/#223: Process type restoration follows semantic recovery without type-only sidecar entries; commands and report schema remain unchanged, and native TIDAS validation remains a separate action."
+lastReviewedCommit: ca8f45b25a1347ce81270c606579e49d6fe15f7a
+lastReviewedNote: "Reviewed for Toolkit #229: the 0.3.3 projection preserves all seven commands, report and exit-class contracts; no CLI invocation or runtime behavior changes."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

@@ -20,10 +20,10 @@ serde_json.workspace = true
 sha2.workspace = true
 tempfile.workspace = true
 thiserror.workspace = true
-tidas-assets = { version = "=0.3.2", path = "../.." }
-tidas-runtime = { version = "=0.3.2", path = "../tidas-runtime" }
-tidas-rulesets = { version = "=0.3.2", path = "../tidas-rulesets" }
-tidas-xml = { version = "=0.3.2", path = "../tidas-xml" }
+tidas-assets = { version = "=0.3.3", path = "../.." }
+tidas-runtime = { version = "=0.3.3", path = "../tidas-runtime" }
+tidas-rulesets = { version = "=0.3.3", path = "../tidas-rulesets" }
+tidas-xml = { version = "=0.3.3", path = "../tidas-xml" }
 walkdir.workspace = true
 
 [lints]
