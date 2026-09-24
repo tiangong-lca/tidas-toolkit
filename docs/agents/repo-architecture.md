@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: ca8f45b25a1347ce81270c606579e49d6fe15f7a
-lastReviewedNote: "Reviewed for Toolkit #229: all 12 public crates share version 0.3.3, tidas-dist remains internal, and the exact-target tag workflow still owns publication."
+lastReviewedCommit: 4c6cf70ed5f0b36bc976272317400d5761d93f2f
+lastReviewedNote: "Reviewed for Toolkit #220: the one-file immutable request targets the previously qualified 0.3.3 source; all 12 public crates and four native archives remain the tag workflow responsibility, with tidas-dist private."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
