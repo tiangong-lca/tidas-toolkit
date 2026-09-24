@@ -32,8 +32,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 4c4b748
-lastReviewedNote: "Reviewed for Toolkit #222 at 4c4b748: native ILCD import preserves Process/Source evidence and refuses missing or version-mismatched sources. Ownership, platform and release boundaries are unchanged."
+lastReviewedCommit: 3b178fd
+lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: native ILCD import preserves Process/Source evidence and refuses ambiguous references or source mismatches. Ownership, platform and release boundaries are unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -141,7 +141,8 @@ For workspace-tracked delivery, also follow the root workspace
 - Native ILCD import must carry source-backed Process and Source names, caveats,
   data-source references, and exchange derivation context into TIDAS and eILCD.
   A generic import placeholder must not replace a meaningful source field while
-  a successful report claims that the process is valid.
+  a successful report claims that the process is valid. It must not infer an
+  untyped non-flow basis or bind one Source UUID to another local source file.
 - Issue count must not cause linear operation-report memory growth.
 - Successful output publication is atomic and deterministic for identical
   inputs; failures must not expose partial output.

@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 4c4b748
-lastReviewedNote: "Reviewed for Toolkit #222 at 4c4b748: the existing import command retains bilingual context and exact source/exchange identity, refusing missing or mismatched sources; report and exit contracts are unchanged."
+lastReviewedCommit: 3b178fd
+lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: import retains bilingual context and exact source/exchange identity, refusing ambiguous or mismatched references; the independent reverse-conversion validity issue is tracked in #224."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -256,6 +256,14 @@ UUID and version; the original ILCD URI remains in trace evidence. Exchange
 IDs and derivation comments remain reviewable across both generated formats.
 If a referenced Source is absent or its explicit version differs from the
 imported Source, import fails without publishing a generic substitute.
+The same refusal applies when a package-local Source URI points to a different
+file than its `refObjectId`, or when a non-flow quantitative reference has no
+declared type. Import records the latter as
+`ambiguous_ilcd_quantitative_reference` instead of guessing from the first
+output. The importer regression checks review-critical fields through actual
+eILCD-to-TIDAS reverse conversion. Full independent validation of the reversed
+TIDAS package is separately tracked in Toolkit #224; normalized semantic
+round-trip success alone does not establish that stronger claim.
 
 ## Native export surface
 

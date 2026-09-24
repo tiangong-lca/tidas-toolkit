@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 4c4b748
-lastReviewedNote: "Reviewed for Toolkit #222 at 4c4b748: import proof covers bilingual provenance, exact source linkage, exchange evidence, deterministic repeats, caveat-change sensitivity and atomic missing/mismatched-source refusal."
+lastReviewedCommit: 3b178fd
+lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: import proof covers bilingual provenance, local URI/source identity, explicit missing-type refusal, real reverse-conversion evidence and the independent Toolkit #224 validity boundary."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -93,7 +93,7 @@ to install a redistributable or copy a development-machine DLL.
 | --- | --- | --- |
 | CLI, contracts, or shared runtime | baseline; root and affected command help; deterministic JSON/version/completion; report/stdout separation; usage and exit-class tests | configuration precedence, cancellation, bounded queues, memory accounting, spool determinism, and all affected JSON Schema contracts |
 | conversion | focused conversion + CLI tests; both directions; representative category round-trips; schema-order/XSD proof with scrambled JSON members; envelope and projection-recovery sidecars; source-semantic hash proof; tree hash; symlink, invalid XML, cancellation, budget, rollback | run the local package twice, validate every projected XML document, recover every adapted TIDAS fragment, compare tree hashes, and record wall time/RSS |
-| import | all supported format fixtures; native target validation; ILCD non-flow quantitative-reference regression with an elementary pollutant first and absent process type; bilingual Process/Source provenance, exact source linkage, exchange comments/IDs, and caveat-change sensitivity through TIDAS/eILCD projection and round-trip; missing or version-mismatched Source fails atomically; deterministic package/mapping/bundle hashes; malformed/unsupported input, cancellation, budget, atomic publication | large exchange/issue-spool fixture with wall time/RSS and cross-root determinism |
+| import | all supported format fixtures; native target validation; ILCD non-flow quantitative-reference regression with an elementary pollutant first and absent process type; bilingual Process/Source provenance, exact source linkage, exchange comments/IDs, and caveat-change sensitivity through TIDAS/eILCD projection plus actual reverse-conversion comparison of review-critical fields; untyped non-flow reference and missing, version-mismatched or URI-mismatched Source fail atomically; deterministic package/mapping/bundle hashes; malformed/unsupported input, cancellation, budget, atomic publication. Toolkit #224 owns complete independent validation of the reversed TIDAS package. | large exchange/issue-spool fixture with wall time/RSS and cross-root determinism |
 | export | focused crate/CLI tests; report schema; secret redaction; unsafe paths; cancellation/budget; version suffixes; deterministic ZIP; atomic replacement | disposable local PostgreSQL and S3-compatible fixtures twice, comparing archive bytes and membership |
 | release | closure/order/round-trip golden fixtures; missing/inexact reference failure; four deterministic ZIPs; native validation; cancellation/budget; atomic directory publication | run the local 237 MiB package twice, compare all four archives, and record wall time/RSS |
 | validation/batch/references | compile every bundled schema/XSD root offline; schema and semantic fixtures including internal keyrefs; complete TIDAS projection/XSD/recovery proof; explicit schema-only diagnostic behavior; oversized rejected-instance event below the 1 MiB frame ceiling; bounded issue spool; batch preflight/drift/final-event hash; extraction schema/roles | local large-package validation twice, recording native time, projection/XSD/recovery time, peak RSS, cancellation, and spool hash |

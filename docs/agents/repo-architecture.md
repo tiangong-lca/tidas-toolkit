@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 4c4b748
-lastReviewedNote: "Reviewed for Toolkit #222 at 4c4b748: Process/Source evidence travels through the existing disk-backed importer and generated TIDAS/eILCD; missing or version-mismatched sources fail. The public spec pin and crate ownership are unchanged."
+lastReviewedCommit: 3b178fd
+lastReviewedNote: "Reviewed for Toolkit #222 at 3b178fd: Process/Source evidence travels through the disk-backed importer and both generated formats; ambiguous references and source identity mismatches fail. The public spec pin and crate ownership are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -109,6 +109,11 @@ package URI while recording the original ILCD reference in source trace; a
 missing or version-mismatched referenced Source fails before publication.
 ILCD exchange internal IDs remain stable through TIDAS and eILCD so human
 review can bind a calculation to its original row.
+An untyped non-flow quantitative basis fails with an explicit import issue
+instead of promoting the first pollutant output to a reference Flow. A
+package-local Source URI must resolve to the imported Source record's file;
+external URIs remain in source trace while the canonical package link targets
+their declared Source UUID.
 
 Export reads one repeatable-read, read-only PostgreSQL snapshot, streams
 records through bounded workers, optionally retrieves S3-compatible object
