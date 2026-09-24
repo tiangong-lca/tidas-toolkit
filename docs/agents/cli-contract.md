@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: "2026-09-24"
-lastReviewedCommit: "43947582bac7db41460597b5622e79e6c37c0ed6"
-lastReviewedNote: "Reviewed for Toolkit #219: ILCD import and eILCD projection preserve non-flow quantitative references and omitted process type against the exact pinned tidas-spec 0.2.3 candidate; command/report schemas are unchanged."
+lastReviewedAt: 2026-09-24
+lastReviewedCommit: 4c4b748
+lastReviewedNote: "Reviewed for Toolkit #222 at 4c4b748: the existing import command retains bilingual context and exact source/exchange identity, refusing missing or mismatched sources; report and exit contracts are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -249,6 +249,13 @@ reference Flow or add `Unit process, single operation` when the source omits
 the process type. The exact pinned public Process schema admits these
 source-valid fields, and eILCD conversion retains the Process information
 reference while omitting a TIDAS-specific exchange-level flag.
+ILCD Process and Source names, comments, applicability, use advice, citation
+and source caveats retain their source languages in the generated package.
+Process `referenceToDataSource` points to the imported Source with its exact
+UUID and version; the original ILCD URI remains in trace evidence. Exchange
+IDs and derivation comments remain reviewable across both generated formats.
+If a referenced Source is absent or its explicit version differs from the
+imported Source, import fails without publishing a generic substitute.
 
 ## Native export surface
 
