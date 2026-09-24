@@ -11,8 +11,7 @@ use super::unit_flow::exchange_metadata;
 
 pub fn process_base(
     entity: &CanonicalEntity,
-    reference: &str,
-    functional_unit: &str,
+    quantitative_reference: &Value,
 ) -> Result<Value, ProcessWriteError> {
     let name = entity.name.as_deref().unwrap_or("Process");
     let description = entity
@@ -38,8 +37,7 @@ pub fn process_base(
         &ProcessParts {
             name,
             description,
-            reference,
-            functional_unit,
+            quantitative_reference,
             format_id: &format_id,
             contact_id: &contact_id,
             location,
@@ -51,8 +49,7 @@ pub fn process_base(
 struct ProcessParts<'a> {
     name: &'a str,
     description: &'a str,
-    reference: &'a str,
-    functional_unit: &'a str,
+    quantitative_reference: &'a Value,
     format_id: &'a str,
     contact_id: &'a str,
     location: &'a str,
@@ -88,11 +85,7 @@ fn json_process(
                     },
                     "common:generalComment": localized(parts.description)
                 },
-                "quantitativeReference": {
-                    "@type": "Reference flow(s)",
-                    "referenceToReferenceFlow": parts.reference,
-                    "functionalUnitOrOther": localized(parts.functional_unit)
-                },
+                "quantitativeReference": parts.quantitative_reference,
                 "time": {"common:referenceYear": parts.reference_year},
                 "geography": {
                     "locationOfOperationSupplyOrProduction": {
@@ -190,21 +183,30 @@ fn insert_at(document: &mut Value, pointer: &str, field: &str, value: Value) {
 }
 
 fn lci_method(entity: &CanonicalEntity) -> Value {
-    let process_type = match entity
-        .raw
-        .get("sourceProcessType")
-        .and_then(Value::as_str)
-        .unwrap_or_default()
-    {
-        "LCI_RESULT" => "LCI result",
-        "PARTLY_TERMINATED_SYSTEM" => "Partly terminated system",
-        "AVOIDED_PRODUCT_SYSTEM" => "Avoided product system",
-        _ => "Unit process, single operation",
+    let process_type = if entity.raw.contains_key("ilcdNonFlowReference") {
+        entity.raw.get("ilcdProcessType").and_then(Value::as_str)
+    } else {
+        Some(
+            match entity
+                .raw
+                .get("sourceProcessType")
+                .and_then(Value::as_str)
+                .unwrap_or_default()
+            {
+                "LCI_RESULT" => "LCI result",
+                "PARTLY_TERMINATED_SYSTEM" => "Partly terminated system",
+                "AVOIDED_PRODUCT_SYSTEM" => "Avoided product system",
+                _ => "Unit process, single operation",
+            },
+        )
     };
-    let mut section = Map::from_iter([(
-        "typeOfDataSet".to_owned(),
-        Value::String(process_type.to_owned()),
-    )]);
+    let mut section = Map::new();
+    if let Some(process_type) = process_type {
+        section.insert(
+            "typeOfDataSet".to_owned(),
+            Value::String(process_type.to_owned()),
+        );
+    }
     if let Some(value) = clean_text(entity.raw.get("deviationsFromLCIMethodPrinciple")) {
         section.insert(
             "deviationsFromLCIMethodPrinciple".to_owned(),
