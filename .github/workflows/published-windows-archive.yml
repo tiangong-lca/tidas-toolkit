@@ -1,0 +1,41 @@
+name: Published Windows Archive Qualification
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/published-windows-archive.yml
+      - scripts/verify-published-windows.ps1
+      - crates/tidas-conversion/tests/fixtures/process-types-v1/synthetic-process.json
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  installed-windows:
+    name: Published Windows x86_64 archive
+    runs-on: windows-2025
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: Verify exact public archive with indexed short/deep Process paths
+        shell: pwsh
+        run: ./scripts/verify-published-windows.ps1 -OutputDir dist/windows-public-proof
+
+      - name: Retain credential-free structured proof
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: tidas-v0.3.3-windows-installed-proof
+          path: |
+            dist/windows-public-proof/proof.json
+            dist/windows-public-proof/*.report.json
+            dist/windows-public-proof/*.stderr.txt
+            dist/windows-public-proof/short/validation-events.jsonl
+            dist/windows-public-proof/deep-validation-events.jsonl
+            dist/windows-public-proof/short/batch-events.jsonl
+            dist/windows-public-proof/deep-batch-events.jsonl
+            dist/windows-public-proof/manifest.jsonl
+            dist/windows-public-proof/input/processes/synthetic.json
+          if-no-files-found: warn
+          retention-days: 30

@@ -2,8 +2,8 @@ version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
 lastReviewedAt: "2026-09-24"
-lastReviewedCommit: "4c6cf70ed5f0b36bc976272317400d5761d93f2f"
-lastReviewedNote: "Reviewed for Toolkit #220: an append-only v0.3.3 request follows the existing release-authorization route; required docs, coverage and automation ownership are unchanged."
+lastReviewedCommit: "c9bbb7a3c7da1ad9b2b12a884326a2d166f1ea49"
+lastReviewedNote: "Reviewed for Toolkit #232: existing automation/bootstrap routing covers the read-only Windows public-archive workflow and verifier; ownership, coverage and rules remain unchanged."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
 # and ownership/routing/validation governance is otherwise unchanged.

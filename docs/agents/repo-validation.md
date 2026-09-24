@@ -29,8 +29,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 4c6cf70ed5f0b36bc976272317400d5761d93f2f
-lastReviewedNote: "Reviewed for Toolkit #220: request schema/tamper and ancestry checks, Rust/package/Docpact gates and four-platform PR qualification precede the canonical tag workflow and independent publication readback."
+lastReviewedCommit: c9bbb7a3c7da1ad9b2b12a884326a2d166f1ea49
+lastReviewedNote: "Reviewed for Toolkit #232: published Windows archive replay covers 400 indexed synthetic Process issues at short/deep Unicode paths, byte-equal spools and exit-74 I/O diagnostics; source CI/package smoke stay distinct."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -106,6 +106,18 @@ to install a redistributable or copy a development-machine DLL.
 | crates.io | sync check; public-set qualification; verify exact version set and `tidas-dist` exclusion; script syntax | inspect each `.crate`; source install; registry absent/existing checksum simulations without a real token |
 | release request or final migration marker | shell syntax; tamper/append-only validation; actionlint; strict Docpact | simulate modification/multiple-file/target/tag/ancestry conflicts and confirm exact-tag workflow dispatch |
 | governed docs only | strict Docpact config validation and enforced lint | one focused route rendering for the changed intent |
+
+The read-only `published-windows-archive.yml` PR/manual qualification downloads
+the immutable `v0.3.3` Windows x64 archive and checksum sidecar, verifies the
+exact lightweight tag/source and independently recorded archive digest, then
+runs **the archive executable**. Its Toolkit-owned synthetic Process fixture
+expands to 400 indexed schema findings; short and task-contained deep Unicode
+paths must produce identical issue-spool bytes/hash and the same data-issues
+class. A real blocked spool destination must retain native exit 74 and
+`validation_io_failed`. The workflow uploads the input, reports and proof but
+cannot tag, publish or change the data #33 Process. Source-built Windows CI and
+package smoke remain separate evidence, not substitutes for this installed
+archive replay.
 
 Scale proofs must run locally first. The canonical large package is outside
 Git:

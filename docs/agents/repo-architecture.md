@@ -28,8 +28,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 4c6cf70ed5f0b36bc976272317400d5761d93f2f
-lastReviewedNote: "Reviewed for Toolkit #220: the one-file immutable request targets the previously qualified 0.3.3 source; all 12 public crates and four native archives remain the tag workflow responsibility, with tidas-dist private."
+lastReviewedCommit: c9bbb7a3c7da1ad9b2b12a884326a2d166f1ea49
+lastReviewedNote: "Reviewed for Toolkit #232: public Windows archive qualification reads exact tag/source/checksum and runs the extracted executable; canonical tag publication and data ownership remain separate."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -270,6 +270,13 @@ and dispatches `rust-release.yml` at that tag. The tag run builds each native
 archive twice, compares bytes, verifies checksums, executes packaged probes,
 publishes the qualified crates, generates SBOM/attestation evidence, and then
 creates the immutable GitHub Release.
+
+
+The separate read-only published-Windows qualification workflow can then
+download the exact public archive, verify its tag/source/checksum identity and
+replay a synthetic high-volume Process issue spool at short and deep Unicode
+paths. It uploads only test evidence; it never rebuilds or republishes the
+immutable archive and is not a data-production route.
 
 Homebrew and Winget metadata derive from the same checksum set. External
 package-manager submissions are separate approvals and do not rebuild.

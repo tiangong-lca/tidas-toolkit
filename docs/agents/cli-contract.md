@@ -28,8 +28,8 @@ checkPaths:
   - README.md
   - README_CN.md
 lastReviewedAt: 2026-09-24
-lastReviewedCommit: 4c6cf70ed5f0b36bc976272317400d5761d93f2f
-lastReviewedNote: "Reviewed for Toolkit #220: exact-target v0.3.3 release request changes no CLI command or report contract; the published tidas binary and cargo install channel remain qualified separately by the canonical tag workflow."
+lastReviewedCommit: c9bbb7a3c7da1ad9b2b12a884326a2d166f1ea49
+lastReviewedNote: "Reviewed for Toolkit #232: the installed public Windows verifier exercises existing schema-only indexed issue-spool and exit-74 I/O contracts without changing the tidas CLI or its machine report schema."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
