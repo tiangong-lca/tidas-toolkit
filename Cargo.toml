@@ -93,7 +93,7 @@ encoding_rs = "0.8.35"
 flate2 = "1.1.9"
 futures-util = "0.3.31"
 include_dir = "0.7.4"
-jsonschema = { version = "0.40.0", default-features = false }
+jsonschema = { version = "0.58.6", default-features = false }
 libxml = "0.3.16"
 libxslt = "0.1.5"
 noyalib = { version = "0.0.16", default-features = false, features = ["std", "compat-serde-yaml"] }
