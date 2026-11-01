@@ -30,8 +30,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-11-01
-lastReviewedCommit: b2e7c948316765e511ad6369fe29fe5e806ca30c
-lastReviewedNote: "Toolkit #269: reviewed explicit Result-only full-closure packaging, v2 report/capabilities, two-archive native validation and deterministic scale proof; default four-package v1 behavior and publication authority are unchanged."
+lastReviewedCommit: d69a886ea0dfad06986f2f0ff6f050cd28688da4
+lastReviewedNote: "Toolkit #269 / PR270: reviewed generated Result-only scale probe golden assertions and resource-only runtime logging after CodeQL flagged a document-derived test diagnostic; public CLI, package contracts and runtime behavior are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

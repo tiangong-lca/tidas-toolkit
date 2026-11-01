@@ -961,6 +961,12 @@ fn result_only_rejects_false_roles_budget_and_cancellation_without_publishing() 
 #[test]
 #[ignore = "generated 64-Result package repeatability and resource probe"]
 fn generated_result_only_package_scale() {
+    // Golden digests describe only this checked-in deterministic generator.
+    // Runtime logs carry fixed fixture identifiers and resource measurements.
+    const EXPECTED_INPUT: &str = "a9ae0e37d6e78afb740b7f8775d0bea4a687cf94edafe2b01708593d0086603f";
+    const EXPECTED_ARTIFACTS: &str =
+        "8d15e3968631d578567bd19229abfc0a332d96bee6b6695b025aca725bd1e372";
+
     let temporary = tempfile::tempdir().unwrap();
     let (tidas, _) = result_only_fixture(temporary.path());
     let source = fs::read_dir(tidas.join("processes"))
@@ -990,10 +996,11 @@ fn generated_result_only_package_scale() {
         }
     }
     fs::write(&index, serde_json::to_vec(&value).unwrap()).unwrap();
-    println!(
-        "input index sha256={}",
-        hex(Sha256::digest(fs::read(&index).unwrap()))
+    assert_eq!(
+        hex(Sha256::digest(fs::read(&index).unwrap())),
+        EXPECTED_INPUT
     );
+    println!("fixture_input_sha256={EXPECTED_INPUT}");
     let mut previous = None;
     for attempt in 0..2 {
         let started = std::time::Instant::now();
@@ -1016,11 +1023,11 @@ fn generated_result_only_package_scale() {
                 && report.ilcd_validation.summary.ok
                 && report.roundtrip.ok
         );
+        assert_eq!(report.profiles[0].dataset_count, 71);
+        assert_eq!(report.artifact_set_sha256, EXPECTED_ARTIFACTS);
         println!(
-            "attempt={attempt} roots=64 datasets={} elapsed_ms={} artifact_set={}",
-            report.profiles[0].dataset_count,
-            started.elapsed().as_millis(),
-            report.artifact_set_sha256
+            "attempt={attempt} roots=64 datasets=71 elapsed_ms={} expected_artifact_set={EXPECTED_ARTIFACTS}",
+            started.elapsed().as_millis()
         );
         if let Some(hash) = previous {
             assert_eq!(report.artifact_set_sha256, hash);
