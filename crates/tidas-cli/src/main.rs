@@ -8,8 +8,8 @@ use std::time::Duration;
 
 use args::{
     Cli, Commands, ConversionTarget, ConvertArgs, ExportArgs, ExportTargetArg, ImportArgs,
-    ImportSourceFormat, ImportTargetArg, ReleaseArgs, ReleaseCommand, ReleaseProfileArg,
-    RulesetArgs, ValidateArgs, ValidationInputFormat, ValidationProtocol,
+    ImportSourceFormat, ImportTargetArg, ReleaseArgs, ReleaseBuildProfileArg, ReleaseCommand,
+    ReleaseProfileArg, RulesetArgs, ValidateArgs, ValidationInputFormat, ValidationProtocol,
 };
 use clap::error::ErrorKind;
 use context::ExecutionContext;
@@ -116,11 +116,19 @@ fn dispatch(command: Commands, execution: &ExecutionContext) -> OperationReportV
 
 fn release_report(arguments: &ReleaseArgs, execution: &ExecutionContext) -> OperationReportV1 {
     let request = match &arguments.action {
-        ReleaseCommand::BuildPackages(arguments) => ReleaseRequest::BuildPackages {
-            tidas_dir: arguments.tidas_dir.clone(),
-            dataset_index: arguments.dataset_index.clone(),
-            output_dir: arguments.output_dir.clone(),
-            issue_spool: arguments.issue_spool.clone(),
+        ReleaseCommand::BuildPackages(arguments) => match arguments.profile {
+            ReleaseBuildProfileArg::Full => ReleaseRequest::BuildPackages {
+                tidas_dir: arguments.tidas_dir.clone(),
+                dataset_index: arguments.dataset_index.clone(),
+                output_dir: arguments.output_dir.clone(),
+                issue_spool: arguments.issue_spool.clone(),
+            },
+            ReleaseBuildProfileArg::ResultProcess => ReleaseRequest::BuildResultPackages {
+                tidas_dir: arguments.tidas_dir.clone(),
+                dataset_index: arguments.dataset_index.clone(),
+                output_dir: arguments.output_dir.clone(),
+                issue_spool: arguments.issue_spool.clone(),
+            },
         },
         ReleaseCommand::ConvertIlcd(arguments) => ReleaseRequest::ConvertIlcd {
             input_dir: arguments.input_dir.clone(),
@@ -135,6 +143,7 @@ fn release_report(arguments: &ReleaseArgs, execution: &ExecutionContext) -> Oper
             dataset_index: arguments.dataset_index.clone(),
             profile: match arguments.profile {
                 ReleaseProfileArg::UnitProcess => ReleaseProfile::UnitProcess,
+                ReleaseProfileArg::ResultProcess => ReleaseProfile::ResultProcess,
                 ReleaseProfileArg::StandaloneResult => ReleaseProfile::StandaloneResult,
             },
         },
@@ -1297,6 +1306,20 @@ fn version_report(execution: &ExecutionContext) -> OperationReportV1 {
     report.summary.insert(
         "release_report_schema".to_owned(),
         serde_json::json!(RELEASE_REPORT_SCHEMA_V1),
+    );
+    report.summary.insert(
+        "release_report_schemas".to_owned(),
+        serde_json::json!([
+            RELEASE_REPORT_SCHEMA_V1,
+            tidas_release::RELEASE_REPORT_SCHEMA_V2
+        ]),
+    );
+    report.summary.insert(
+        "release_build_profiles".to_owned(),
+        serde_json::json!([
+            tidas_release::RESULT_PROFILE,
+            tidas_release::RESULT_ONLY_PROFILE
+        ]),
     );
     report
         .summary

@@ -28,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-10-26
-lastReviewedCommit: 8c55fafd49a0996a8f31b64bb9d345bbb75a4dc2
-lastReviewedNote: "Reviewed Toolkit #267 / original PR251: jsonschema 0.60.1 uses an explicit prepared registry, canonical category base URI and offline compilation; bounded error adapters cover regex failures and shared enum/const values. Portable resource/diagnostic regressions and generated issue-volume proof replace no existing gate. The two newly split jsonschema crates retain archive/checksum/VCS-bound upstream license evidence for native qualification. CLI, assets, ownership and release/publication authority are unchanged."
+lastReviewedAt: 2026-11-01
+lastReviewedCommit: b2e7c948316765e511ad6369fe29fe5e806ca30c
+lastReviewedNote: "Toolkit #269: reviewed explicit Result-only full-closure packaging, v2 report/capabilities, two-archive native validation and deterministic scale proof; default four-package v1 behavior and publication authority are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -149,7 +149,10 @@ their existing path behavior.
 
 Release consumes finalized UUID/version decisions. It resolves exact
 standalone/full closure, derives schema-ordered ILCD, runs native validation and
-semantic round-trip gates, and publishes two TIDAS plus two ILCD archives.
+semantic round-trip gates, and publishes two TIDAS plus two ILCD archives by
+default. An explicit Result Process-only profile publishes one TIDAS/ILCD pair
+from exact Result roots and genuine dependencies without fabricating Unit or
+Model data. Its v2 report preserves the four-package v1 consumer contract.
 Package validation can persist a caller-requested NDJSON issue spool; a failed
 build retains it and exposes it as an operation-report artifact, while a
 successful build removes it so only failure evidence remains.

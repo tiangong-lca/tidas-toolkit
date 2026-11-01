@@ -1150,3 +1150,40 @@ fn release_validation_unresolved_is_partial_and_known_invalid_is_complete() {
         assert_eq!(report.exit_class.code(), 2);
     }
 }
+
+#[test]
+fn result_only_release_profile_is_explicit_and_discoverable() {
+    let help = tidas()
+        .args(["release", "build-packages", "--help"])
+        .output()
+        .unwrap();
+    assert!(help.status.success());
+    let text = String::from_utf8(help.stdout).unwrap();
+    assert!(text.contains("result-process-full-closure.v1"));
+    assert!(text.contains("standalone-lifecyclemodel-result-full-closure.v1"));
+    let (output, version) = json_output(&["version", "--format", "json"]);
+    assert!(output.status.success());
+    assert!(
+        version["summary"]["release_build_profiles"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|v| v == "result-process-full-closure.v1")
+    );
+    let output = tidas()
+        .args([
+            "release",
+            "build-packages",
+            "--profile",
+            "unit-process-full-closure.v1",
+            "--tidas-dir",
+            "unused",
+            "--dataset-index",
+            "unused",
+            "--output-dir",
+            "unused",
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(64));
+}

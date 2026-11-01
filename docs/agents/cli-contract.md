@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: 2026-10-26
-lastReviewedCommit: 8c55fafd49a0996a8f31b64bb9d345bbb75a4dc2
-lastReviewedNote: "Reviewed Toolkit #267 / original PR251: jsonschema 0.60.1 uses an explicit prepared registry, canonical category base URI and offline compilation; bounded error adapters cover regex failures and shared enum/const values. Portable resource/diagnostic regressions and generated issue-volume proof replace no existing gate. The two newly split jsonschema crates retain archive/checksum/VCS-bound upstream license evidence for native qualification. CLI, assets, ownership and release/publication authority are unchanged."
+lastReviewedAt: 2026-11-01
+lastReviewedCommit: b2e7c948316765e511ad6369fe29fe5e806ca30c
+lastReviewedNote: "Toolkit #269: reviewed explicit Result-only full-closure packaging, v2 report/capabilities, two-archive native validation and deterministic scale proof; default four-package v1 behavior and publication authority are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -320,6 +320,7 @@ tidas release build-packages \
   --tidas-dir <CANONICAL_DIR> \
   --dataset-index <CANONICAL_INDEX.json> \
   --output-dir <RELEASE_DIR> \
+  [--profile result-process-full-closure.v1] \
   [--issue-spool <ISSUES.ndjson>] \
   --format json
 
@@ -339,10 +340,19 @@ tidas release semantic-roundtrip \
 
 The domain consumes a finalized
 `tiangong.release.canonical-dataset-index.v1`; it does not assign UUIDs or
-versions. Exact references require UUID and version. The two fixed profiles
+versions. Exact references require UUID and version. The default paired profiles
 are `unit-process-full-closure.v1` and
 `standalone-lifecyclemodel-result-full-closure.v1`, and the standalone closure
 must contain the complete unit closure.
+
+Explicit `--profile result-process-full-closure.v1` selects only exact Result
+Process roots and their genuine transitive dependencies. Every selected Result
+root must be a Process of type `LCI result`; index role labels cannot promote a
+Unit Process. It does not create Model/Unit roots or demand an unrelated Unit
+closure. The complete supplied input still passes the same validation,
+conversion and round-trip gates. This profile writes exactly two ZIPs (TIDAS
+and ILCD), using its profile ID in archive names. The default build and its four
+archives remain unchanged. `validate-closure` also accepts the new profile.
 
 Exact closure follows references required to interpret the packaged datasets.
 `referenceToPrecedingDataSetVersion` is retained in the dataset as lineage
@@ -367,7 +377,11 @@ The path must not already exist, and a successful build removes the spool so
 only failure evidence is retained.
 
 The operation summary contains one `release` member conforming to
-`tidas.release-report.v1`. Full result sets are represented by deterministic
+`tidas.release-report.v1` for existing operations, or `tidas.release-report.v2`
+for Result-only build/closure. The v1 schema's two profiles/four-package counts
+are unchanged; v2 binds one Result-only profile/two packages. `tidas version`
+retains `release_report_schema` for v1 and adds `release_report_schemas` and
+`release_build_profiles` for explicit consumer capability admission. Full result sets are represented by deterministic
 counts and hashes; inline closure keys and mismatches are capped at 256 and
 carry explicit truncation flags. Package artifacts include final paths,
 media type, bytes, member counts, and SHA-256 values. Malformed indexes,

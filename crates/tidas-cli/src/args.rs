@@ -379,7 +379,7 @@ pub enum ExportTargetArg {
 
 #[derive(Clone, Debug, Eq, PartialEq, clap::Args)]
 #[command(
-    long_about = "Run native release-control operations over a finalized canonical TIDAS tree. The release layer never assigns UUIDs or versions. End-to-end builds validate TIDAS, resolve exact reference closure, derive and validate eILCD, prove normalized semantic round-trip, and atomically publish four byte-stable ZIPs.",
+    long_about = "Run native release-control operations over a finalized canonical TIDAS tree. The release layer never assigns UUIDs or versions. End-to-end builds validate TIDAS, resolve exact reference closure, derive and validate eILCD, prove normalized semantic round-trip, and atomically publish four byte-stable ZIPs by default or two Result-only ZIPs with an explicit profile.",
     after_help = "Examples:\n  tidas release build-packages --tidas-dir ./canonical --dataset-index ./canonical-dataset-index.json --output-dir ./release\n  tidas release validate-closure --input-dir ./canonical --dataset-index ./canonical-dataset-index.json --profile unit-process-full-closure.v1 --format json\n  tidas release semantic-roundtrip --tidas-dir ./canonical --ilcd-dir ./derived-ilcd\n\nAll actions use the global memory budget, bounded runtime controls, and cancellation token. Build publication is atomic and never invokes Python."
 )]
 pub struct ReleaseArgs {
@@ -389,7 +389,7 @@ pub struct ReleaseArgs {
 
 #[derive(Clone, Debug, Eq, PartialEq, Subcommand)]
 pub enum ReleaseCommand {
-    /// Validate, convert, prove closure/round-trip, and publish four ZIPs.
+    /// Validate, convert, prove closure/round-trip, and publish four ZIPs (or two Result-only ZIPs).
     BuildPackages(ReleaseBuildArgs),
     /// Convert canonical TIDAS JSON to a schema-ordered eILCD tree.
     ConvertIlcd(ReleaseConvertArgs),
@@ -405,13 +405,16 @@ pub enum ReleaseCommand {
 
 #[derive(Clone, Debug, Eq, PartialEq, clap::Args)]
 pub struct ReleaseBuildArgs {
+    /// Select the existing four-package recipe or the Result Process-only pair.
+    #[arg(long, value_enum, default_value_t = ReleaseBuildProfileArg::Full)]
+    pub profile: ReleaseBuildProfileArg,
     /// Finalized canonical TIDAS dataset tree.
     #[arg(long, value_name = "DIR")]
     pub tidas_dir: PathBuf,
     /// Canonical dataset identity/hash index.
     #[arg(long, value_name = "JSON")]
     pub dataset_index: PathBuf,
-    /// Directory containing exactly four published ZIPs after success.
+    /// Directory containing four default ZIPs or two Result-only ZIPs after success.
     #[arg(long, value_name = "DIR")]
     pub output_dir: PathBuf,
     /// Persist validation issues as NDJSON when the build fails.
@@ -453,7 +456,17 @@ pub struct ReleaseClosureArgs {
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
+pub enum ReleaseBuildProfileArg {
+    #[value(name = "standalone-lifecyclemodel-result-full-closure.v1")]
+    Full,
+    #[value(name = "result-process-full-closure.v1")]
+    ResultProcess,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
 pub enum ReleaseProfileArg {
+    #[value(name = "result-process-full-closure.v1")]
+    ResultProcess,
     #[value(name = "unit-process-full-closure.v1")]
     UnitProcess,
     #[value(name = "standalone-lifecyclemodel-result-full-closure.v1")]

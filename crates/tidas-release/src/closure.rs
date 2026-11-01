@@ -10,6 +10,7 @@ use crate::index::{DatasetEntry, DatasetIndex, contained, hex_digest};
 use crate::{INLINE_ITEM_LIMIT, ReferenceClosureReportV1, ReleaseError, ReleaseRuntime};
 
 pub const UNIT_PROFILE: &str = "unit-process-full-closure.v1";
+pub const RESULT_ONLY_PROFILE: &str = "result-process-full-closure.v1";
 pub const RESULT_PROFILE: &str = "standalone-lifecyclemodel-result-full-closure.v1";
 
 #[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -17,6 +18,7 @@ pub const RESULT_PROFILE: &str = "standalone-lifecyclemodel-result-full-closure.
 pub enum ReleaseProfile {
     UnitProcess,
     StandaloneResult,
+    ResultProcess,
 }
 
 impl ReleaseProfile {
@@ -25,6 +27,7 @@ impl ReleaseProfile {
         match self {
             Self::UnitProcess => UNIT_PROFILE,
             Self::StandaloneResult => RESULT_PROFILE,
+            Self::ResultProcess => RESULT_ONLY_PROFILE,
         }
     }
 }
@@ -40,6 +43,9 @@ pub(crate) fn resolve(
         .iter()
         .filter(|entry| match profile {
             ReleaseProfile::UnitProcess => entry.role == "unit_process",
+            ReleaseProfile::ResultProcess => {
+                entry.role == "result_process" && entry.dataset_type == "process"
+            }
             ReleaseProfile::StandaloneResult => {
                 matches!(entry.role.as_str(), "lifecycle_model" | "result_process")
             }
@@ -76,6 +82,20 @@ pub(crate) fn resolve(
                 path: path.clone(),
                 source,
             })?;
+        if profile == ReleaseProfile::ResultProcess
+            && entry.role == "result_process"
+            && document
+                .pointer(
+                    "/processDataSet/modellingAndValidation/LCIMethodAndAllocation/typeOfDataSet",
+                )
+                .and_then(Value::as_str)
+                != Some("LCI result")
+        {
+            return Err(ReleaseError::DatasetIndexInvalid(format!(
+                "Result-only root must be an LCI result: {}",
+                entry.key()
+            )));
+        }
         let mut references = BTreeSet::new();
         walk_references(&document, "$", None, &mut references)?;
         reference_count = reference_count
