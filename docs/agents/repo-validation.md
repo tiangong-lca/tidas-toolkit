@@ -29,9 +29,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-10-26
-lastReviewedCommit: 8c55fafd49a0996a8f31b64bb9d345bbb75a4dc2
-lastReviewedNote: "Reviewed Toolkit #267 / original PR251: jsonschema 0.60.1 uses an explicit prepared registry, canonical category base URI and offline compilation; bounded error adapters cover regex failures and shared enum/const values. Portable resource/diagnostic regressions and generated issue-volume proof replace no existing gate. The two newly split jsonschema crates retain archive/checksum/VCS-bound upstream license evidence for native qualification. CLI, assets, ownership and release/publication authority are unchanged."
+lastReviewedAt: 2026-11-01
+lastReviewedCommit: d69a886ea0dfad06986f2f0ff6f050cd28688da4
+lastReviewedNote: "Toolkit #269 / PR270: reviewed generated Result-only scale probe golden assertions and resource-only runtime logging after CodeQL flagged a document-derived test diagnostic; public CLI, package contracts and runtime behavior are unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -366,3 +366,25 @@ fixtures prove the previous linear estimate fits the small test budget while
 checked projection cardinality rejects before success evidence in package,
 batch and selected closure paths. The pure API has no runtime budget; bounded
 callers must reserve its dense projections as well as linear input/analysis.
+
+## Result-only release profile
+
+`cargo test --locked -p tidas-release --test native_release` covers two real
+Result-only archives, native TIDAS/eILCD validity, semantic roundtrip, exact
+closure, repeated archive hashes, Result role/type validation, cancellation and
+memory-budget failure. The original four-package fixture still exercises the
+default path. `cargo test --locked -p tidas --test cli_contract` checks explicit
+profile help, invalid profile rejection and version capability advertisement.
+The Result-only report validates against its separate v2 schema; v1 cardinality
+is not relaxed. No generated public specification asset changes are needed.
+
+Reproduce the generated 64-Result / 71-dataset closure probe with:
+
+```bash
+cargo test --locked -p tidas-release --test native_release \
+  generated_result_only_package_scale -- --ignored --nocapture
+```
+
+The probe builds both archives twice and compares their artifact-set hash. It
+qualifies this fixture size only; record wall time and peak RSS outside Cargo
+when measuring runtime resources.

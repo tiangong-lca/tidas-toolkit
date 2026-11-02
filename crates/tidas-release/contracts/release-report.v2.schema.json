@@ -1,0 +1,448 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://tidas.tools/contracts/release-report.v2.schema.json",
+  "title": "TIDAS native Result-only release report v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "action",
+    "ok",
+    "peak_accounted_memory_bytes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "tidas.release-report.v2"
+    },
+    "action": {
+      "enum": [
+        "build-packages",
+        "convert-ilcd",
+        "semantic-roundtrip",
+        "validate-closure",
+        "validate-ilcd",
+        "validate-tidas"
+      ]
+    },
+    "ok": {
+      "type": "boolean"
+    },
+    "closure": {
+      "$ref": "#/$defs/closure"
+    },
+    "conversion": {
+      "$ref": "#/$defs/conversion"
+    },
+    "validation": {
+      "$ref": "#/$defs/validation"
+    },
+    "roundtrip": {
+      "$ref": "#/$defs/roundtrip"
+    },
+    "build": {
+      "$ref": "#/$defs/build"
+    },
+    "peak_accounted_memory_bytes": {
+      "type": "integer",
+      "minimum": 0
+    }
+  },
+  "$defs": {
+    "closure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "root_count",
+        "dataset_count",
+        "reference_count",
+        "closure_sha256",
+        "dataset_keys",
+        "dataset_keys_truncated"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "result-process-full-closure.v1"
+        },
+        "root_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "dataset_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "reference_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "closure_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "dataset_keys": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "dataset_keys_truncated": {
+          "type": "boolean"
+        },
+        "semantic_coverage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "profile",
+            "complete",
+            "process_count",
+            "checks"
+          ],
+          "properties": {
+            "profile": {
+              "const": "tidas.process-allocation-reference.v1"
+            },
+            "complete": {
+              "type": "boolean"
+            },
+            "process_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "checks": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "passed",
+                  "invalid",
+                  "unresolved",
+                  "not_applicable"
+                ],
+                "properties": {
+                  "passed": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "invalid": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "unresolved": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "not_applicable": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                }
+              }
+            }
+          }
+        },
+        "semantic_diagnostics": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "issue_count",
+            "issues",
+            "truncated"
+          ],
+          "properties": {
+            "issue_count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "issues": {
+              "type": "array",
+              "maxItems": 256,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "issue_code",
+                  "severity",
+                  "category",
+                  "file_path",
+                  "location",
+                  "message",
+                  "context"
+                ],
+                "properties": {
+                  "issue_code": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "severity": {
+                    "enum": [
+                      "error",
+                      "warning",
+                      "info"
+                    ]
+                  },
+                  "category": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "file_path": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "location": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "message": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "context": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "truncated": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "conversion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dataset_count",
+        "input_bytes",
+        "output_bytes",
+        "conversion_set_sha256",
+        "output_tree_sha256",
+        "asset_fingerprint"
+      ],
+      "properties": {
+        "dataset_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "input_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "output_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "conversion_set_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "output_tree_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "asset_fingerprint": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "format",
+        "summary"
+      ],
+      "properties": {
+        "format": {
+          "enum": [
+            "ilcd",
+            "tidas"
+          ]
+        },
+        "summary": {
+          "type": "object"
+        }
+      }
+    },
+    "mismatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "location",
+        "code"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "location": {
+          "type": "string",
+          "minLength": 1
+        },
+        "code": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "roundtrip": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ok",
+        "dataset_count",
+        "mismatch_count",
+        "semantic_set_sha256",
+        "mismatches",
+        "mismatches_truncated"
+      ],
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        },
+        "dataset_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "mismatch_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "semantic_set_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "mismatches": {
+          "type": "array",
+          "maxItems": 256,
+          "items": {
+            "$ref": "#/$defs/mismatch"
+          }
+        },
+        "mismatches_truncated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "media_type",
+        "sha256",
+        "bytes",
+        "member_count"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "media_type": {
+          "const": "application/zip"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "member_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "package": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "format",
+        "self_contained",
+        "closure_sha256",
+        "dataset_count",
+        "artifact"
+      ],
+      "properties": {
+        "profile_id": {
+          "const": "result-process-full-closure.v1"
+        },
+        "format": {
+          "enum": [
+            "ilcd",
+            "tidas"
+          ]
+        },
+        "self_contained": {
+          "const": true
+        },
+        "closure_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "dataset_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "artifact": {
+          "$ref": "#/$defs/artifact"
+        }
+      }
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tidas_validation",
+        "conversion",
+        "ilcd_validation",
+        "roundtrip",
+        "profiles",
+        "packages",
+        "artifact_set_sha256"
+      ],
+      "properties": {
+        "tidas_validation": {
+          "$ref": "#/$defs/validation"
+        },
+        "conversion": {
+          "$ref": "#/$defs/conversion"
+        },
+        "ilcd_validation": {
+          "$ref": "#/$defs/validation"
+        },
+        "roundtrip": {
+          "$ref": "#/$defs/roundtrip"
+        },
+        "profiles": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "$ref": "#/$defs/closure"
+          }
+        },
+        "packages": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "$ref": "#/$defs/package"
+          }
+        },
+        "artifact_set_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  }
+}

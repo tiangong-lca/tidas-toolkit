@@ -14,8 +14,13 @@ use tidas_conversion::ConversionError;
 use tidas_runtime::{CancellationToken, MemoryBudget, RuntimeError};
 use tidas_validation::{ValidationError, ValidationSummaryV1};
 
-pub use closure::{RESULT_PROFILE, ReleaseProfile, UNIT_PROFILE};
+pub use closure::{RESULT_ONLY_PROFILE, RESULT_PROFILE, ReleaseProfile, UNIT_PROFILE};
 
+pub const RELEASE_REPORT_SCHEMA_V2: &str = "tidas.release-report.v2";
+pub const RELEASE_REPORT_JSON_SCHEMA_V2: &str = include_str!(concat!(
+    env!("CARGO_MANIFEST_DIR"),
+    "/contracts/release-report.v2.schema.json"
+));
 pub const RELEASE_REPORT_SCHEMA_V1: &str = "tidas.release-report.v1";
 pub const RELEASE_REPORT_JSON_SCHEMA_V1: &str = include_str!(concat!(
     env!("CARGO_MANIFEST_DIR"),
@@ -50,6 +55,12 @@ pub enum ReleaseRequest {
         output_dir: PathBuf,
         issue_spool: Option<PathBuf>,
     },
+    BuildResultPackages {
+        tidas_dir: PathBuf,
+        dataset_index: PathBuf,
+        output_dir: PathBuf,
+        issue_spool: Option<PathBuf>,
+    },
     ConvertIlcd {
         input_dir: PathBuf,
         output_dir: PathBuf,
@@ -75,7 +86,9 @@ impl ReleaseRequest {
     #[must_use]
     pub const fn action(&self) -> ReleaseAction {
         match self {
-            Self::BuildPackages { .. } => ReleaseAction::BuildPackages,
+            Self::BuildPackages { .. } | Self::BuildResultPackages { .. } => {
+                ReleaseAction::BuildPackages
+            }
             Self::ConvertIlcd { .. } => ReleaseAction::ConvertIlcd,
             Self::SemanticRoundtrip { .. } => ReleaseAction::SemanticRoundtrip,
             Self::ValidateClosure { .. } => ReleaseAction::ValidateClosure,
@@ -235,6 +248,11 @@ pub fn run_release(
             tidas_dir,
             output_dir,
             ..
+        }
+        | ReleaseRequest::BuildResultPackages {
+            tidas_dir,
+            output_dir,
+            ..
         } => transaction::reject_overlapping_output(tidas_dir, output_dir)?,
         ReleaseRequest::ConvertIlcd {
             input_dir,
@@ -242,7 +260,18 @@ pub fn run_release(
         } => transaction::reject_overlapping_output(input_dir, output_dir)?,
         _ => {}
     }
+    let result_only = matches!(
+        request,
+        ReleaseRequest::BuildResultPackages { .. }
+            | ReleaseRequest::ValidateClosure {
+                profile: ReleaseProfile::ResultProcess,
+                ..
+            }
+    );
     let mut report = ReleaseReportV1::new(request.action());
+    if result_only {
+        RELEASE_REPORT_SCHEMA_V2.clone_into(&mut report.schema_version);
+    }
     match request {
         ReleaseRequest::ValidateClosure {
             input_dir,
@@ -290,12 +319,19 @@ pub fn run_release(
             dataset_index,
             output_dir,
             issue_spool,
+        }
+        | ReleaseRequest::BuildResultPackages {
+            tidas_dir,
+            dataset_index,
+            output_dir,
+            issue_spool,
         } => {
             report.build = Some(build_packages(
                 tidas_dir,
                 dataset_index,
                 output_dir,
                 issue_spool.as_deref(),
+                result_only,
                 runtime,
             )?);
         }
@@ -333,6 +369,7 @@ fn build_packages(
     dataset_index: &std::path::Path,
     output_dir: &std::path::Path,
     issue_spool: Option<&std::path::Path>,
+    result_only: bool,
     runtime: &ReleaseRuntime,
 ) -> Result<ReleaseBuildReportV1, ReleaseError> {
     if let Some(path) = issue_spool
@@ -352,11 +389,7 @@ fn build_packages(
     remove_successful_spool(issue_spool)?;
 
     let index = index::DatasetIndex::load(dataset_index, tidas_dir, runtime)?;
-    let (unit_entries, unit_report) =
-        closure::resolve(tidas_dir, &index, ReleaseProfile::UnitProcess, runtime)?;
-    let (result_entries, result_report) =
-        closure::resolve(tidas_dir, &index, ReleaseProfile::StandaloneResult, runtime)?;
-    closure::verify_result_contains_unit(&unit_entries, &result_entries)?;
+    let profiles = resolve_build_profiles(tidas_dir, &index, result_only, runtime)?;
 
     let staging = transaction::StagedDirectory::new(output_dir)?;
     let ilcd_dir = staging.path().join("ilcd");
@@ -379,15 +412,7 @@ fn build_packages(
 
     let package_dir = staging.path().join("packages");
     std::fs::create_dir_all(&package_dir)?;
-    let profiles = [
-        (ReleaseProfile::UnitProcess, unit_entries, unit_report),
-        (
-            ReleaseProfile::StandaloneResult,
-            result_entries,
-            result_report,
-        ),
-    ];
-    let mut packages = Vec::with_capacity(4);
+    let mut packages = Vec::with_capacity(profiles.len() * 2);
     for (profile, entries, closure) in &profiles {
         packages.push(archive::write_package(&archive::PackageRequest {
             profile: *profile,
@@ -435,6 +460,39 @@ fn build_packages(
         packages,
         artifact_set_sha256,
     })
+}
+
+type BuildProfile = (
+    ReleaseProfile,
+    Vec<index::DatasetEntry>,
+    ReferenceClosureReportV1,
+);
+
+fn resolve_build_profiles(
+    tidas_dir: &std::path::Path,
+    index: &index::DatasetIndex,
+    result_only: bool,
+    runtime: &ReleaseRuntime,
+) -> Result<Vec<BuildProfile>, ReleaseError> {
+    if result_only {
+        let (entries, report) =
+            closure::resolve(tidas_dir, index, ReleaseProfile::ResultProcess, runtime)?;
+        Ok(vec![(ReleaseProfile::ResultProcess, entries, report)])
+    } else {
+        let (unit_entries, unit_report) =
+            closure::resolve(tidas_dir, index, ReleaseProfile::UnitProcess, runtime)?;
+        let (result_entries, result_report) =
+            closure::resolve(tidas_dir, index, ReleaseProfile::StandaloneResult, runtime)?;
+        closure::verify_result_contains_unit(&unit_entries, &result_entries)?;
+        Ok(vec![
+            (ReleaseProfile::UnitProcess, unit_entries, unit_report),
+            (
+                ReleaseProfile::StandaloneResult,
+                result_entries,
+                result_report,
+            ),
+        ])
+    }
 }
 
 fn remove_successful_spool(issue_spool: Option<&std::path::Path>) -> Result<(), ReleaseError> {

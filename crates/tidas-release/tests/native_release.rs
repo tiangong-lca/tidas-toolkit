@@ -801,3 +801,237 @@ fn closure_dense_projections_reserve_cardinality_before_analysis() {
         ));
     }
 }
+
+fn result_only_fixture(root: &Path) -> (PathBuf, PathBuf) {
+    let source = root.join("result-source.csv");
+    fs::write(&source, b"{SimaPro 9.5}\n{CSV separator: semicolon}\n\nProcess\n\nProcess name\nFinal result\n\nComment\nResult-only package fixture\n\nProducts\nSteel | production route | GLO;kg;1\n\nEmissions to air\nCarbon dioxide;air;kg;2.5\n\nEnd\n").unwrap();
+    let imported = root.join("result-imported");
+    run_import(&ImportRequest {
+        source,
+        requested_format: Some(SourceFormat::SimaproCsv),
+        output_dir: imported.clone(),
+        target: ImportTarget::Tidas,
+        write_mapping: false,
+        write_process_bundles: false,
+        cancellation: CancellationToken::default(),
+        memory_budget: MemoryBudget::new(128 * 1024 * 1024),
+        queue_capacity: 16,
+        max_entry_bytes: 8 * 1024 * 1024,
+        max_issue_bytes: 64 * 1024,
+    })
+    .unwrap();
+    let tidas = imported.join("tidas");
+    for item in fs::read_dir(tidas.join("processes")).unwrap() {
+        let path = item.unwrap().path();
+        let mut document: Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+        document["processDataSet"]["modellingAndValidation"]["LCIMethodAndAllocation"]["typeOfDataSet"] =
+            json!("LCI result");
+        fs::write(&path, serde_json::to_vec_pretty(&document).unwrap()).unwrap();
+    }
+    let index = write_index_for_valid_package(&tidas, root);
+    let mut value: Value = serde_json::from_slice(&fs::read(&index).unwrap()).unwrap();
+    for entry in value["datasets"].as_array_mut().unwrap() {
+        if entry["datasetType"] != "process" {
+            entry["role"] = json!("support");
+        }
+    }
+    fs::write(&index, serde_json::to_vec_pretty(&value).unwrap()).unwrap();
+    (tidas, index)
+}
+
+#[test]
+fn result_only_builds_two_repeatable_archives_without_unit_or_model_roots() {
+    let temporary = tempfile::tempdir().unwrap();
+    let (tidas, index) = result_only_fixture(temporary.path());
+    let build = |name: &str| {
+        run_release(
+            &ReleaseRequest::BuildResultPackages {
+                tidas_dir: tidas.clone(),
+                dataset_index: index.clone(),
+                output_dir: temporary.path().join(name),
+                issue_spool: None,
+            },
+            &runtime(),
+        )
+        .unwrap()
+    };
+    let first = build("result-a");
+    assert_eq!(
+        first.schema_version,
+        tidas_release::RELEASE_REPORT_SCHEMA_V2
+    );
+    let schema: Value = serde_json::from_str(tidas_release::RELEASE_REPORT_JSON_SCHEMA_V2).unwrap();
+    assert!(
+        jsonschema::validator_for(&schema)
+            .unwrap()
+            .is_valid(&serde_json::to_value(&first).unwrap())
+    );
+    let first = first.build.unwrap();
+    let second = build("result-b").build.unwrap();
+    assert_eq!(first.packages.len(), 2);
+    assert_eq!(first.profiles.len(), 1);
+    assert_eq!(
+        first.profiles[0].profile_id,
+        tidas_release::RESULT_ONLY_PROFILE
+    );
+    assert_eq!(first.profiles[0].root_count, 1);
+    assert_eq!(first.artifact_set_sha256, second.artifact_set_sha256);
+    assert!(
+        first.roundtrip.ok && first.tidas_validation.summary.ok && first.ilcd_validation.summary.ok
+    );
+    for package in first.packages {
+        assert_eq!(package.profile_id, tidas_release::RESULT_ONLY_PROFILE);
+        assert!(package.self_contained);
+        let mut zip =
+            zip::ZipArchive::new(fs::File::open(&package.artifact.path).unwrap()).unwrap();
+        for ordinal in 0..zip.len() {
+            assert!(
+                !zip.by_index(ordinal)
+                    .unwrap()
+                    .name()
+                    .starts_with("lifecyclemodels/")
+            );
+        }
+    }
+    assert_eq!(
+        fs::read_dir(temporary.path().join("result-a"))
+            .unwrap()
+            .count(),
+        2
+    );
+    let legacy = run_release(
+        &ReleaseRequest::BuildPackages {
+            tidas_dir: tidas,
+            dataset_index: index,
+            output_dir: temporary.path().join("legacy"),
+            issue_spool: None,
+        },
+        &runtime(),
+    )
+    .unwrap_err();
+    assert!(matches!(legacy, ReleaseError::ProfileRootsMissing(_)));
+}
+
+#[test]
+fn result_only_rejects_false_roles_budget_and_cancellation_without_publishing() {
+    let temporary = tempfile::tempdir().unwrap();
+    let (tidas, index) = result_only_fixture(temporary.path());
+    let request = ReleaseRequest::BuildResultPackages {
+        tidas_dir: tidas.clone(),
+        dataset_index: index.clone(),
+        output_dir: temporary.path().join("failed"),
+        issue_spool: None,
+    };
+    let small = ReleaseRuntime {
+        memory_budget: MemoryBudget::new(1),
+        ..runtime()
+    };
+    assert!(run_release(&request, &small).is_err());
+    assert!(!temporary.path().join("failed").exists());
+    let cancelled = runtime();
+    cancelled.cancellation.cancel();
+    assert!(run_release(&request, &cancelled).is_err());
+    assert!(!temporary.path().join("failed").exists());
+    let process = fs::read_dir(tidas.join("processes"))
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .path();
+    let mut document: Value = serde_json::from_slice(&fs::read(&process).unwrap()).unwrap();
+    document["processDataSet"]["modellingAndValidation"]["LCIMethodAndAllocation"]["typeOfDataSet"] =
+        json!("Unit process, single operation");
+    let bytes = serde_json::to_vec_pretty(&document).unwrap();
+    fs::write(&process, &bytes).unwrap();
+    let uuid = find_string(&document, "common:UUID").unwrap();
+    update_index_digest(&index, &uuid, &bytes);
+    assert!(matches!(
+        run_release(
+            &ReleaseRequest::ValidateClosure {
+                input_dir: tidas,
+                dataset_index: index,
+                profile: ReleaseProfile::ResultProcess
+            },
+            &runtime()
+        ),
+        Err(ReleaseError::DatasetIndexInvalid(_))
+    ));
+}
+
+#[test]
+#[ignore = "generated 64-Result package repeatability and resource probe"]
+fn generated_result_only_package_scale() {
+    // Golden digests describe only this checked-in deterministic generator.
+    // Runtime logs carry fixed fixture identifiers and resource measurements.
+    const EXPECTED_INPUT: &str = "a9ae0e37d6e78afb740b7f8775d0bea4a687cf94edafe2b01708593d0086603f";
+    const EXPECTED_ARTIFACTS: &str =
+        "8d15e3968631d578567bd19229abfc0a332d96bee6b6695b025aca725bd1e372";
+
+    let temporary = tempfile::tempdir().unwrap();
+    let (tidas, _) = result_only_fixture(temporary.path());
+    let source = fs::read_dir(tidas.join("processes"))
+        .unwrap()
+        .next()
+        .unwrap()
+        .unwrap()
+        .path();
+    let original: Value = serde_json::from_slice(&fs::read(&source).unwrap()).unwrap();
+    let version = find_string(&original, "common:dataSetVersion").unwrap();
+    for ordinal in 1..64 {
+        let uuid = format!("00000000-0000-4000-8000-{ordinal:012}");
+        let mut document = original.clone();
+        document["processDataSet"]["processInformation"]["dataSetInformation"]["common:UUID"] =
+            json!(uuid);
+        fs::write(
+            tidas.join(format!("processes/{uuid}_{version}.json")),
+            serde_json::to_vec(&document).unwrap(),
+        )
+        .unwrap();
+    }
+    let index = write_index_for_valid_package(&tidas, temporary.path());
+    let mut value: Value = serde_json::from_slice(&fs::read(&index).unwrap()).unwrap();
+    for entry in value["datasets"].as_array_mut().unwrap() {
+        if entry["datasetType"] != "process" {
+            entry["role"] = json!("support");
+        }
+    }
+    fs::write(&index, serde_json::to_vec(&value).unwrap()).unwrap();
+    assert_eq!(
+        hex(Sha256::digest(fs::read(&index).unwrap())),
+        EXPECTED_INPUT
+    );
+    println!("fixture_input_sha256={EXPECTED_INPUT}");
+    let mut previous = None;
+    for attempt in 0..2 {
+        let started = std::time::Instant::now();
+        let report = run_release(
+            &ReleaseRequest::BuildResultPackages {
+                tidas_dir: tidas.clone(),
+                dataset_index: index.clone(),
+                output_dir: temporary.path().join(format!("scale-{attempt}")),
+                issue_spool: None,
+            },
+            &runtime(),
+        )
+        .unwrap()
+        .build
+        .unwrap();
+        assert_eq!(report.profiles[0].root_count, 64);
+        assert_eq!(report.packages.len(), 2);
+        assert!(
+            report.tidas_validation.summary.ok
+                && report.ilcd_validation.summary.ok
+                && report.roundtrip.ok
+        );
+        assert_eq!(report.profiles[0].dataset_count, 71);
+        assert_eq!(report.artifact_set_sha256, EXPECTED_ARTIFACTS);
+        println!(
+            "attempt={attempt} roots=64 datasets=71 elapsed_ms={} expected_artifact_set={EXPECTED_ARTIFACTS}",
+            started.elapsed().as_millis()
+        );
+        if let Some(hash) = previous {
+            assert_eq!(report.artifact_set_sha256, hash);
+        }
+        previous = Some(report.artifact_set_sha256);
+    }
+}

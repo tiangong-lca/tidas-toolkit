@@ -17,6 +17,7 @@ contract_copies=(
   "import-package-report.v1.schema.json:crates/tidas-import/contracts"
   "reference-extraction-result.v1.schema.json:crates/tidas-references/contracts"
   "release-report.v1.schema.json:crates/tidas-release/contracts"
+  "release-report.v2.schema.json:crates/tidas-release/contracts"
   "methodology-validation-report.v1.schema.json:crates/tidas-rulesets/contracts"
   "ruleset-description.v1.schema.json:crates/tidas-rulesets/contracts"
   "spool-summary.v1.schema.json:crates/tidas-runtime/contracts"
