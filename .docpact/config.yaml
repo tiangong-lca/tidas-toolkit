@@ -2,8 +2,8 @@ version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
 lastReviewedAt: "2026-11-04"
-lastReviewedCommit: "9b73e6a721f210ca9f791907fd14b36dde5a0c27"
-lastReviewedNote: "Toolkit #274: verified v0.3.6 append-only request binds exact versioned source 9b73e6a, includes PR273 and uses unchanged tag-context four-platform release automation."
+lastReviewedCommit: "a3f241646605d3e6f7cb025c9b6cf702d262ac59"
+lastReviewedNote: "Toolkit #277: reviewed repeatable Process quantitative-reference text preservation, synthetic XSD/round-trip regressions and v0.3.7 qualification; source data, assets and public CLI contracts remain unchanged."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
 # and ownership/routing/validation governance is otherwise unchanged.

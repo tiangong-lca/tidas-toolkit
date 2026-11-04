@@ -32,9 +32,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: 2026-11-04
-lastReviewedCommit: "9b73e6a721f210ca9f791907fd14b36dde5a0c27"
-lastReviewedNote: "Toolkit #274: verified v0.3.6 append-only request binds exact versioned source 9b73e6a, includes PR273 and uses unchanged tag-context four-platform release automation."
+lastReviewedAt: "2026-11-04"
+lastReviewedCommit: "a3f241646605d3e6f7cb025c9b6cf702d262ac59"
+lastReviewedNote: "Toolkit #277: reviewed repeatable Process quantitative-reference text preservation, synthetic XSD/round-trip regressions and v0.3.7 qualification; source data, assets and public CLI contracts remain unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

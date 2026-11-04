@@ -28,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-04
-lastReviewedCommit: "9b73e6a721f210ca9f791907fd14b36dde5a0c27"
-lastReviewedNote: "Toolkit #274: verified v0.3.6 append-only request binds exact versioned source 9b73e6a, includes PR273 and uses unchanged tag-context four-platform release automation."
+lastReviewedAt: "2026-11-04"
+lastReviewedCommit: "a3f241646605d3e6f7cb025c9b6cf702d262ac59"
+lastReviewedNote: "Toolkit #277: reviewed repeatable Process quantitative-reference text preservation, synthetic XSD/round-trip regressions and v0.3.7 qualification; source data, assets and public CLI contracts remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -102,6 +102,15 @@ order. Single-language comments and Process multilingual fields retain their
 existing behavior. Canonical TIDAS bytes and the locked XSD are not rewritten.
 This projection requires the recovery sidecar for exact structured multilingual
 round-trip; a consumer reading XML alone sees a labeled mixed-language note.
+
+Process `quantitativeReference/functionalUnitOrOther` preserves ordered localized
+fragments, including repeated languages. Its eILCD XSD permits repeated elements
+without language uniqueness and limits each text to 500 characters; generic
+language merging would turn valid fragments into an oversized element. This
+path does not gain recovery entries for unchanged fragments, so the existing
+semantic hash check still detects edits to projected XML. Other unique-language
+fields and singleton LifecycleModel comments retain their own projection rules.
+This conversion compatibility does not redefine a consumer's authoring policy.
 
 For Process datasets, the projected XML carries both
 `common:referenceYear` and optional `common:dataSetValidUntil` as text, and a
