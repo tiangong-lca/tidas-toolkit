@@ -33,8 +33,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: 00120e93ad95d7aade16f64db4bf059213f8f43f
-lastReviewedNote: "Toolkit #272: reviewed official singleton Model comment projection, labeled multilingual text and exact recovery; source content, target XSD and delivery boundaries remain unchanged."
+lastReviewedCommit: "9b73e6a721f210ca9f791907fd14b36dde5a0c27"
+lastReviewedNote: "Toolkit #274: verified v0.3.6 append-only request binds exact versioned source 9b73e6a, includes PR273 and uses unchanged tag-context four-platform release automation."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
