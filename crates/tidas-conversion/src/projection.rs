@@ -280,6 +280,14 @@ fn merge_duplicate_languages(
 ) {
     let keys: Vec<String> = object.keys().cloned().collect();
     for key in keys {
+        // Process XSD permits repeated functionalUnitOrOther elements without
+        // language uniqueness. Each fragment has its own 500-character limit;
+        // joining them can invalidate valid input and erase fragment metadata.
+        if path == "/processDataSet/processInformation/quantitativeReference"
+            && key == "functionalUnitOrOther"
+        {
+            continue;
+        }
         let Some(Value::Array(items)) = object.get(&key) else {
             continue;
         };

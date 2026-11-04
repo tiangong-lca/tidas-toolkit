@@ -29,9 +29,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-04
-lastReviewedCommit: "9b73e6a721f210ca9f791907fd14b36dde5a0c27"
-lastReviewedNote: "Toolkit #274: verified v0.3.6 append-only request binds exact versioned source 9b73e6a, includes PR273 and uses unchanged tag-context four-platform release automation."
+lastReviewedAt: "2026-11-04"
+lastReviewedCommit: "a3f241646605d3e6f7cb025c9b6cf702d262ac59"
+lastReviewedNote: "Toolkit #277: reviewed repeatable Process quantitative-reference text preservation, synthetic XSD/round-trip regressions and v0.3.7 qualification; source data, assets and public CLI contracts remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -72,6 +72,17 @@ recovery of adapted comment fragments, unchanged source bytes and unchanged
 Process multilingual behavior. The official SDK's singleton cardinality must
 remain intact; private production data is supplementary replay evidence, not
 a prerequisite for this regression.
+
+For repeatable Process quantitative-reference text, run `cargo test --locked -p
+tidas-conversion --test process_text_fragments --test lifecycle_comments --test
+process_type_roundtrip`. Generate fragments from the checked-in synthetic Process:
+495 + 34 characters, interleaved languages, a 500-code-point Unicode boundary,
+short duplicate languages, singleton and empty forms. Verify actual native/XSD
+validation, exact ordered round-trip, repeated output hashes and rejection of
+edited XML. Empty-array representation must not waive the semantic requirement
+for an `Other parameter` basis. Single 501-character fragments remain invalid;
+unsupported fragment metadata remains visible rather than being lost in merging.
+No private data or full consumer package is a CI fixture or release prerequisite.
 
 The asset command checks both the paired English/Chinese schema contract and
 the complete executable-asset byte lock. `spec-check` additionally proves the
