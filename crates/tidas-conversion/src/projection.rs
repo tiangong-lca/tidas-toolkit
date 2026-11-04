@@ -489,6 +489,9 @@ fn adapt_lifecycle_model_object(
     path: &str,
     recovery: &mut RecoveryBuilder,
 ) {
+    if path == "/lifeCycleModelDataSet/lifeCycleModelInformation/dataSetInformation" {
+        project_model_comment(object, path, recovery);
+    }
     for key in [
         "common:workflowAndPublicationStatus",
         "common:dateOfLastRevision",
@@ -566,6 +569,54 @@ fn adapt_lifecycle_model_object(
         );
         object.insert("compliance".to_owned(), items[0].clone());
     }
+}
+
+/// The official eILCD SDK 2.1.1 permits only one Model generalComment.
+/// Same-language fragments have already been merged; keep every remaining
+/// language visible in one mixed-language text and recover the original field.
+fn project_model_comment(
+    object: &mut Map<String, Value>,
+    path: &str,
+    recovery: &mut RecoveryBuilder,
+) {
+    const FIELD: &str = "common:generalComment";
+    let Some(Value::Array(items)) = object.get(FIELD) else {
+        return;
+    };
+    if items.len() < 2 {
+        return;
+    }
+    let fragments = items
+        .iter()
+        .map(|item| {
+            let item = item.as_object()?;
+            if item.keys().any(|key| key != "@xml:lang" && key != "#text") {
+                return None;
+            }
+            Some((
+                item.get("@xml:lang")?.as_str()?,
+                item.get("#text")?.as_str()?,
+            ))
+        })
+        .collect::<Option<Vec<_>>>();
+    let Some(fragments) = fragments else {
+        // Do not turn malformed source content into apparently valid XML.
+        return;
+    };
+    let text = fragments
+        .iter()
+        .map(|(language, text)| format!("[{language}]\n{text}"))
+        .collect::<Vec<_>>()
+        .join("\n\n");
+    recovery.record(
+        &join_pointer(path, FIELD),
+        &object[FIELD],
+        "project-singleton-lifecycle-model-comment",
+    );
+    object.insert(
+        FIELD.to_owned(),
+        serde_json::json!({"@xml:lang": "mul", "#text": text}),
+    );
 }
 
 fn adapt_lcia_method_object(

@@ -28,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-01
-lastReviewedCommit: d69a886ea0dfad06986f2f0ff6f050cd28688da4
-lastReviewedNote: "Toolkit #269 / PR270: reviewed generated Result-only scale probe golden assertions and resource-only runtime logging after CodeQL flagged a document-derived test diagnostic; public CLI, package contracts and runtime behavior are unchanged."
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 00120e93ad95d7aade16f64db4bf059213f8f43f
+lastReviewedNote: "Toolkit #272: reviewed official singleton Model comment projection, labeled multilingual text and exact recovery; source content, target XSD and delivery boundaries remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -90,6 +90,18 @@ representation differences without changing the TIDAS schemas: target-safe
 XML is paired with `.tidas-recovery.json` fragments, and reverse conversion
 must reproduce the source semantic hash. Release conversion reuses the same
 projection, ordering, XSD-validation, and recovery components.
+
+The official eILCD SDK 2.1.1 allows at most one LifecycleModel
+`lifeCycleModelInformation/dataSetInformation/common:generalComment`, even
+though its text type carries a language attribute. After the existing
+same-language fragment merge, conversion projects multiple languages at this
+exact field into one `xml:lang="mul"` text with `[language]` labels and blank-line
+separators in source language order. Every text remains readable; the recovery
+sidecar restores the original field, including duplicate fragments and their
+order. Single-language comments and Process multilingual fields retain their
+existing behavior. Canonical TIDAS bytes and the locked XSD are not rewritten.
+This projection requires the recovery sidecar for exact structured multilingual
+round-trip; a consumer reading XML alone sees a labeled mixed-language note.
 
 For Process datasets, the projected XML carries both
 `common:referenceYear` and optional `common:dataSetValidUntil` as text, and a
