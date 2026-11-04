@@ -32,9 +32,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: 2026-11-01
-lastReviewedCommit: d69a886ea0dfad06986f2f0ff6f050cd28688da4
-lastReviewedNote: "Toolkit #269 / PR270: reviewed generated Result-only scale probe golden assertions and resource-only runtime logging after CodeQL flagged a document-derived test diagnostic; public CLI, package contracts and runtime behavior are unchanged."
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 00120e93ad95d7aade16f64db4bf059213f8f43f
+lastReviewedNote: "Toolkit #272: reviewed official singleton Model comment projection, labeled multilingual text and exact recovery; source content, target XSD and delivery boundaries remain unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

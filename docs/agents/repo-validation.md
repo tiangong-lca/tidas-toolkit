@@ -29,9 +29,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-01
-lastReviewedCommit: d69a886ea0dfad06986f2f0ff6f050cd28688da4
-lastReviewedNote: "Toolkit #269 / PR270: reviewed generated Result-only scale probe golden assertions and resource-only runtime logging after CodeQL flagged a document-derived test diagnostic; public CLI, package contracts and runtime behavior are unchanged."
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 00120e93ad95d7aade16f64db4bf059213f8f43f
+lastReviewedNote: "Toolkit #272: reviewed official singleton Model comment projection, labeled multilingual text and exact recovery; source content, target XSD and delivery boundaries remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -61,6 +61,17 @@ scripts/publish-crates.sh check
 
 Rust 1.98.1 is the required compiler for local, CI and release validation;
 there is no separate Rust 1.88 compatibility matrix.
+
+For LifecycleModel comment projection, run `cargo test --locked -p
+tidas-conversion --test lifecycle_comments`. The synthetic fixture must pass
+native TIDAS validation and exercise actual conversion, native XSD validation,
+reverse conversion and repeated output-tree hashes. Cover single-language,
+duplicate-language, bilingual and trilingual comments with both original and
+reversed JSON member order. Require visible labeled translations, exact
+recovery of adapted comment fragments, unchanged source bytes and unchanged
+Process multilingual behavior. The official SDK's singleton cardinality must
+remain intact; private production data is supplementary replay evidence, not
+a prerequisite for this regression.
 
 The asset command checks both the paired English/Chinese schema contract and
 the complete executable-asset byte lock. `spec-check` additionally proves the

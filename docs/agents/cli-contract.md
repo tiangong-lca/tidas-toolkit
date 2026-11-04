@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: 2026-11-01
-lastReviewedCommit: d69a886ea0dfad06986f2f0ff6f050cd28688da4
-lastReviewedNote: "Toolkit #269 / PR270: reviewed generated Result-only scale probe golden assertions and resource-only runtime logging after CodeQL flagged a document-derived test diagnostic; public CLI, package contracts and runtime behavior are unchanged."
+lastReviewedAt: 2026-11-04
+lastReviewedCommit: 00120e93ad95d7aade16f64db4bf059213f8f43f
+lastReviewedNote: "Toolkit #272: reviewed official singleton Model comment projection, labeled multilingual text and exact recovery; source content, target XSD and delivery boundaries remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -199,6 +199,14 @@ and merges it. `.tidas-recovery.json` preserves source fragments changed by the
 semantic eILCD projection; reverse conversion applies it and verifies the
 source semantic hash. The report next action gives the exact `tidas validate
 OUTPUT/data --input-format ...` command.
+
+LifecycleModel general comments use the official target's single-element
+cardinality. Multiple languages become one `xml:lang="mul"` comment containing
+language-labeled text blocks; no translation is silently dropped or tagged as
+English. The existing recovery sidecar retains original language tags, text,
+fragment boundaries and ordering for reverse conversion. Single-language
+comments and Process comments keep their existing projection. This does not
+change canonical TIDAS content or permit skipping XSD or round-trip validation.
 
 Process reverse conversion restores numeric `common:referenceYear` and
 optional `common:dataSetValidUntil`, plus a present empty
