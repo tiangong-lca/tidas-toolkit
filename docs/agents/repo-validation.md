@@ -30,8 +30,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-11-04
-lastReviewedCommit: "bc135c9ac733086fc0359e1d30cd62580b0d6623"
-lastReviewedNote: "Toolkit #274: reviewed unified 0.3.6 version preparation and exact-source immutable release request; multilingual comment behavior, CLI contracts, assets and release automation remain unchanged."
+lastReviewedCommit: "9b73e6a721f210ca9f791907fd14b36dde5a0c27"
+lastReviewedNote: "Toolkit #274: verified v0.3.6 append-only request binds exact versioned source 9b73e6a, includes PR273 and uses unchanged tag-context four-platform release automation."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
