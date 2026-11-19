@@ -311,10 +311,9 @@ fn scan_zip(path: &Path, candidates: &mut CandidateAccumulator) -> Result<(), De
     };
     let has_context = (0..archive.len()).try_fold(false, |found, index| {
         let entry = archive.by_index(index)?;
-        let name = entry.name()?;
         Ok::<_, zip::result::ZipError>(
             found
-                || Path::new(name.as_ref())
+                || Path::new(entry.name()?.as_ref())
                     .file_name()
                     .is_some_and(|name| name == "context.jsonld"),
         )
