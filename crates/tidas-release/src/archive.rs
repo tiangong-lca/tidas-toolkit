@@ -325,7 +325,7 @@ mod tests {
         let mut archive = zip::ZipArchive::new(file).unwrap();
         assert_eq!(archive.len(), 1);
         let member = archive.by_index(0).unwrap();
-        assert_eq!(member.name(), "record.json");
+        assert_eq!(member.name().unwrap(), "record.json");
         assert_eq!(member.last_modified(), Some(zip::DateTime::default()));
         assert_eq!(member.unix_mode(), Some(0o100_644));
     }
@@ -394,7 +394,14 @@ mod tests {
         let file = File::open(package.artifact.path).unwrap();
         let mut archive = zip::ZipArchive::new(file).unwrap();
         let mut names = (0..archive.len())
-            .map(|index| archive.by_index(index).unwrap().name().to_owned())
+            .map(|index| {
+                archive
+                    .by_index(index)
+                    .unwrap()
+                    .name()
+                    .unwrap()
+                    .into_owned()
+            })
             .collect::<Vec<_>>();
         names.sort();
         assert_eq!(

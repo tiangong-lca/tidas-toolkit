@@ -160,7 +160,10 @@ where
         }
         let relative_path = entry
             .enclosed_name()
-            .ok_or_else(|| SourceReadError::UnsafeArchivePath(entry.name().to_owned()))
+            .ok_or_else(|| match entry.name() {
+                Ok(name) => SourceReadError::UnsafeArchivePath(name.into_owned()),
+                Err(error) => SourceReadError::from(error),
+            })
             .map_err(E::from)?
             .clone();
         if zip_entry_is_symlink(entry.unix_mode()) {
@@ -292,6 +295,36 @@ pub enum SourceReadError {
 }
 
 #[cfg(test)]
+pub(crate) fn zip_with_raw_name(name: &[u8], content: &[u8]) -> Vec<u8> {
+    use std::io::{Cursor, Write as _};
+
+    let placeholder = "x".repeat(name.len());
+    let decoded = std::str::from_utf8(name).ok();
+    let mut writer = zip::ZipWriter::new(Cursor::new(Vec::new()));
+    writer
+        .start_file(
+            decoded.unwrap_or(placeholder.as_str()),
+            zip::write::SimpleFileOptions::default(),
+        )
+        .unwrap();
+    writer.write_all(content).unwrap();
+    let mut bytes = writer.finish().unwrap().into_inner();
+    if decoded.is_some() {
+        return bytes;
+    }
+    let offsets = bytes
+        .windows(placeholder.len())
+        .enumerate()
+        .filter_map(|(offset, value)| (value == placeholder.as_bytes()).then_some(offset))
+        .collect::<Vec<_>>();
+    assert_eq!(offsets.len(), 2, "local and central entry names");
+    for offset in offsets {
+        bytes[offset..offset + name.len()].copy_from_slice(name);
+    }
+    bytes
+}
+
+#[cfg(test)]
 mod tests {
     use std::io::Write as _;
 
@@ -351,6 +384,88 @@ mod tests {
             visit_source_entries(&request, |_| Ok(())),
             Err(SourceReadError::UnsafeArchivePath(_))
         ));
+    }
+
+    #[test]
+    fn zip_entry_names_preserve_utf8_and_legacy_cp437() {
+        let directory = tempdir().unwrap();
+        let archive_path = directory.path().join("source.zip");
+        for (raw_name, expected) in [
+            ("目录/记录.json".as_bytes(), "目录/记录.json"),
+            (b"\x82.json".as_slice(), "é.json"),
+        ] {
+            std::fs::write(&archive_path, zip_with_raw_name(raw_name, b"{}\n")).unwrap();
+            let (cancellation, memory_budget) = controls(1024);
+            let request = SourceReadRequest {
+                source: &archive_path,
+                allowed_extensions: &["json"],
+                max_entry_bytes: 1024,
+                cancellation: &cancellation,
+                memory_budget: &memory_budget,
+            };
+            let mut visited = Vec::new();
+            let summary = visit_source_entries(&request, |entry| {
+                visited.push((entry.relative_path, entry.bytes.to_vec()));
+                Ok::<(), SourceReadError>(())
+            })
+            .unwrap();
+            assert_eq!(visited, [(PathBuf::from(expected), b"{}\n".to_vec())]);
+            assert_eq!(summary.entries_visited, 1);
+            assert_eq!(summary.bytes_read, 3);
+            assert_eq!(memory_budget.used(), 0);
+        }
+    }
+
+    #[test]
+    fn unsafe_legacy_zip_name_is_reported_before_visiting() {
+        let directory = tempdir().unwrap();
+        let archive_path = directory.path().join("source.zip");
+        std::fs::write(&archive_path, zip_with_raw_name(b"../\x82.json", b"{}")).unwrap();
+        let (cancellation, memory_budget) = controls(1024);
+        let request = SourceReadRequest {
+            source: &archive_path,
+            allowed_extensions: &["json"],
+            max_entry_bytes: 1024,
+            cancellation: &cancellation,
+            memory_budget: &memory_budget,
+        };
+        let mut visited = false;
+        assert!(matches!(
+            visit_source_entries(&request, |_| {
+                visited = true;
+                Ok(())
+            }),
+            Err(SourceReadError::UnsafeArchivePath(name)) if name == "../é.json"
+        ));
+        assert!(!visited);
+        assert_eq!(memory_budget.used(), 0);
+    }
+
+    #[test]
+    fn corrupt_zip_entry_returns_zip_error_before_visiting() {
+        let directory = tempdir().unwrap();
+        let archive_path = directory.path().join("source.zip");
+        let mut bytes = zip_with_raw_name(b"record.json", b"{}");
+        bytes[0] ^= 1;
+        std::fs::write(&archive_path, bytes).unwrap();
+        let (cancellation, memory_budget) = controls(1024);
+        let request = SourceReadRequest {
+            source: &archive_path,
+            allowed_extensions: &["json"],
+            max_entry_bytes: 1024,
+            cancellation: &cancellation,
+            memory_budget: &memory_budget,
+        };
+        let mut visited = false;
+        assert!(matches!(
+            visit_source_entries(&request, |_| {
+                visited = true;
+                Ok(())
+            }),
+            Err(SourceReadError::Zip(_))
+        ));
+        assert!(!visited);
+        assert_eq!(memory_budget.used(), 0);
     }
 
     #[test]
