@@ -2,8 +2,8 @@ version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
 lastReviewedAt: "2026-11-19"
-lastReviewedCommit: "55512569846833c3b61ca1da5c35da15725a14ba"
-lastReviewedNote: "Toolkit #281: reviewed ZIP API adaptation, native filename regressions and unchanged ownership, validation and publication rules."
+lastReviewedCommit: "21091c43bce55b6d1bb0ca13979cede16c628699"
+lastReviewedNote: "Toolkit #281: reviewed ZIP 9 fallible names, UTF-8/CP437 and error regressions, and explicit Unix member metadata preserving portable release/distribution modes on Windows. Existing validation, bounds, platform, package versions and publication authority remain unchanged."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
 # and ownership/routing/validation governance is otherwise unchanged.

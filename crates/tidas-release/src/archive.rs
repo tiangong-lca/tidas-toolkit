@@ -52,6 +52,7 @@ pub(crate) fn write_package(
     let base_options = SimpleFileOptions::default()
         .compression_method(CompressionMethod::Stored)
         .last_modified_time(zip::DateTime::default())
+        .system(zip::System::Unix)
         .unix_permissions(0o644);
     let buffer_size = u64::try_from(COPY_BUFFER_BYTES).map_err(|_| ReleaseError::SizeOverflow)?;
     let _reservation = request.runtime.memory_budget.reserve(buffer_size)?;
@@ -327,6 +328,7 @@ mod tests {
         let member = archive.by_index(0).unwrap();
         assert_eq!(member.name().unwrap(), "record.json");
         assert_eq!(member.last_modified(), Some(zip::DateTime::default()));
+        assert_eq!(member.system(), zip::System::Unix);
         assert_eq!(member.unix_mode(), Some(0o100_644));
     }
 

@@ -32,9 +32,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: "2026-11-19"
-lastReviewedCommit: "55512569846833c3b61ca1da5c35da15725a14ba"
-lastReviewedNote: "Toolkit #281: reviewed ZIP 9 fallible filename handling, preserved UTF-8/CP437 compatibility and error propagation, source/extraction safety and scoped native regressions. Public commands, schemas, bounds, toolchain, platform and publication authority remain unchanged."
+lastReviewedAt: 2026-11-19
+lastReviewedCommit: 21091c43bce55b6d1bb0ca13979cede16c628699
+lastReviewedNote: "Toolkit #281: reviewed ZIP 9 fallible names, UTF-8/CP437 and error regressions, and explicit Unix member metadata preserving portable release/distribution modes on Windows. Existing validation, bounds, platform, package versions and publication authority remain unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md

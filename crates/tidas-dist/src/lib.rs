@@ -422,6 +422,7 @@ fn write_zip(root: &Path, output: &Path) -> Result<(), DistError> {
             .compression_method(CompressionMethod::Deflated)
             .compression_level(Some(9))
             .last_modified_time(zip::DateTime::default())
+            .system(zip::System::Unix)
             .unix_permissions(mode);
         writer.start_file(name, options)?;
         copy_file(&path, &mut writer, &mut buffer)?;
@@ -920,6 +921,44 @@ mod tests {
             fs::read(first.checksum_file).unwrap(),
             fs::read(second.checksum_file).unwrap()
         );
+    }
+
+    #[test]
+    fn windows_zip_preserves_portable_modes_and_repeatability() {
+        let temporary = tempfile::tempdir().unwrap();
+        let binary = temporary.path().join("tidas.exe");
+        let license = temporary.path().join("LICENSE");
+        fake_binary(&binary);
+        fs::write(&license, b"MIT\n").unwrap();
+        let notices_dir = temporary.path().join("notices");
+        notice_fixture::create(&notices_dir, &binary, &license, WINDOWS_TARGET, "0.1.0");
+        let mut archives = Vec::new();
+        for name in ["first", "second"] {
+            let artifact = package(&PackageRequest {
+                binary: &binary,
+                license: &license,
+                notices_dir: &notices_dir,
+                target: WINDOWS_TARGET,
+                version: "0.1.0",
+                output_dir: &temporary.path().join(name),
+            })
+            .unwrap();
+            archives.push(fs::read(artifact.archive).unwrap());
+        }
+        assert_eq!(archives[0], archives[1]);
+        let mut archive = zip::ZipArchive::new(std::io::Cursor::new(&archives[0])).unwrap();
+        let mut executable_count = 0;
+        for index in 0..archive.len() {
+            let member = archive.by_index(index).unwrap();
+            let is_executable = member.name().unwrap().ends_with("/bin/tidas.exe");
+            executable_count += usize::from(is_executable);
+            assert_eq!(member.system(), zip::System::Unix);
+            assert_eq!(
+                member.unix_mode(),
+                Some(if is_executable { 0o100_755 } else { 0o100_644 })
+            );
+        }
+        assert_eq!(executable_count, 1);
     }
 
     #[test]
