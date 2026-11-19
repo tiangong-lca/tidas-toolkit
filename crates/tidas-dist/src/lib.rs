@@ -422,6 +422,7 @@ fn write_zip(root: &Path, output: &Path) -> Result<(), DistError> {
             .compression_method(CompressionMethod::Deflated)
             .compression_level(Some(9))
             .last_modified_time(zip::DateTime::default())
+            .system(zip::System::Unix)
             .unix_permissions(mode);
         writer.start_file(name, options)?;
         copy_file(&path, &mut writer, &mut buffer)?;
@@ -540,9 +541,10 @@ fn extract_zip(archive: &Path, output: &Path) -> Result<(), DistError> {
     let mut total = 0_u64;
     for index in 0..reader.len() {
         let mut member = reader.by_index(index)?;
-        let relative = member
-            .enclosed_name()
-            .ok_or_else(|| DistError::UnsafePath(PathBuf::from(member.name())))?;
+        let relative = member.enclosed_name().ok_or_else(|| match member.name() {
+            Ok(name) => DistError::UnsafePath(PathBuf::from(name.into_owned())),
+            Err(error) => DistError::from(error),
+        })?;
         validate_relative(&relative)?;
         let mode = member.unix_mode().unwrap_or(0) & 0o170_000;
         if !paths.insert(portable(&relative)?) || ![0, 0o100_000, 0o040_000].contains(&mode) {
@@ -798,6 +800,83 @@ mod tests {
         fs::write(path, b"native tidas fixture\n").unwrap();
     }
 
+    fn zip_with_raw_name(name: &[u8], content: &[u8]) -> Vec<u8> {
+        let placeholder = "x".repeat(name.len());
+        let decoded = std::str::from_utf8(name).ok();
+        let mut writer = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
+        writer
+            .start_file(
+                decoded.unwrap_or(placeholder.as_str()),
+                SimpleFileOptions::default(),
+            )
+            .unwrap();
+        writer.write_all(content).unwrap();
+        let mut bytes = writer.finish().unwrap().into_inner();
+        if decoded.is_some() {
+            return bytes;
+        }
+        let offsets = bytes
+            .windows(placeholder.len())
+            .enumerate()
+            .filter_map(|(offset, value)| (value == placeholder.as_bytes()).then_some(offset))
+            .collect::<Vec<_>>();
+        assert_eq!(offsets.len(), 2, "local and central entry names");
+        for offset in offsets {
+            bytes[offset..offset + name.len()].copy_from_slice(name);
+        }
+        bytes
+    }
+
+    #[test]
+    fn zip_extraction_preserves_utf8_and_legacy_cp437_names() {
+        let temporary = tempfile::tempdir().unwrap();
+        let archive = temporary.path().join("source.zip");
+        for (index, (raw_name, expected)) in [
+            ("目录/记录.json".as_bytes(), "目录/记录.json"),
+            (b"\x82.json".as_slice(), "é.json"),
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            fs::write(&archive, zip_with_raw_name(raw_name, b"{}\n")).unwrap();
+            let output = temporary.path().join(index.to_string());
+            fs::create_dir(&output).unwrap();
+            extract_zip(&archive, &output).unwrap();
+            assert_eq!(fs::read(output.join(expected)).unwrap(), b"{}\n");
+        }
+    }
+
+    #[test]
+    fn zip_extraction_rejects_unsafe_legacy_names_without_writing() {
+        let temporary = tempfile::tempdir().unwrap();
+        let archive = temporary.path().join("source.zip");
+        let output = temporary.path().join("extracted");
+        fs::create_dir(&output).unwrap();
+        fs::write(&archive, zip_with_raw_name(b"../\x82.json", b"{}")).unwrap();
+        assert!(matches!(
+            extract_zip(&archive, &output),
+            Err(DistError::UnsafePath(path)) if path == Path::new("../é.json")
+        ));
+        assert_eq!(fs::read_dir(&output).unwrap().count(), 0);
+        assert!(!temporary.path().join("é.json").exists());
+    }
+
+    #[test]
+    fn zip_extraction_reports_corrupt_entries_without_writing() {
+        let temporary = tempfile::tempdir().unwrap();
+        let archive = temporary.path().join("source.zip");
+        let output = temporary.path().join("extracted");
+        fs::create_dir(&output).unwrap();
+        let mut bytes = zip_with_raw_name(b"record.json", b"{}");
+        bytes[0] ^= 1;
+        fs::write(&archive, bytes).unwrap();
+        assert!(matches!(
+            extract_zip(&archive, &output),
+            Err(DistError::Zip(_))
+        ));
+        assert_eq!(fs::read_dir(&output).unwrap().count(), 0);
+    }
+
     #[test]
     fn archives_and_checksums_are_byte_repeatable() {
         let temporary = tempfile::tempdir().unwrap();
@@ -842,6 +921,44 @@ mod tests {
             fs::read(first.checksum_file).unwrap(),
             fs::read(second.checksum_file).unwrap()
         );
+    }
+
+    #[test]
+    fn windows_zip_preserves_portable_modes_and_repeatability() {
+        let temporary = tempfile::tempdir().unwrap();
+        let binary = temporary.path().join("tidas.exe");
+        let license = temporary.path().join("LICENSE");
+        fake_binary(&binary);
+        fs::write(&license, b"MIT\n").unwrap();
+        let notices_dir = temporary.path().join("notices");
+        notice_fixture::create(&notices_dir, &binary, &license, WINDOWS_TARGET, "0.1.0");
+        let mut archives = Vec::new();
+        for name in ["first", "second"] {
+            let artifact = package(&PackageRequest {
+                binary: &binary,
+                license: &license,
+                notices_dir: &notices_dir,
+                target: WINDOWS_TARGET,
+                version: "0.1.0",
+                output_dir: &temporary.path().join(name),
+            })
+            .unwrap();
+            archives.push(fs::read(artifact.archive).unwrap());
+        }
+        assert_eq!(archives[0], archives[1]);
+        let mut archive = zip::ZipArchive::new(std::io::Cursor::new(&archives[0])).unwrap();
+        let mut executable_count = 0;
+        for index in 0..archive.len() {
+            let member = archive.by_index(index).unwrap();
+            let is_executable = member.name().unwrap().ends_with("/bin/tidas.exe");
+            executable_count += usize::from(is_executable);
+            assert_eq!(member.system(), zip::System::Unix);
+            assert_eq!(
+                member.unix_mode(),
+                Some(if is_executable { 0o100_755 } else { 0o100_644 })
+            );
+        }
+        assert_eq!(executable_count, 1);
     }
 
     #[test]

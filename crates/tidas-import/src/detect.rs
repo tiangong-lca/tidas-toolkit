@@ -313,7 +313,7 @@ fn scan_zip(path: &Path, candidates: &mut CandidateAccumulator) -> Result<(), De
         let entry = archive.by_index(index)?;
         Ok::<_, zip::result::ZipError>(
             found
-                || Path::new(entry.name())
+                || Path::new(entry.name()?.as_ref())
                     .file_name()
                     .is_some_and(|name| name == "context.jsonld"),
         )
@@ -330,7 +330,7 @@ fn scan_zip(path: &Path, candidates: &mut CandidateAccumulator) -> Result<(), De
         if entry.is_dir() {
             continue;
         }
-        let name = entry.name().to_owned();
+        let name = entry.name()?.into_owned();
         let label = PathBuf::from(format!("{}:{name}", path.display()));
         match extension(Path::new(&name)).as_deref() {
             Some("zolca") => candidates.push(candidate(
@@ -372,8 +372,9 @@ fn scan_xlsx(path: &Path, candidates: &mut CandidateAccumulator) -> Result<(), D
     let mut workbook = false;
     for index in 0..archive.len() {
         let entry = archive.by_index(index)?;
-        content_types |= entry.name() == "[Content_Types].xml";
-        workbook |= entry.name() == "xl/workbook.xml";
+        let name = entry.name()?;
+        content_types |= name == "[Content_Types].xml";
+        workbook |= name == "xl/workbook.xml";
     }
     if content_types && workbook {
         candidates.push(candidate(
@@ -683,6 +684,38 @@ mod tests {
         let detected = detect_format(&request(&source)).unwrap();
         assert_eq!(detected.format, SourceFormat::OpenlcaProcessXlsx);
         assert_eq!(detected.confidence, DetectionConfidence::Medium);
+    }
+
+    #[test]
+    fn zip_detection_decodes_utf8_and_legacy_entry_names() {
+        let directory = tempdir().unwrap();
+        let source = directory.path().join("source.zip");
+        for (raw_name, expected) in [
+            ("目录/记录.spold".as_bytes(), "目录/记录.spold"),
+            (b"\x82.spold".as_slice(), "é.spold"),
+        ] {
+            std::fs::write(
+                &source,
+                crate::source::zip_with_raw_name(raw_name, b"<ecoSpold/>"),
+            )
+            .unwrap();
+            let detected = detect_format(&request(&source)).unwrap();
+            assert_eq!(detected.format, SourceFormat::Ecospold2);
+            assert!(detected.evidence.iter().any(|item| item.contains(expected)));
+        }
+    }
+
+    #[test]
+    fn corrupt_zip_entry_is_an_error_instead_of_a_format_candidate() {
+        let directory = tempdir().unwrap();
+        let source = directory.path().join("source.zip");
+        let mut bytes = crate::source::zip_with_raw_name(b"record.spold", b"<ecoSpold/>");
+        bytes[0] ^= 1;
+        std::fs::write(&source, bytes).unwrap();
+        assert!(matches!(
+            detect_format(&request(&source)),
+            Err(DetectionError::Zip(_))
+        ));
     }
 
     #[test]

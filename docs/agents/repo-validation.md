@@ -29,9 +29,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: "2026-11-04"
-lastReviewedCommit: "a3f241646605d3e6f7cb025c9b6cf702d262ac59"
-lastReviewedNote: "Toolkit #277: reviewed repeatable Process quantitative-reference text preservation, synthetic XSD/round-trip regressions and v0.3.7 qualification; source data, assets and public CLI contracts remain unchanged."
+lastReviewedAt: 2026-11-19
+lastReviewedCommit: 21091c43bce55b6d1bb0ca13979cede16c628699
+lastReviewedNote: "Toolkit #281: reviewed ZIP 9 fallible names, UTF-8/CP437 and error regressions, and explicit Unix member metadata preserving portable release/distribution modes on Windows. Existing validation, bounds, platform, package versions and publication authority remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -163,6 +163,16 @@ updates need the baseline plus regressions for the behavior changed by the
 updated dependency. For example, a schema-engine update needs representative
 valid/invalid schema cases and diagnostics checks. Do not require a private
 historical ZIP merely because a dependency changed.
+
+ZIP reader updates must retain valid UTF-8 and legacy CP437 entry names and
+reject unsafe names or corrupt entry headers before visiting or extracting
+content. Run the import, distribution and release unit suites alongside the
+full baseline; the fallible filename API must propagate ZIP errors rather
+than display a Result or replace a name with a placeholder. Path/symlink,
+byte/memory, cancellation and atomic-publication guards remain independent.
+ZIP writers explicitly select Unix member metadata so declared `0644` files
+and `0755` executables retain those modes on every producer platform. Verify
+release and native Windows archives without relaxing their mode assertions.
 
 Add local scale probes when throughput, memory, streaming, cancellation or
 spooling may be affected, including by a dependency update. Use checked-in

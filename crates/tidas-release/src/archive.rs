@@ -52,6 +52,7 @@ pub(crate) fn write_package(
     let base_options = SimpleFileOptions::default()
         .compression_method(CompressionMethod::Stored)
         .last_modified_time(zip::DateTime::default())
+        .system(zip::System::Unix)
         .unix_permissions(0o644);
     let buffer_size = u64::try_from(COPY_BUFFER_BYTES).map_err(|_| ReleaseError::SizeOverflow)?;
     let _reservation = request.runtime.memory_budget.reserve(buffer_size)?;
@@ -325,8 +326,9 @@ mod tests {
         let mut archive = zip::ZipArchive::new(file).unwrap();
         assert_eq!(archive.len(), 1);
         let member = archive.by_index(0).unwrap();
-        assert_eq!(member.name(), "record.json");
+        assert_eq!(member.name().unwrap(), "record.json");
         assert_eq!(member.last_modified(), Some(zip::DateTime::default()));
+        assert_eq!(member.system(), zip::System::Unix);
         assert_eq!(member.unix_mode(), Some(0o100_644));
     }
 
@@ -394,7 +396,14 @@ mod tests {
         let file = File::open(package.artifact.path).unwrap();
         let mut archive = zip::ZipArchive::new(file).unwrap();
         let mut names = (0..archive.len())
-            .map(|index| archive.by_index(index).unwrap().name().to_owned())
+            .map(|index| {
+                archive
+                    .by_index(index)
+                    .unwrap()
+                    .name()
+                    .unwrap()
+                    .into_owned()
+            })
             .collect::<Vec<_>>();
         names.sort();
         assert_eq!(

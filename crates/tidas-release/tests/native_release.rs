@@ -889,6 +889,7 @@ fn result_only_builds_two_repeatable_archives_without_unit_or_model_roots() {
                 !zip.by_index(ordinal)
                     .unwrap()
                     .name()
+                    .unwrap()
                     .starts_with("lifecyclemodels/")
             );
         }
