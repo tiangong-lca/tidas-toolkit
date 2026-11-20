@@ -28,9 +28,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-19
-lastReviewedCommit: 21091c43bce55b6d1bb0ca13979cede16c628699
-lastReviewedNote: "Toolkit #281: reviewed ZIP 9 fallible names, UTF-8/CP437 and error regressions, and explicit Unix member metadata preserving portable release/distribution modes on Windows. Existing validation, bounds, platform, package versions and publication authority remain unchanged."
+lastReviewedAt: 2026-11-20
+lastReviewedCommit: 45c65f8a0390448f8ca66dab0c969fe5f0d8b21b
+lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -354,6 +354,11 @@ seeding through `.github/actions/native-xml`. Reuse is limited to vcpkg binary
 archives; installed native inputs and final product/notice outputs remain fresh.
 Cache seeding owns no release, registry or attestation action. Package archive
 location comes from existing Cargo metadata, preserving portable isolated builds.
+The pinned Windows release and seed paths generate an external overlay containing
+the complete builtin `x64-windows-static` triplet followed by a Release-only build
+selection. Target/CRT/library linkage and dependency features stay unchanged.
+Unix setup and ordinary Rust CI's separate Windows dependency graph do not use
+this overlay. Its source is covered by the action's existing cache-input glob.
 
 ## Process allocation consumer profile
 

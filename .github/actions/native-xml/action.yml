@@ -17,6 +17,11 @@ runs:
       shell: bash
       run: bash scripts/test-native-cache.sh
 
+    - name: Test Windows release triplet
+      if: inputs.family == 'windows'
+      shell: pwsh
+      run: ./.github/actions/native-xml/test-release-triplet.ps1
+
     - name: Identify native cache inputs
       id: identity
       shell: bash
@@ -88,8 +93,12 @@ runs:
         if ($LASTEXITCODE -ne 0) { throw "vcpkg checkout failed." }
         & "$env:RUNNER_TEMP\vcpkg\bootstrap-vcpkg.bat" -disableMetrics
         if ($LASTEXITCODE -ne 0) { throw "vcpkg bootstrap failed." }
+        $ReleaseTriplets = "$env:RUNNER_TEMP\vcpkg-release-triplets"
+        & ./.github/actions/native-xml/create-release-triplet.ps1 `
+          -VcpkgRoot "$env:RUNNER_TEMP\vcpkg" -OverlayRoot $ReleaseTriplets -Triplet $env:TRIPLET
         & "$env:RUNNER_TEMP\vcpkg\vcpkg.exe" install `
           --triplet $env:TRIPLET `
+          --overlay-triplets="$ReleaseTriplets" `
           --x-manifest-root="$env:GITHUB_WORKSPACE\packaging\vcpkg" `
           --x-install-root="$env:RUNNER_TEMP\vcpkg\installed"
         if ($LASTEXITCODE -ne 0) { throw "vcpkg installation failed." }
