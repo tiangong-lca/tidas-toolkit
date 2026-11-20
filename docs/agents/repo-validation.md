@@ -30,8 +30,8 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-11-20
-lastReviewedCommit: 45c65f8a0390448f8ca66dab0c969fe5f0d8b21b
-lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
+lastReviewedCommit: a747b2d90fc837f2298d76cfb62080e4c0962e65
+lastReviewedNote: "Toolkit #284: reviewed the ordinary Release-only generator and real LF/CRLF, spaced-path, directory-alias, immutable existing-output and competing-creator fixtures. Exclusive creation and byte-identical no-write reuse preserve the pinned source. Existing cache identity, native qualification, Unix/Rust CI and publisher remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -305,7 +305,10 @@ complete checked-out builtin triplet and appends only `VCPKG_BUILD_TYPE release`
 the original source, target name, CRT/library linkage and features are retained.
 The Windows action runs `test-release-triplet.ps1` against fixed LF/CRLF input,
 paths with spaces, repeated generation, missing input, foreign triplet and source
-overwrite refusals. Run that same PowerShell fixture locally for generator changes.
+overwrite refusals, including directory aliases. First creation is exclusive;
+an existing output is accepted without writing only when its bytes match the
+expected overlay. Different contents and in-progress competing writes fail
+without replacing a pinned source. Run that same PowerShell fixture locally for generator changes.
 Unix setup and ordinary Rust CI's distinct Windows installation remain unchanged.
 Action/generator byte changes naturally invalidate the existing source-bound key,
 including the shared action input for Unix keys; no old ABI or wider restore scope

@@ -12,5 +12,19 @@ if ([IO.Path]::GetFullPath($PinnedTriplet) -eq [IO.Path]::GetFullPath($ReleaseTr
   throw 'The release overlay must not replace the pinned triplet.'
 }
 $PinnedText = [IO.File]::ReadAllText($PinnedTriplet)
+$GeneratedBytes = [Text.UTF8Encoding]::new($false).GetBytes($PinnedText + "`nset(VCPKG_BUILD_TYPE release)`n")
 [IO.Directory]::CreateDirectory($OverlayRoot) | Out-Null
-[IO.File]::WriteAllText($ReleaseTriplet, $PinnedText + "`nset(VCPKG_BUILD_TYPE release)`n", [Text.UTF8Encoding]::new($false))
+try {
+  $Output = [IO.File]::Open($ReleaseTriplet, [IO.FileMode]::CreateNew, [IO.FileAccess]::Write, [IO.FileShare]::None)
+} catch [IO.IOException] {
+  if ([IO.File]::Exists($ReleaseTriplet)) {
+    $Existing = [IO.File]::ReadAllBytes($ReleaseTriplet)
+    if ([Convert]::ToBase64String($Existing) -ceq [Convert]::ToBase64String($GeneratedBytes)) { return }
+  }
+  throw 'The release overlay already exists with different contents or cannot be created exclusively.'
+}
+try {
+  $Output.Write($GeneratedBytes, 0, $GeneratedBytes.Length)
+} finally {
+  $Output.Dispose()
+}
