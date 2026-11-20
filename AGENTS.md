@@ -33,7 +33,7 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
 lastReviewedAt: 2026-11-20
-lastReviewedCommit: 45c65f8a0390448f8ca66dab0c969fe5f0d8b21b
+lastReviewedCommit: c15dfb9732b53de78e164a1b7c7a7709b168c66c
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - .docpact/config.yaml
