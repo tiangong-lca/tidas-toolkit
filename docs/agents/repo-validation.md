@@ -30,7 +30,7 @@ checkPaths:
   - .githooks/pre-push
   - scripts/**
 lastReviewedAt: 2026-11-20
-lastReviewedCommit: a747b2d90fc837f2298d76cfb62080e4c0962e65
+lastReviewedCommit: c15dfb9732b53de78e164a1b7c7a7709b168c66c
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Release-only generator and real LF/CRLF, spaced-path, directory-alias, immutable existing-output and competing-creator fixtures. Exclusive creation and byte-identical no-write reuse preserve the pinned source. Existing cache identity, native qualification, Unix/Rust CI and publisher remain unchanged."
 related:
   - ../../AGENTS.md

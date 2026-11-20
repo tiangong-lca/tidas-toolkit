@@ -2,7 +2,7 @@ version: 1
 layout: repo
 # Review note, 2026-09-07: #187 adds the immutable v0.3.0 request for exact bbccee6; source, runtime, platform and ownership invariants are unchanged.
 lastReviewedAt: "2026-11-20"
-lastReviewedCommit: "45c65f8a0390448f8ca66dab0c969fe5f0d8b21b"
+lastReviewedCommit: "c15dfb9732b53de78e164a1b7c7a7709b168c66c"
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 # Reviewed for Issue #177: macOS Intel is retired from the required native
 # matrix; Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64 remain,
