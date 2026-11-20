@@ -27,9 +27,9 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: 2026-11-19
-lastReviewedCommit: 21091c43bce55b6d1bb0ca13979cede16c628699
-lastReviewedNote: "Toolkit #281: reviewed ZIP 9 fallible names, UTF-8/CP437 and error regressions, and explicit Unix member metadata preserving portable release/distribution modes on Windows. Existing validation, bounds, platform, package versions and publication authority remain unchanged."
+lastReviewedAt: 2026-11-20
+lastReviewedCommit: 45c65f8a0390448f8ca66dab0c969fe5f0d8b21b
+lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml

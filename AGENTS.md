@@ -32,9 +32,9 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: 2026-11-19
-lastReviewedCommit: 21091c43bce55b6d1bb0ca13979cede16c628699
-lastReviewedNote: "Toolkit #281: reviewed ZIP 9 fallible names, UTF-8/CP437 and error regressions, and explicit Unix member metadata preserving portable release/distribution modes on Windows. Existing validation, bounds, platform, package versions and publication authority remain unchanged."
+lastReviewedAt: 2026-11-20
+lastReviewedCommit: 45c65f8a0390448f8ca66dab0c969fe5f0d8b21b
+lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - .docpact/config.yaml
   - docs/agents/repo-architecture.md
@@ -274,3 +274,9 @@ checkout/bootstrap/install and every native qualification gate. Default-branch c
 seeding is setup only and cannot publish or attest a product. Follow the cache and
 isolated Cargo output regressions in `docs/agents/repo-validation.md` when editing
 these harnesses; package locations follow Cargo metadata instead of a fixed directory.
+
+Pinned Windows native-release preparation and its normal seed generate a
+Release-only overlay from the checked-out builtin `x64-windows-static` triplet.
+Keep its original architecture, static CRT/library settings and other contents.
+The action and generator participate in the existing native cache input hash.
+Unix preparation and ordinary Rust CI's distinct Windows installation stay separate.

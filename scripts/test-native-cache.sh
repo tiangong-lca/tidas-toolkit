@@ -145,6 +145,8 @@ for path in Cargo.toml Cargo.lock crates/example/src/lib.rs contracts/example.js
   scripts/audit-rust-only.sh .githooks/pre-push scripts/pre-push-deletion-only.sh \
   scripts/pre-push-maintenance-only.sh scripts/test-pre-push.sh \
   packaging/vcpkg/vcpkg.json .github/actions/native-xml/action.yml \
+  .github/actions/native-xml/create-release-triplet.ps1 \
+  .github/actions/native-xml/test-release-triplet.ps1 \
   .github/workflows/rust-release.yml scripts/native-cache-contract.sh scripts/test-native-cache.sh; do
   rust_ci_matches "$path" || fail "Rust CI omits required input: $path"
 done

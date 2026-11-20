@@ -29,9 +29,9 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-19
-lastReviewedCommit: 21091c43bce55b6d1bb0ca13979cede16c628699
-lastReviewedNote: "Toolkit #281: reviewed ZIP 9 fallible names, UTF-8/CP437 and error regressions, and explicit Unix member metadata preserving portable release/distribution modes on Windows. Existing validation, bounds, platform, package versions and publication authority remain unchanged."
+lastReviewedAt: 2026-11-20
+lastReviewedCommit: 45c65f8a0390448f8ca66dab0c969fe5f0d8b21b
+lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - ../../AGENTS.md
   - ../../.docpact/config.yaml
@@ -298,6 +298,18 @@ action verifier. Windows checks each native command's exit code. Existing static
 imports, source-bound notices, repeatable archive bytes, checksums, smoke and the
 complete four-platform qualification remain mandatory. A cache hit is not a
 qualification receipt.
+
+The pinned Windows release and normal seed select Release-only target libraries
+through `create-release-triplet.ps1` in the native action directory. It copies the
+complete checked-out builtin triplet and appends only `VCPKG_BUILD_TYPE release`;
+the original source, target name, CRT/library linkage and features are retained.
+The Windows action runs `test-release-triplet.ps1` against fixed LF/CRLF input,
+paths with spaces, repeated generation, missing input, foreign triplet and source
+overwrite refusals. Run that same PowerShell fixture locally for generator changes.
+Unix setup and ordinary Rust CI's distinct Windows installation remain unchanged.
+Action/generator byte changes naturally invalidate the existing source-bound key,
+including the shared action input for Unix keys; no old ABI or wider restore scope
+substitutes for the complete native installation and package gates.
 
 Unix setup removes inherited `VCPKG_FORCE_SYSTEM_BINARIES` in its own process so
 vcpkg can select and verify its existing pinned tools. Even an empty value or `0`
