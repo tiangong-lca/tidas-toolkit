@@ -32,8 +32,8 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: 2026-11-20
-lastReviewedCommit: c15dfb9732b53de78e164a1b7c7a7709b168c66c
+lastReviewedAt: 2026-11-21
+lastReviewedCommit: e67a8c6b52219ebe42aa879f950088011413b731
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - .docpact/config.yaml
@@ -279,4 +279,4 @@ Pinned Windows native-release preparation and its normal seed generate a
 Release-only overlay from the checked-out builtin `x64-windows-static` triplet.
 Keep its original architecture, static CRT/library settings and other contents.
 The action and generator participate in the existing native cache input hash.
-Unix preparation and ordinary Rust CI's distinct Windows installation stay separate.
+Ordinary Windows Rust CI generates its own Release-only XML overlay from the runner-provided triplet and retains debug-profile Rust tests. The native release and seed use their separately pinned vcpkg checkout.

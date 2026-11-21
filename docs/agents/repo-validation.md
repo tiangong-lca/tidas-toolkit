@@ -29,8 +29,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-20
-lastReviewedCommit: c15dfb9732b53de78e164a1b7c7a7709b168c66c
+lastReviewedAt: 2026-11-21
+lastReviewedCommit: e67a8c6b52219ebe42aa879f950088011413b731
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Release-only generator and real LF/CRLF, spaced-path, directory-alias, immutable existing-output and competing-creator fixtures. Exclusive creation and byte-identical no-write reuse preserve the pinned source. Existing cache identity, native qualification, Unix/Rust CI and publisher remain unchanged."
 related:
   - ../../AGENTS.md
@@ -309,7 +309,7 @@ overwrite refusals, including directory aliases. First creation is exclusive;
 an existing output is accepted without writing only when its bytes match the
 expected overlay. Different contents and in-progress competing writes fail
 without replacing a pinned source. Run that same PowerShell fixture locally for generator changes.
-Unix setup and ordinary Rust CI's distinct Windows installation remain unchanged.
+Ordinary Windows Rust CI also uses the generator, with its own temporary overlay based on the runner-provided vcpkg triplet. The locked libxml and libxslt build scripts use vcpkg-rs, which selects the triplet's `lib` directory for Clippy and tests as well as releases. CI still runs the debug-profile Rust tests with the static CRT. The ordinary installation keeps its own port selection and runner-provided vcpkg source.
 Action/generator byte changes naturally invalidate the existing source-bound key,
 including the shared action input for Unix keys; no old ABI or wider restore scope
 substitutes for the complete native installation and package gates.

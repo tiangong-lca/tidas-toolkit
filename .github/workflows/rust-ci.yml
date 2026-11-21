@@ -68,7 +68,10 @@ jobs:
         shell: pwsh
         run: |
           $vcpkgRoot = Split-Path -Parent (Get-Command vcpkg).Source
-          vcpkg install libxslt:x64-windows-static
+          $triplets = Join-Path $env:RUNNER_TEMP "rust-ci-xml-triplets"
+          & ./.github/actions/native-xml/create-release-triplet.ps1 -VcpkgRoot $vcpkgRoot -OverlayRoot $triplets
+          vcpkg install libxslt:x64-windows-static --overlay-triplets="$triplets"
+          if ($LASTEXITCODE -ne 0) { throw "Failed to install the Windows XML toolchain." }
           "VCPKG_ROOT=$vcpkgRoot" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           "VCPKGRS_TRIPLET=x64-windows-static" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           "CARGO_BUILD_TARGET=x86_64-pc-windows-msvc" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
