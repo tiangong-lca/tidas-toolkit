@@ -28,8 +28,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-20
-lastReviewedCommit: c15dfb9732b53de78e164a1b7c7a7709b168c66c
+lastReviewedAt: 2026-11-21
+lastReviewedCommit: e67a8c6b52219ebe42aa879f950088011413b731
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - ../../AGENTS.md
@@ -357,8 +357,10 @@ location comes from existing Cargo metadata, preserving portable isolated builds
 The pinned Windows release and seed paths generate an external overlay containing
 the complete builtin `x64-windows-static` triplet followed by a Release-only build
 selection. Target/CRT/library linkage and dependency features stay unchanged.
-Unix setup and ordinary Rust CI's separate Windows dependency graph do not use
-this overlay. Its source is covered by the action's existing cache-input glob.
+Ordinary Windows Rust CI creates a separate overlay from the runner's builtin
+triplet using the same generator. Its Cargo checks consume the Release XML
+libraries from that runner installation. The pinned action's cache inputs still
+include the generator.
 
 ## Process allocation consumer profile
 
