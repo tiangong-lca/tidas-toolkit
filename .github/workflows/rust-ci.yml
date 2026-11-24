@@ -1,6 +1,27 @@
 name: Rust CI
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - Cargo.toml
+      - Cargo.lock
+      - crates/**
+      - contracts/**
+      - assets/**
+      - migration/**
+      - .github/workflows/rust-ci.yml
+      - scripts/audit-rust-only.sh
+      - .githooks/**
+      - scripts/pre-push-deletion-only.sh
+      - scripts/pre-push-maintenance-only.sh
+      - scripts/test-pre-push.sh
+      - packaging/vcpkg/**
+      - .github/actions/native-xml/**
+      - .github/workflows/rust-release.yml
+      - scripts/native-cache-contract.sh
+      - scripts/test-native-cache.sh
   pull_request:
     paths:
       - Cargo.toml
@@ -24,6 +45,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: tidas-toolkit-rust-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   rust:
