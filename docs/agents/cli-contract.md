@@ -27,8 +27,8 @@ checkPaths:
   - contracts/**
   - README.md
   - README_CN.md
-lastReviewedAt: 2026-11-21
-lastReviewedCommit: e67a8c6b52219ebe42aa879f950088011413b731
+lastReviewedAt: 2026-11-24
+lastReviewedCommit: 483477d9adbef1a94a51a9585c216833ca90145d
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - ../../AGENTS.md
