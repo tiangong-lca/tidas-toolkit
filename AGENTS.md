@@ -32,8 +32,8 @@ checkPaths:
   - .github/workflows/**
   - .github/actions/native-xml/**
   - .githooks/pre-push
-lastReviewedAt: 2026-11-24
-lastReviewedCommit: 07cf90b8ba8942c0d3bf0d2aa497195bc3857e30
+lastReviewedAt: 2026-11-27
+lastReviewedCommit: ca0d2c19ef5fdc9bf48697320be85319952cdeb3
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - .docpact/config.yaml
@@ -279,4 +279,4 @@ Pinned Windows native-release preparation and its normal seed generate a
 Release-only overlay from the checked-out builtin `x64-windows-static` triplet.
 Keep its original architecture, static CRT/library settings and other contents.
 The action and generator participate in the existing native cache input hash.
-Ordinary Windows Rust CI generates its own Release-only XML overlay from the runner-provided triplet and retains debug-profile Rust tests. The native release and seed use their separately pinned vcpkg checkout.
+Ordinary Windows Rust CI generates its own Release-only XML overlay from the runner-provided triplet, caches its vcpkg binary archives keyed by hosted image and overlay inputs, and retains debug-profile Rust tests. The native release and seed use their separately pinned vcpkg checkout. Ordinary domain-only pull requests may use the fail-closed Linux x86_64 `pr-fast` lane in `Rust CI` (and crates.io qualification in `Native Rust Release`), while `push` to `main`, version tags, manual dispatch, `ci:full`, and Cargo/native/packaging/XML/CLI/validation/workflow/script pull requests retain the full four-platform matrices.
