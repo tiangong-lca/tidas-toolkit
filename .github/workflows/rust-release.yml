@@ -35,12 +35,73 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: tidas-toolkit-native-release-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 env:
   CARGO_TERM_COLOR: always
   VCPKG_COMMIT: 9e593bb18ea69cc5095e012465dcd675a822ed0d
 
 jobs:
+  plan:
+    if: github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')
+    name: Plan native release qualification
+    runs-on: ubuntu-24.04
+    outputs:
+      mode: ${{ steps.plan.outputs.mode }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        if: github.event_name == 'pull_request'
+        with:
+          fetch-depth: 0
+
+      - name: Classify exact native release lane
+        id: plan
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha || '' }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha || '' }}
+          HAS_FULL_LABEL: ${{ contains(github.event.pull_request.labels.*.name, 'ci:full') }}
+        run: |
+          set -euo pipefail
+          emit() {
+            echo "Native Rust Release lane: mode=$1 reason=$2"
+            echo "mode=$1" >> "$GITHUB_OUTPUT"
+            exit 0
+          }
+          if [ "$EVENT_NAME" != "pull_request" ]; then
+            emit full "non-pr-event"
+          fi
+          if [ "$HAS_FULL_LABEL" = "true" ]; then
+            emit full "ci-full-label"
+          fi
+          if ! [[ "$PR_BASE_SHA" =~ ^[0-9a-f]{40}$ && "$PR_HEAD_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            emit full "unproven-pr-commits"
+          fi
+          if ! git cat-file -e "${PR_BASE_SHA}^{commit}" || ! git cat-file -e "${PR_HEAD_SHA}^{commit}"; then
+            emit full "missing-pr-history"
+          fi
+          changed_count=0
+          while IFS= read -r file; do
+            [ -n "$file" ] || continue
+            changed_count=$((changed_count + 1))
+            case "$file" in
+              crates/tidas-contracts/*|crates/tidas-conversion/*|crates/tidas-export/*|crates/tidas-import/*|crates/tidas-references/*|crates/tidas-release/*|crates/tidas-rulesets/*|*.md|docs/*|.docpact/*)
+                ;;
+              *)
+                emit full "release-sensitive-path:$file"
+                ;;
+            esac
+          done < <(git diff --name-only --no-renames "${PR_BASE_SHA}...${PR_HEAD_SHA}")
+          if [ "$changed_count" -eq 0 ]; then
+            emit full "empty-diff"
+          fi
+          emit pr-fast "domain-only-pr"
+
   package-crates:
+    needs: plan
     if: github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')
     name: Qualify crates.io release set
     runs-on: ubuntu-24.04
@@ -52,6 +113,10 @@ jobs:
       - uses: dtolnay/rust-toolchain@4cda84d5c5c54efe2404f9d843567869ab1699d4
         with:
           toolchain: 1.98.1
+
+      - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          key: package-crates-linux
 
       - name: Install native XML verification dependencies
         run: sudo apt-get update && sudo apt-get install --yes libxml2-dev libxslt1-dev pkg-config
@@ -66,7 +131,8 @@ jobs:
         run: ./scripts/publish-crates.sh check
 
   build:
-    if: github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')
+    needs: plan
+    if: (github.event_name != 'push' || startsWith(github.ref, 'refs/tags/')) && needs.plan.outputs.mode == 'full'
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runner }}
     permissions:

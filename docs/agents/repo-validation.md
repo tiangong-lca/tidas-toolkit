@@ -29,8 +29,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-24
-lastReviewedCommit: 07cf90b8ba8942c0d3bf0d2aa497195bc3857e30
+lastReviewedAt: 2026-11-27
+lastReviewedCommit: ca0d2c19ef5fdc9bf48697320be85319952cdeb3
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Release-only generator and real LF/CRLF, spaced-path, directory-alias, immutable existing-output and competing-creator fixtures. Exclusive creation and byte-identical no-write reuse preserve the pinned source. Existing cache identity, native qualification, Unix/Rust CI and publisher remain unchanged."
 related:
   - ../../AGENTS.md
@@ -96,8 +96,7 @@ fails the pull request. Import provenance lives under `assets/spec/`, outside
 the executable asset roots, so pinning a specification cannot silently move the
 runtime fingerprint; adopting genuinely different public bytes regenerates the
 locks as a deliberate, reviewed change. The pre-push hook adds strict
-Docpact. Pull requests run the product matrix on Linux x86_64/ARM64, macOS
-Apple Silicon, and Windows x86_64. macOS Intel and Windows ARM64 are
+Docpact. `push` to `main`, `workflow_dispatch`, `ci:full`, and PRs touching Cargo manifests/locks, native XML/packaging/distribution/CLI/runtime/validation/workflow/script paths run the full product matrix on Linux x86_64/ARM64, macOS Apple Silicon, and Windows x86_64; pure cross-platform domain PRs fail closed into the Linux x86_64 `pr-fast` lane in `Rust CI` and crates.io dry-run qualification in `Native Rust Release`. macOS Intel and Windows ARM64 are
 intentionally absent; the POSIX installer rejects macOS Intel before any
 download.
 
