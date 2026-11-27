@@ -408,3 +408,4 @@ rules:
       - path: docs/agents/repo-architecture.md
         mode: review_or_update
     reason: CI, release, distribution, migration, and local gates must preserve the Rust-only product contract.
+# lastReviewedIssue: #301

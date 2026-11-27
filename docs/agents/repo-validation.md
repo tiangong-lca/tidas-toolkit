@@ -29,8 +29,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-27
-lastReviewedCommit: 7766027532098675405875c2522cf2b1dff49a75
+lastReviewedAt: 2026-11-28
+lastReviewedCommit: f8b039a3de1243750843d3e0ec1de9c0e4e2ab6f
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Release-only generator and real LF/CRLF, spaced-path, directory-alias, immutable existing-output and competing-creator fixtures. Exclusive creation and byte-identical no-write reuse preserve the pinned source. Existing cache identity, native qualification, Unix/Rust CI and publisher remain unchanged."
 related:
   - ../../AGENTS.md

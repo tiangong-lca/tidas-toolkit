@@ -28,8 +28,8 @@ checkPaths:
   - .github/actions/native-xml/**
   - .githooks/pre-push
   - scripts/**
-lastReviewedAt: 2026-11-27
-lastReviewedCommit: 7766027532098675405875c2522cf2b1dff49a75
+lastReviewedAt: 2026-11-28
+lastReviewedCommit: f8b039a3de1243750843d3e0ec1de9c0e4e2ab6f
 lastReviewedNote: "Toolkit #284: reviewed the ordinary Windows pinned release/seed Release-only overlay generated from the complete builtin triplet, exact LF/CRLF and spaced-path fixtures, retained static CRT/library/features and source pin, and existing cache-input coverage. Unix, distinct Rust CI setup, full qualification, public CLI and publisher remain unchanged."
 related:
   - ../../AGENTS.md

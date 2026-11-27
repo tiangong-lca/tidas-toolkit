@@ -117,6 +117,9 @@ jobs:
     needs: plan
     name: ${{ matrix.name }}
     runs-on: ${{ matrix.runner }}
+    env:
+      CARGO_PROFILE_DEV_DEBUG: "0"
+      CARGO_PROFILE_TEST_DEBUG: "0"
     strategy:
       fail-fast: false
       matrix:
@@ -183,6 +186,13 @@ jobs:
           components: rustfmt, clippy
 
       - uses: Swatinem/rust-cache@e18b497796c12c097a38f9edb9d0641fb99eee32 # v2
+        with:
+          env-vars: CARGO_PROFILE_DEV_DEBUG, CARGO_PROFILE_TEST_DEBUG
+
+      - name: Install prebuilt cargo-nextest
+        uses: taiki-e/install-action@073e1fd0bc889c9aee68dbaaa927cde1b5653a83 # v2
+        with:
+          tool: nextest
 
       - name: Audit Rust-only active tree
         if: matrix.name == 'Linux x86_64'
@@ -228,13 +238,9 @@ jobs:
         run: cargo fmt --all --check
 
       - name: Lint
-        env:
-          CARGO_PROFILE_DEV_DEBUG: "0"
-          CARGO_PROFILE_TEST_DEBUG: "0"
         run: cargo clippy --locked --workspace --all-targets -- -D warnings
 
       - name: Test workspace
-        env:
-          CARGO_PROFILE_DEV_DEBUG: "0"
-          CARGO_PROFILE_TEST_DEBUG: "0"
-        run: cargo test --locked --workspace --all-targets
+        run: |
+          cargo nextest run --locked --workspace --all-targets
+          cargo test --locked --workspace --doc
