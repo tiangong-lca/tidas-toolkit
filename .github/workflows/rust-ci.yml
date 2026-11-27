@@ -145,10 +145,10 @@ jobs:
         if: matrix.family == 'windows'
         shell: bash
         env:
-          INPUT_HASH: ${{ hashFiles('.github/actions/native-xml/create-release-triplet.ps1', '.github/workflows/rust-ci.yml') }}
+          INPUT_HASH: ${{ hashFiles('.github/actions/native-xml/create-release-triplet.ps1') }}
         run: |
           set -euo pipefail
-          echo "key=rust-ci-vcpkg-v1-${RUNNER_OS}-${RUNNER_ARCH}-${ImageOS:-unknown}-${ImageVersion:-unknown}-${INPUT_HASH}" >> "$GITHUB_OUTPUT"
+          echo "key=rust-ci-vcpkg-v2-${RUNNER_OS}-${RUNNER_ARCH}-${ImageOS:-unknown}-${ImageVersion:-unknown}-${INPUT_HASH}" >> "$GITHUB_OUTPUT"
 
       - name: Restore Windows Rust CI vcpkg archives
         if: matrix.family == 'windows'
@@ -228,7 +228,13 @@ jobs:
         run: cargo fmt --all --check
 
       - name: Lint
+        env:
+          CARGO_PROFILE_DEV_DEBUG: "0"
+          CARGO_PROFILE_TEST_DEBUG: "0"
         run: cargo clippy --locked --workspace --all-targets -- -D warnings
 
       - name: Test workspace
+        env:
+          CARGO_PROFILE_DEV_DEBUG: "0"
+          CARGO_PROFILE_TEST_DEBUG: "0"
         run: cargo test --locked --workspace --all-targets
